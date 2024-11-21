@@ -15,7 +15,7 @@ setup(
         "Licence :: OSI Approved :: MIT Licence",
         "Operating System :: OS Independent"
     ],
-    keywords="ATC ATM Airspace FlightRoute",
+    keywords="atc, atm, airspace, flight route, airspace simulation, map visualization, flight tracking",
     python_requires=">=3.7",
     install_requires=[
         "",
