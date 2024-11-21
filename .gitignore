@@ -9,3 +9,9 @@ __pycache__/
 
 # Virtual environment
 venv/
+
+# The project how to for me
+how_to
+
+# PyPISettings
+PyPISettings.txt
