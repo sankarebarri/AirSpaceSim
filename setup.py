@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Licence :: OSI Approved :: MIT Licence",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent"
     ],
     keywords="atc, atm, airspace, flight route, airspace simulation, map visualization, flight tracking",
