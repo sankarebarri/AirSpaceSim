@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="AirSpaceSim",
-    version="0.1.0",
+    version="0.1.1",
     author="sankarebarri",
     author_email="sankarebarri_dev@yahoo.com,mathservant@gmail.com",
     description="A modular library for aircraft simulation, airspace and route visualisation, and flight tracking.",
