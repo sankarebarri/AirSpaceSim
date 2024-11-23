@@ -15,3 +15,5 @@ how_to
 
 # PyPISettings
 PyPISettings.txt
+airspacesim/data
+examples/
