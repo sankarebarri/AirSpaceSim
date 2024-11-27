@@ -33,3 +33,5 @@ def haversine(lat1, lon1, lat2, lon2):
     a = sin(dlat / 2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c * 0.539957 # Convert kilometers to nautical miles
+
+# print(haversine(16.5, -0.083333, 16.7, -0.15))  # Example for WP1 to WP2

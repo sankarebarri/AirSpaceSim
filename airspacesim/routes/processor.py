@@ -7,21 +7,35 @@ def process_waypoints(waypoints):
     :param waypoints: List of waypoints with DMS or distance placeholders.
     :return: List of waypoints with decimal degrees and calculated distances.
     """
-    processed_waypoints = []
-    for i, wp in enumerate(waypoints):
+    # First Pass: Convert all DMS to decimal degrees
+    for wp in waypoints:
         if "coords" in wp:
             lat = dms_to_decimal(*wp["coords"]["lat"])
             lon = dms_to_decimal(*wp["coords"]["lon"])
-            wp["coords"] = [lat, lon]
+            wp["dec_coords"] = [lat, lon]
 
-        if "distance" not in wp or wp["distance"] is None:
-            if i < len(waypoints) - 1 and "coords" in wp and "coords" in waypoints[i + 1]:
-                wp["distance"] = haversine(
-                    wp["coords"][0], wp["coords"][1],
-                    waypoints[i + 1]["coords"][0], waypoints[i + 1]["coords"][1]
-                )
-        processed_waypoints.append(wp)
-    return processed_waypoints
+    # Second Pass: Calculate distances if not already provided
+    for i, wp in enumerate(waypoints):
+        # Skip distance calculation for the last waypoint
+        if i == len(waypoints) - 1:
+            continue
+
+        # Skip if the current waypoint already has a distance
+        if wp.get("distance") is not None:
+            continue
+
+        # Ensure the next waypoint has dec_coords
+        next_wp = waypoints[i + 1]
+        if "dec_coords" in wp and "dec_coords" in next_wp:
+            wp["distance"] = haversine(
+                wp["dec_coords"][0], wp["dec_coords"][1],  # Current waypoint
+                next_wp["dec_coords"][0], next_wp["dec_coords"][1]  # Next waypoint
+            )
+
+    return waypoints
+
+
+
 
 def process_route(route):
     """
