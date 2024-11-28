@@ -25,7 +25,7 @@ class MapRenderer:
             "attribution": attribution or "© OpenStreetMap contributors"
         }
 
-    def add_polygon(self, coords, color="blue", name=None):
+    def add_polygon_boundary(self, coords, color="blue", name=None):
         """
         Add a polygon to represent an airspace boundary.
 
@@ -38,6 +38,23 @@ class MapRenderer:
                 "coords": coords,
                 "color": color,
                 "name": name
+        })
+
+    def add_circle_boundary(self, center, radius, color="blue", name=None):
+        """
+        Add a circle to represent a circular airspace boundary.
+
+        :param center: [latitude, longitude] of the center.
+        :param radius: Radius in meters.
+        :param color: Color of the circle. Default: blue.
+        :param name: Optional name for the circle.
+        """
+        self.elements.append({
+            "type": "circle",
+            "center": center,
+            "radius": radius,
+            "color": color,
+            "name": name
         })
 
     def add_polyline(self, coords, color="green", name=None):
@@ -122,12 +139,19 @@ class MapRenderer:
         """
         Internal method to generate JavaScript for map elements.
 
-        :param elements: List of elements (polygons, polylines, markers).
+        :param elements: List of elements (circle, polygons, polylines, markers).
         :return: JavaScript code to add elements to the map.
         """
         js_code = ""
         for element in elements:
-            if element["type"] == "polygon":
+            if element["type"] == "circle":
+                js_code += f"""
+                L.circle({json.dumps(element["center"])}, {{
+                    radius: {element['radius']},
+                    color: "{element["color"]}"
+                }}).addTo(map).bindPopup("{element["name"] or ''}")
+                """
+            elif element["type"] == "polygon":
                 js_code += f"""
                 L.polygon({json.dumps(element["coords"])}, {{
                     color: "{element['color']}"
