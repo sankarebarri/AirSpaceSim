@@ -40,50 +40,70 @@ class MapRenderer:
                 "name": name
         })
 
-    def add_circle_boundary(self, center, radius, color="blue", name=None):
+    def add_circle_boundary(self, center, radius, name=None, color="blue", fill_color="blue", fill_opacity=0.2, dash_array=None, opacity=1):
         """
-        Add a circle to represent a circular airspace boundary.
+        Add a circle to represent an airspace boundary.
 
-        :param center: [latitude, longitude] of the center.
-        :param radius: Radius in meters.
-        :param color: Color of the circle. Default: blue.
+        :param center: [latitude, longitude] for the circle's center.
+        :param radius: Radius of the circle in meters.
         :param name: Optional name for the circle.
+        :param color: Border color of the circle. Default: blue.
+        :param fill_color: Fill color of the circle. Default: blue.
+        :param fill_opacity: Opacity of the fill. Default: 0.2.
+        :param dash_array: Optional dash pattern for the border.
+        :param opacity: Opacity of the border. Default: 1.
         """
         self.elements.append({
             "type": "circle",
             "center": center,
             "radius": radius,
+            "name": name,
             "color": color,
-            "name": name
+            "fill_color": fill_color,
+            "fill_opacity": fill_opacity,
+            "dash_array": dash_array,  # Add dash_array
+            "opacity": opacity         # Add opacity
         })
 
-    def add_polyline(self, coords, color="green", name=None):
+    def add_polyline(self, coords, color="green", weight=3, opacity=1, name=None):
         """
         Add a polyline to represent a route.
 
         :param coords: List of [latitude, longitude] pairs for the polyline.
         :param color: Color of the polyline. Default: green.
+        :param weight: Thickness of the polyline. Default: 3.
+        :param opacity: Opacity of the polyline. Default: 1.
         :param name: Optional name for the polyline.
         """
         self.elements.append({
             "type": "polyline",
             "coords": coords,
             "color": color,
+            "weight": weight,
+            "opacity": opacity,
             "name": name
         })
 
-    def add_marker(self, coords, popup_text=None):
+
+    def add_marker(self, coords, popup_text=None, icon_url=None, icon_size=None, label_text=None):
         """
-        Add a marker to represent a waypoint.
+        Add a marker to represent a waypoint with optional permanent labels.
 
         :param coords: [latitude, longitude] of the marker.
         :param popup_text: Optional text to display on marker click.
+        :param icon_url: URL for a custom icon (e.g., triangle).
+        :param icon_size: Size of the custom icon as [width, height]. Default: [20, 20].
+        :param label_text: Optional text to display as a permanent label near the marker.
         """
         self.elements.append({
             "type": "marker",
             "coords": coords,
-            "popup_text": popup_text
+            "popup_text": popup_text,
+            "icon_url": icon_url,
+            "icon_size": icon_size or [20, 20],  # Default size if not provided
+            "label_text": label_text  # Permanent label
         })
+
 
     def show(self, output_file="map.html"):
         """
@@ -117,7 +137,7 @@ class MapRenderer:
                 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                 <style>
-                    #map {{ width: 100%; height: 500px; }}
+                    #map {{ width: 100%; height: 700px; }}
                 </style>
             </head>
             <body>
@@ -147,9 +167,13 @@ class MapRenderer:
             if element["type"] == "circle":
                 js_code += f"""
                 L.circle({json.dumps(element["center"])}, {{
-                    radius: {element['radius']},
-                    color: "{element["color"]}"
-                }}).addTo(map).bindPopup("{element["name"] or ''}")
+                    radius: {element["radius"]},
+                    color: "{element['color']}",
+                    fillColor: "{element['fill_color']}",
+                    fillOpacity: {element['fill_opacity']},
+                    opacity: {element['opacity']},
+                    dashArray: "{element['dash_array'] or ''}"  // Apply dash pattern if provided
+                }}).addTo(map).bindPopup("{element['name'] or ''}");
                 """
             elif element["type"] == "polygon":
                 js_code += f"""
@@ -160,11 +184,24 @@ class MapRenderer:
             elif element["type"] == "polyline":
                 js_code += f"""
                 L.polyline({json.dumps(element['coords'])}, {{
-                    color: "{element['color']}"
+                    color: "{element['color']}",
+                    weight: {element['weight']},  // Line thickness
+                    opacity: {element['opacity']}  // Line opacity
                 }}).addTo(map).bindPopup("{element['name'] or ''}");
                 """
             elif element["type"] == "marker":
-                js_code += f"""
-                L.marker({json.dumps(element['coords'])}).addTo(map).bindPopup("{element['popup_text'] or ''}");
-                """
+                if element["icon_url"]:
+                    js_code += f"""
+                    L.marker({json.dumps(element['coords'])}, {{
+                        icon: L.icon({{
+                            iconUrl: "{element['icon_url']}",
+                            iconSize: {json.dumps(element['icon_size'])}
+                        }})
+                    }}).addTo(map).bindPopup("{element['popup_text'] or ''}")
+                    .bindTooltip("{element['label_text'] or ''}", {{ permanent: true, direction: "top" }});
+                    """
+                else:
+                    js_code += f"""
+                    L.marker({json.dumps(element['coords'])}).addTo(map).bindPopup("{element['popup_text'] or ''}");
+                    """
         return js_code
