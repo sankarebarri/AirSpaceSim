@@ -204,4 +204,4 @@ class MapRenderer:
                     js_code += f"""
                     L.marker({json.dumps(element['coords'])}).addTo(map).bindPopup("{element['popup_text'] or ''}");
                     """
-        return js_code
+        return 1
