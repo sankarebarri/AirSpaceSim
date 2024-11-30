@@ -1,3 +1,4 @@
+import json
 class MapRenderer:
     def __init__(self, center=None, Zoom=10):
         """
