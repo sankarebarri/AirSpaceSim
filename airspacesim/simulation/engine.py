@@ -1,50 +1,72 @@
-import time
+from math import radians, sin, cos, atan2, degrees, asin
 from airspacesim.utils.conversions import haversine
-from airspacesim.simulation.interpolation import interpolate_position
+from airspacesim.utils.calculate_bearing import calculate_bearing
 
-# def run_simulation(map_renderer, dep_center, waypoints, aircraft_icon, speed_knots, update_interval, arrival_center=None):
-#     """
-#     Simulate aircraft movement along a route
+class Aircraft:
+    def __init__(self, route, speed=400):
+        """
+        Initialize the aircraft.
 
-#     :param map_renderer: MapRenderer instance
-#     :param dep_center: Departure airport coordinates[lat, lon]
-#     :param arr_center: Destination airport coordinates[lat, lon]
-#     :param waypoints: List of waypoints in [lat, lon] format
-#     :param aircraft_icon: Icon URL for the aircraft marker.
-#     :param speed_knots: Aircraft speed in knots.
-#     :param update_interval: Time interval between updates in seconds.
-#     """
-def run_simulation(map_renderer, gao_center, waypoints, aircraft_icon, speed_knots, update_interval):
-    step_distance_nm = speed_knots * update_interval / 3600  # Convert speed to NM per step
-    current_position = gao_center
+        :param route: List of waypoints in decimal degrees [(lat, lon), ...].
+        :param speed: Speed of the aircraft in knots. Default is 400 knots.
+        """
+        self.route = route
+        self.speed = speed  # knots
+        self.position = route[0]  # Start at the first waypoint
+        self.current_waypoint_index = 1  # Start moving towards the second waypoint
+        self.bearing = self.calculate_next_bearing()
 
-    for i in range(len(waypoints)):
-        start = current_position
-        end = waypoints[i]
-        distance_nm = haversine(start[0], start[1], end[0], end[1])
+    def calculate_next_bearing(self):
+        """
+        Calculate the bearing to the next waypoint using `calculate_bearing`.
+        """
+        if self.current_waypoint_index >= len(self.route):
+            return None  # No more waypoints to calculate
+        lat1, lon1 = self.position
+        lat2, lon2 = self.route[self.current_waypoint_index]
+        return calculate_bearing(lat1, lon1, lat2, lon2)
 
-        # Debugging prints
-        print(f"Start: {start}, End: {end}, Distance (NM): {distance_nm}")
+    def update_position(self, time_step):
+        """
+        Update the aircraft's position based on speed and bearing.
 
-        if distance_nm == 0:
-            print("Skipping segment: Start and end points are the same.")
-            continue
+        :param time_step: Time elapsed in seconds since the last update.
+        """
+        if self.current_waypoint_index >= len(self.route):
+            return  # No more waypoints to move towards
 
-        t = 0
+        # Calculate the distance to travel in this time step
+        distance_to_travel = (self.speed * time_step) / 3600  # Convert knots to nautical miles
+        lat1, lon1 = map(radians, self.position)
 
-        while t < 1:
-            # Dynamically calculate step size
-            step_size = max(step_distance_nm / distance_nm, 0.01)
-            print(f"Step Size: {step_size}, Updated t: {t}")
+        # Recalculate the bearing dynamically
+        self.bearing = self.calculate_next_bearing()
 
-            current_position = interpolate_position(start, end, t)
-            print(f"Current t: {t}, Current Position: {current_position}")
+        # Calculate the new position using the bearing
+        bearing_rad = radians(self.bearing)
+        R = 3440.065  # Earth's radius in nautical miles
+        lat2 = asin(sin(lat1) * cos(distance_to_travel / R) +
+                    cos(lat1) * sin(distance_to_travel / R) * cos(bearing_rad))
+        lon2 = lon1 + atan2(sin(bearing_rad) * sin(distance_to_travel / R) * cos(lat1),
+                            cos(distance_to_travel / R) - sin(lat1) * sin(lat2))
 
-            map_renderer.add_marker(
-                coords=current_position,
-                icon_url=aircraft_icon,
-                icon_size=[20, 20],
-                label_text="Aircraft"
-            )
-            t += step_size
-            time.sleep(update_interval)
+        # Update the aircraft's position
+        self.position = [degrees(lat2), degrees(lon2)]
+
+        # Check if the waypoint is reached
+        self.check_waypoint_reached()
+
+    def check_waypoint_reached(self):
+        """
+        Check if the aircraft has reached or passed the current waypoint.
+        """
+        if self.current_waypoint_index >= len(self.route):
+            return  # No more waypoints to check
+        next_waypoint = self.route[self.current_waypoint_index]
+        distance_to_next_waypoint = haversine(self.position[0], self.position[1],
+                                              next_waypoint[0], next_waypoint[1])
+
+        if distance_to_next_waypoint < 0.1:  # Threshold in nautical miles
+            self.current_waypoint_index += 1
+            if self.current_waypoint_index < len(self.route):
+                self.bearing = self.calculate_next_bearing()

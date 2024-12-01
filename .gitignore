@@ -20,3 +20,6 @@ examples/
 
 # TO-DO
 todo
+
+# READEME.md not ready to be githubed
+*.md
