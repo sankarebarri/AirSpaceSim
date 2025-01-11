@@ -1,0 +1,5 @@
+{
+    "AIRSPACE_FILE": "custom_data/airspace.json",
+    "AIRCRAFT_FILE": "custom_data/aircraft_data.json",
+    "NEW_AIRCRAFT_FILE": "custom_data/new_aircraft.json"
+}

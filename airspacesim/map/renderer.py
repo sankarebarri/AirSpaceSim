@@ -1,4 +1,6 @@
+# map/renderer.py
 import json
+from airspacesim.settings import settings
 
 class MapRenderer:
     def __init__(self, center=None, zoom=10):
@@ -9,8 +11,8 @@ class MapRenderer:
         :param zoom: Integer zoom level. Default: 10.
         """
         self.config = {
-            "center": center or [0, 0],
-            "zoom": zoom,
+            "center": center or settings.AIRSPACE_CENTER,
+            "zoom": zoom or settings.DEFAULT_ZOOM_LEVEL,
             "tile_layer": None,
             "elements": []
         }
@@ -43,11 +45,13 @@ class MapRenderer:
         """
         return self.config
 
-    def to_json(self, filepath="map_config.json"):
+    # def to_json(self, filepath="map_config.json"):
+    def to_json(self, filepath=None):
         """
         Export the map configuration to a JSON file.
 
         :param filepath: Path to save the JSON file.
         """
+        filepath = filepath or settings.AIRSPACE_DATA_FILE
         with open(filepath, "w") as f:
             json.dump(self.config, f, indent=4)

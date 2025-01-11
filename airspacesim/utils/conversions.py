@@ -1,3 +1,5 @@
+#utils/conversions.py
+
 from math import radians, sin, cos, sqrt, atan2
 
 def dms_to_decimal(degrees, minutes, seconds, direction):

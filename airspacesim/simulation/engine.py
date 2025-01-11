@@ -1,9 +1,11 @@
+#simulation/engine.py
 from math import radians, sin, cos, atan2, degrees, asin
 from airspacesim.utils.conversions import haversine
 from airspacesim.utils.calculate_bearing import calculate_bearing
+from airspacesim.settings import settings
 
 class Aircraft:
-    def __init__(self, route, speed=400):
+    def __init__(self, route, speed=None):
         """
         Initialize the aircraft.
 
@@ -11,7 +13,7 @@ class Aircraft:
         :param speed: Speed of the aircraft in knots. Default is 400 knots.
         """
         self.route = route
-        self.speed = speed  # knots
+        self.speed = speed or settings.DEFAULT_SPEED_KNOTS  # knots
         self.position = route[0]  # Start at the first waypoint
         self.current_waypoint_index = 1  # Start moving towards the second waypoint
         self.bearing = self.calculate_next_bearing()
@@ -44,7 +46,7 @@ class Aircraft:
 
         # Calculate the new position using the bearing
         bearing_rad = radians(self.bearing)
-        R = 3440.065  # Earth's radius in nautical miles
+        R = settings.EARTH_RADIUS_NM  # Earth's radius in nautical miles
         lat2 = asin(sin(lat1) * cos(distance_to_travel / R) +
                     cos(lat1) * sin(distance_to_travel / R) * cos(bearing_rad))
         lon2 = lon1 + atan2(sin(bearing_rad) * sin(distance_to_travel / R) * cos(lat1),
