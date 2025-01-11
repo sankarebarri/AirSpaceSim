@@ -28,13 +28,5 @@ class Settings:
         user_path = os.path.join(os.getcwd(), filename)
         return user_path if os.path.exists(user_path) else default_path
 
-    def set(self, key, value):
-        """Allows modifying global settings dynamically."""
-        if hasattr(self, key):
-            setattr(self, key, value)
-
-    def get(self, key):
-        """Retrieve a setting value."""
-        return getattr(self, key, None)
 
 settings = Settings()
