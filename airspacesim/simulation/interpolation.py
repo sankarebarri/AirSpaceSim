@@ -1,15 +1,15 @@
-def interpolate_position(start, end, t):
-    # print(1)
+def interpolate_position(start, end, fraction):
     """
-    Interpolate between two points based on t (0 <= t <= 1)
+    Interpolate position between two waypoints.
 
-    :param start: [lat, lon] of the start point
-    :param end: [lat, lon] of the end point
-    :param t:  Parameter (0 <= t <= 1).
-
-    :return: Interpolated position [lat, lon]
+    :param start: Starting waypoint [lat, lon].
+    :param end: Ending waypoint [lat, lon].
+    :param fraction: Fraction of the distance between start and end (0 to 1).
+    :return: New interpolated position [lat, lon].
     """
-    return [
-        start[0] + (end[0] - start[0]) * t,
-        start[1] + (end[1] - start[1]) * t
+    new_position = [
+        start[0] + (end[0] - start[0]) * fraction,
+        start[1] + (end[1] - start[1]) * fraction,
     ]
+    print(f"DEBUG: Interpolating: Start={start}, End={end}, Fraction={fraction}, New={new_position}")
+    return new_position
