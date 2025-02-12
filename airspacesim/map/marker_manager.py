@@ -8,7 +8,7 @@ class DynamicMarkerManager:
 
     def add_marker(self, marker_id, call_sign, coords, heading=0, speed=0):
         """
-        Add a new marker to the manager
+        Add a new marker to the manager.
 
         :param marker_id: Unique identifier for the marker (aircraft ID).
         :param callsign: Aircraft callsign.
@@ -41,9 +41,9 @@ class DynamicMarkerManager:
         if new_heading is not None:
             marker["heading"] = new_heading
         if new_speed is not None:
-            new_speed["speed"] = new_speed
-        
-    def remove_marker(self):
+            marker["speed"] = new_speed
+
+    def remove_marker(self, marker_id):
         """
         Remove a marker from the manager.
 
@@ -59,17 +59,13 @@ class DynamicMarkerManager:
         :return: List of marker configurations.
         """
         return [
-            {
-                "id": marker_id,
-                **marker_data
-            }
+            {"id": marker_id, **marker_data}
             for marker_id, marker_data in self.markers.items()
         ]
 
     def to_json(self):
         """
         Export all managed markers as a JSON serializable structure.
-
         :return: JSON-compatible dictionary.
         """
         return {"Aircraft": self.get_markers()}

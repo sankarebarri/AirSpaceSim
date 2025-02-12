@@ -18,33 +18,23 @@ def process_waypoints(waypoints):
 
     # Calculate distances if not already provided
     for i, wp in enumerate(waypoints):
-        # Skip distance calculation for the last waypoint
         if i == len(waypoints) - 1:
             continue
-
-        # Skip if the current waypoint already has a distance
         if wp.get("distance") is not None:
             continue
-
-        # Ensure the next waypoint has dec_coords
         next_wp = waypoints[i + 1]
         if "dec_coords" in wp and "dec_coords" in next_wp:
             wp["distance"] = haversine(
-                wp["dec_coords"][0], wp["dec_coords"][1],  # Current waypoint
-                next_wp["dec_coords"][0], next_wp["dec_coords"][1]  # Next waypoint
+                wp["dec_coords"][0], wp["dec_coords"][1],
+                next_wp["dec_coords"][0], next_wp["dec_coords"][1]
             )
-
     return waypoints
-
-
-
 
 def process_route(route):
     """
     Process a single route to calculate all waypoints distances
-    
-    :param route: Route dictionary with waypoints and radial
 
+    :param route: Route dictionary with waypoints and radial
     :return: Processed route with updated waypoints.
     """
     route["waypoints"] = process_waypoints(route["waypoints"])

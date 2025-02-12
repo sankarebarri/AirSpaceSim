@@ -14,9 +14,7 @@ async function loadMapConfig() {
 
 function initializeMap(config) {
   map = L.map("map").setView(config.center, config.zoom);
-  console.log("Map initialized:", map); // Debug log
-  // Initialize map once
-
+  console.log("Map initialized:", map);
   if (config.tile_layer) {
     L.tileLayer(config.tile_layer.url, {
       attribution: config.tile_layer.attribution,

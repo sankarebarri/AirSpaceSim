@@ -1,4 +1,3 @@
-# settings.py
 import os
 import json
 
@@ -18,16 +17,14 @@ class Settings:
         self.DEFAULT_AIRCRAFT_FILE = os.path.join(os.path.dirname(__file__), "data", "aircraft_data.json")
         self.DEFAULT_NEW_AIRCRAFT_FILE = os.path.join(os.path.dirname(__file__), "data", "new_aircraft.json")
 
-        # User-defined overides (if they exist)
+        # User-defined overrides (if they exist)
         self.AIRSPACE_FILE = self.get_user_override("gao_airspace.json", self.DEFAULT_AIRSPACE_FILE)
         self.AIRCRAFT_FILE = self.get_user_override("aircraft_data.json", self.DEFAULT_AIRCRAFT_FILE)
         self.NEW_AIRCRAFT_FILE = self.get_user_override("new_aircraft.json", self.DEFAULT_NEW_AIRCRAFT_FILE)
 
-
     def get_user_override(self, filename, default_path):
-        """Check if the user has provided a file in the working directory"""
+        """Check if the user has provided a file in the working directory."""
         user_path = os.path.join(os.getcwd(), filename)
         return user_path if os.path.exists(user_path) else default_path
-
 
 settings = Settings()

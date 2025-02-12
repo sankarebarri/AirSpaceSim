@@ -94,26 +94,53 @@ from airspacesim.simulation.interpolation import interpolate_position
 
 class Aircraft:
     def __init__(self, id, route, waypoints, speed=400, callsign=None):
+        """
+        Initialize the aircraft.
+
+        :param id: Unique identifier for the aircraft.
+        :param route: Route name associated with the aircraft.
+        :param waypoints: List of waypoints in decimal degrees [(lat, lon), ...].
+        :param speed: Speed of the aircraft in knots. Defaults to 400.
+        :param callsign: Optional callsign for the aircraft.
+        """
         self.id = id
         self.route = route
         self.waypoints = waypoints
         self.speed = speed
         self.callsign = callsign
-        self.current_index = 0
-        self.position = waypoints[0]
+        self.current_index = 0  # Current waypoint index.
+        self.position = waypoints[0]  # Start at the first waypoint.
+        self.segment_progress = 0  # Distance (in nautical miles) travelled along the current segment.
 
-    def move(self, fraction):
-        """Move the aircraft along the route."""
+    def update_position(self, time_step):
+        """
+        Update the aircraft's position based on its speed and elapsed time.
+
+        :param time_step: Time elapsed in seconds since the last update.
+        """
         if self.current_index >= len(self.waypoints) - 1:
-            return False  # Aircraft reached destination
+            return
 
-        start = self.waypoints[self.current_index]
-        end = self.waypoints[self.current_index + 1]
+        # Calculate travel distance for this time step (in nautical miles)
+        travel_distance = (self.speed * time_step) / 3600.0
 
-        self.position = interpolate_position(start, end, fraction)
+        # Process travel distance, accounting for potential overshoot of waypoints
+        while travel_distance > 0 and self.current_index < len(self.waypoints) - 1:
+            start = self.waypoints[self.current_index]
+            end = self.waypoints[self.current_index + 1]
 
-        if haversine(*self.position, *end) < 0.1:  # Close enough to waypoint
-            self.current_index += 1
-            return False  # Reset fraction for the next segment
+            segment_distance = haversine(start[0], start[1], end[0], end[1])
+            remaining_distance = segment_distance - self.segment_progress
 
-        return True  # Aircraft still moving
+            if travel_distance < remaining_distance:
+                self.segment_progress += travel_distance
+                fraction = self.segment_progress / segment_distance
+                self.position = interpolate_position(start, end, fraction)
+                travel_distance = 0
+            else:
+                self.current_index += 1
+                self.position = end
+                travel_distance -= remaining_distance
+                self.segment_progress = 0
+                if self.current_index >= len(self.waypoints) - 1:
+                    break

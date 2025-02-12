@@ -18,7 +18,7 @@ class AircraftManager:
         self.threads = []  # List to track active threads
         self.lock = threading.Lock()  # Thread safety
 
-    def add_aircraft(self, id, route_name, callsign="Unknown", stop_flag=None):
+    def add_aircraft(self, id, route_name, callsign="Unknown", stop_flag=None, speed=None):
         """
         Adds a new aircraft and starts its simulation.
 
@@ -26,41 +26,52 @@ class AircraftManager:
         :param route_name: The name of the predefined route.
         :param callsign: Optional callsign for display.
         :param stop_flag: Threading event to stop simulation gracefully.
+        :param speed: Optional speed in knots; if not provided, the default is used.
         """
         if route_name not in self.routes:
             raise ValueError(f"Route '{route_name}' does not exist.")
 
-        # Convert waypoints from DMS to Decimal
-        waypoints = [
-            [dms_to_decimal(*wp["coords"]["lat"]), dms_to_decimal(*wp["coords"]["lon"])]
-            for wp in self.routes[route_name]
-        ]
+        # Ensure each waypoint is in decimal degrees.
+        waypoints = []
+        for wp in self.routes[route_name]:
+            if "dec_coords" in wp:
+                coords = wp["dec_coords"]
+            else:
+                # Convert from DMS to decimal using dms_to_decimal
+                coords = [
+                    dms_to_decimal(*wp["coords"]["lat"]),
+                    dms_to_decimal(*wp["coords"]["lon"])
+                ]
+            waypoints.append(coords)
 
-        # Create the Aircraft instance
-        aircraft = Aircraft(id, route_name, waypoints, callsign=callsign)
+        # Create the Aircraft instance, using provided speed or default.
+        aircraft = Aircraft(
+            id,
+            route_name,
+            waypoints,
+            speed=speed if speed is not None else settings.DEFAULT_SPEED_KNOTS,
+            callsign=callsign
+        )
         self.aircraft_list.append(aircraft)
 
-        # Start the simulation in a new thread
+        # Start the simulation in a new thread.
         thread = threading.Thread(target=self.simulate_aircraft, args=(aircraft, stop_flag))
         thread.start()
         self.threads.append(thread)
 
     def simulate_aircraft(self, aircraft, stop_flag):
-        total_steps = 10  # Number of steps between waypoints
-        step_fraction = 1 / total_steps
-        cumulative_fraction = 0
-
+        """
+        Simulate the aircraft's movement based on its speed.
+        """
         print(f"🛫 Starting simulation for {aircraft.id} ({aircraft.callsign})...")
 
         while aircraft.current_index < len(aircraft.waypoints) - 1:
-            if stop_flag.is_set():  # Check if the stop flag is set
+            if stop_flag.is_set():
                 print(f"⛔ Simulation for {aircraft.id} interrupted.")
                 return
 
-            cumulative_fraction += step_fraction
-            if not aircraft.move(cumulative_fraction):
-                cumulative_fraction = 0
-
+            # Update aircraft position using its speed and the simulation time step.
+            aircraft.update_position(settings.SIMULATION_UPDATE_INTERVAL)
             self.save_aircraft_data()
             time.sleep(settings.SIMULATION_UPDATE_INTERVAL)
 
@@ -68,12 +79,17 @@ class AircraftManager:
 
     def save_aircraft_data(self):
         """
-        Saves the current positions of all aircraft to JSON.
+        Saves the current positions, callsigns, and speeds of all aircraft to JSON.
         """
         with self.lock:
             data = {
                 "aircraft_data": [
-                    {"id": ac.id, "position": ac.position, "callsign": ac.callsign}
+                    {
+                        "id": ac.id,
+                        "position": ac.position,
+                        "callsign": ac.callsign,
+                        "speed": ac.speed
+                    }
                     for ac in self.aircraft_list
                 ]
             }
@@ -91,16 +107,22 @@ class AircraftManager:
 
                 if new_data.get("aircraft"):
                     for ac in new_data["aircraft"]:
-                        self.add_aircraft(ac["id"], ac["route"], ac["callsign"], stop_flag)
+                        self.add_aircraft(
+                            ac["id"],
+                            ac["route"],
+                            ac.get("callsign", "Unknown"),
+                            stop_flag,
+                            ac.get("speed", None)
+                        )
 
-                    # Clear new aircraft data after processing
+                    # Clear new aircraft data after processing.
                     with open(settings.NEW_AIRCRAFT_FILE, "w") as f:
                         json.dump({"aircraft": []}, f, indent=4)
 
             except (json.JSONDecodeError, FileNotFoundError):
                 pass
 
-            time.sleep(2)  # Check for new aircraft every 2 seconds
+            time.sleep(2)  # Check for new aircraft every 2 seconds.
 
     def terminate_simulations(self):
         """

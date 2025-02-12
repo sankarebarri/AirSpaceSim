@@ -1,5 +1,5 @@
 // aricraft_simulation.py
-import { map } from "./map_renderer.js"; // Use the map instance
+import { map } from "./map_renderer.js";
 const AIRCRAFT_CONFIG_URL = "aircraft_data.json";
 let markers = {}; // Dictionary to track markers
 
@@ -7,7 +7,7 @@ async function fetchAircraftData() {
   try {
     const response = await fetch(AIRCRAFT_CONFIG_URL);
     const data = await response.json();
-    console.log("Fetched aircraft data:", data); // Debug log
+    console.log("Fetched aircraft data:", data);
     updateMarkers(data.aircraft_data);
   } catch (error) {
     console.error("Error fetching aircraft data:", error);
@@ -19,30 +19,30 @@ function updateMarkers(aircraftData) {
     const markerId = aircraft.id;
     const coords = aircraft.position;
     const callsign = aircraft.callsign;
+    const speed = aircraft.speed;
 
-    // Check if the marker already exists
     if (markers[markerId]) {
-      console.log(`Updating marker ${markerId} to ${coords}`); // Debug log
-      // Update marker position smoothly
+      console.log(`Updating marker ${markerId} to ${coords}`);
       markers[markerId].setLatLng(coords);
+      markers[markerId].setTooltipContent(
+        `Callsign: ${callsign}, Speed: ${speed} knots`
+      );
     } else {
-      console.log(`Adding new marker for ${markerId}`); // Debug log
-      // Add a new marker if it doesn't exist
+      console.log(`Adding new marker for ${markerId}`);
       const marker = L.marker(coords, {
         icon: L.icon({
           iconUrl: "static/icons/circle.svg",
           iconSize: [10, 10],
         }),
-      }).bindTooltip(`Callsign: ${callsign}`, {
+      }).bindTooltip(`Callsign: ${callsign}, Speed: ${speed} knots`, {
         permanent: true,
         direction: "bottom",
       });
 
       marker.addTo(map);
-      markers[markerId] = marker; // Save reference for future updates
+      markers[markerId] = marker;
     }
   });
 }
 
-// Fetch and update markers periodically
 setInterval(fetchAircraftData, 200);
