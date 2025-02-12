@@ -1,3 +1,7 @@
 include README.md
 include LICENSE
 include requirements.txt
+
+include airspacesim/static/js/*.js
+include airspacesim/static/css/*.css
+include airspacesim/templates/*.html
