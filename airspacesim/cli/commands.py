@@ -1,3 +1,4 @@
+# airspacesim/cli/commands.py
 import os
 import shutil
 import argparse
@@ -62,6 +63,77 @@ def initialize_project():
     print("3️⃣ Open 'map.html' in a browser to visualize the airspace.\n")
     print("ℹ️ Need help? Check the documentation!\n")
 
+# ------------------------------------------
+# 🚀 Command: List Available Routes
+# ------------------------------------------
+
+def list_routes():
+    """List all available routes from gao_airspace_config.json."""
+    config_path = os.path.join(os.getcwd(), "gao_airspace_config.json")
+
+    if not os.path.exists(config_path):
+        print("❌ Error: 'gao_airspace_config.json' not found. Run 'airspacesim init' first.")
+        return
+
+    try:
+        with open(config_path, "r") as file:
+            config_data = json.load(file)
+        
+        routes = [element["name"] for element in config_data.get("elements", []) if element["type"] == "polyline"]
+
+        if not routes:
+            print("⚠️ No routes found in the configuration.")
+        else:
+            print("\n🛤️ Available Routes:")
+            for route in routes:
+                print(f"   - {route}")
+    
+    except json.JSONDecodeError:
+        print("❌ Error: Invalid JSON format in 'gao_airspace_config.json'.")
+
+# ------------------------------------------
+# 🚀 Command: List Active Aircraft
+# ------------------------------------------
+
+# def list_aircraft():
+#     """List all active aircraft from aircraft_data.json."""
+#     data_path = os.path.join(os.getcwd(), "aircraft_data.json")
+
+#     if not os.path.exists(data_path):
+#         print("❌ Error: 'aircraft_data.json' not found. Run 'airspacesim init' first.")
+#         return
+
+#     try:
+#         with open(data_path, "r") as file:
+#             data = json.load(file)
+        
+#         aircraft_list = data.get("aircraft_data", [])
+
+#         if not aircraft_list:
+#             print("⚠️ No active aircraft found.")
+#         else:
+#             print("\n✈️ Active Aircraft:")
+#             for aircraft in aircraft_list:
+#                 print(f"   - ID: {aircraft['id']} | Callsign: {aircraft['callsign']} | Position: {aircraft['position']}")
+    
+#     except json.JSONDecodeError:
+#         print("❌ Error: Invalid JSON format in 'aircraft_data.json'.")
+
+# ------------------------------------------
+# 📌 Placeholder: Future CLI Commands
+# ------------------------------------------
+
+# def add_route(name, waypoints):
+#     """[Future] Add a new route to gao_airspace_config.json."""
+#     print(f"🚧 Feature under development: Adding route '{name}' with waypoints {waypoints}.")
+
+# def add_aircraft(id, route, speed):
+#     """[Future] Add a new aircraft to aircraft_data.json."""
+#     print(f"🚧 Feature under development: Adding aircraft '{id}' to route '{route}' at {speed} knots.")
+
+# ------------------------------------------
+# 🚀 CLI Entry Point
+# ------------------------------------------
 def main():
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(description="AirSpaceSim Command Line Interface")

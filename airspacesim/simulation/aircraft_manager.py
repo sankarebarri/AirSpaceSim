@@ -1,3 +1,4 @@
+# simulation/aircraft_manager.py
 import threading
 import json
 import time
@@ -45,7 +46,7 @@ class AircraftManager:
         self.threads.append(thread)
 
     def simulate_aircraft(self, aircraft, stop_flag):
-        total_steps = 100  # Number of steps between waypoints
+        total_steps = 10  # Number of steps between waypoints
         step_fraction = 1 / total_steps
         cumulative_fraction = 0
 
