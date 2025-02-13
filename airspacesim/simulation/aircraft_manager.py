@@ -5,12 +5,12 @@ import time
 from airspacesim.simulation.aircraft import Aircraft
 from airspacesim.settings import settings
 from airspacesim.utils.conversions import dms_to_decimal
+from airspacesim.utils.logging_config import default_logger as logger
 
 class AircraftManager:
     def __init__(self, routes):
         """
         Initialize an Aircraft Manager to handle multiple aircraft simulations.
-
         :param routes: Dictionary of predefined routes with waypoints in DMS format.
         """
         self.aircraft_list = []  # Stores active aircraft
@@ -21,61 +21,60 @@ class AircraftManager:
     def add_aircraft(self, id, route_name, callsign="Unknown", stop_flag=None, speed=None):
         """
         Adds a new aircraft and starts its simulation.
-
-        :param id: Unique aircraft identifier.
-        :param route_name: The name of the predefined route.
-        :param callsign: Optional callsign for display.
-        :param stop_flag: Threading event to stop simulation gracefully.
-        :param speed: Optional speed in knots; if not provided, the default is used.
         """
         if route_name not in self.routes:
+            logger.error("Route '%s' does not exist.", route_name)
             raise ValueError(f"Route '{route_name}' does not exist.")
 
-        # Ensure each waypoint is in decimal degrees.
         waypoints = []
         for wp in self.routes[route_name]:
             if "dec_coords" in wp:
                 coords = wp["dec_coords"]
             else:
-                # Convert from DMS to decimal using dms_to_decimal
-                coords = [
-                    dms_to_decimal(*wp["coords"]["lat"]),
-                    dms_to_decimal(*wp["coords"]["lon"])
-                ]
+                try:
+                    coords = [
+                        dms_to_decimal(*wp["coords"]["lat"]),
+                        dms_to_decimal(*wp["coords"]["lon"])
+                    ]
+                except Exception as e:
+                    logger.exception("Error converting DMS to decimal for waypoint: %s", wp)
+                    raise
             waypoints.append(coords)
 
-        # Create the Aircraft instance, using provided speed or default.
-        aircraft = Aircraft(
-            id,
-            route_name,
-            waypoints,
-            speed=speed if speed is not None else settings.DEFAULT_SPEED_KNOTS,
-            callsign=callsign
-        )
-        self.aircraft_list.append(aircraft)
+        try:
+            aircraft = Aircraft(
+                id,
+                route_name,
+                waypoints,
+                speed=speed if speed is not None else settings.DEFAULT_SPEED_KNOTS,
+                callsign=callsign
+            )
+            self.aircraft_list.append(aircraft)
+        except Exception as e:
+            logger.exception("Error creating Aircraft instance for ID: %s", id)
+            raise
 
-        # Start the simulation in a new thread.
         thread = threading.Thread(target=self.simulate_aircraft, args=(aircraft, stop_flag))
         thread.start()
         self.threads.append(thread)
+        logger.info("Aircraft %s added on route %s with callsign %s.", id, route_name, callsign)
 
     def simulate_aircraft(self, aircraft, stop_flag):
         """
         Simulate the aircraft's movement based on its speed.
         """
-        print(f"🛫 Starting simulation for {aircraft.id} ({aircraft.callsign})...")
-
-        while aircraft.current_index < len(aircraft.waypoints) - 1:
-            if stop_flag.is_set():
-                print(f"⛔ Simulation for {aircraft.id} interrupted.")
-                return
-
-            # Update aircraft position using its speed and the simulation time step.
-            aircraft.update_position(settings.SIMULATION_UPDATE_INTERVAL)
-            self.save_aircraft_data()
-            time.sleep(settings.SIMULATION_UPDATE_INTERVAL)
-
-        print(f"✅ {aircraft.id} has completed its route.")
+        logger.info("🛫 Starting simulation for %s (%s)...", aircraft.id, aircraft.callsign)
+        try:
+            while aircraft.current_index < len(aircraft.waypoints) - 1:
+                if stop_flag.is_set():
+                    logger.info("⛔ Simulation for %s interrupted.", aircraft.id)
+                    return
+                aircraft.update_position(settings.SIMULATION_UPDATE_INTERVAL)
+                self.save_aircraft_data()
+                time.sleep(settings.SIMULATION_UPDATE_INTERVAL)
+            logger.info("✅ %s has completed its route.", aircraft.id)
+        except Exception as e:
+            logger.exception("Error during simulation for aircraft %s", aircraft.id)
 
     def save_aircraft_data(self):
         """
@@ -93,8 +92,11 @@ class AircraftManager:
                     for ac in self.aircraft_list
                 ]
             }
-            with open(settings.AIRCRAFT_FILE, "w") as f:
-                json.dump(data, f, indent=4)
+            try:
+                with open(settings.AIRCRAFT_FILE, "w") as f:
+                    json.dump(data, f, indent=4)
+            except Exception as e:
+                logger.exception("Failed to write aircraft data to file.")
 
     def monitor_new_aircraft(self, stop_flag):
         """
@@ -107,6 +109,9 @@ class AircraftManager:
 
                 if new_data.get("aircraft"):
                     for ac in new_data["aircraft"]:
+                        if "route" not in ac:
+                            logger.error("New aircraft entry missing 'route': %s", ac)
+                            continue  # Skip entries without a route
                         self.add_aircraft(
                             ac["id"],
                             ac["route"],
@@ -114,15 +119,14 @@ class AircraftManager:
                             stop_flag,
                             ac.get("speed", None)
                         )
-
-                    # Clear new aircraft data after processing.
                     with open(settings.NEW_AIRCRAFT_FILE, "w") as f:
                         json.dump({"aircraft": []}, f, indent=4)
+            except (json.JSONDecodeError, FileNotFoundError) as e:
+                logger.warning("Error reading new_aircraft.json: %s", e)
+            except Exception as e:
+                logger.exception("Unexpected error in monitor_new_aircraft.")
+            time.sleep(2)
 
-            except (json.JSONDecodeError, FileNotFoundError):
-                pass
-
-            time.sleep(2)  # Check for new aircraft every 2 seconds.
 
     def terminate_simulations(self):
         """
@@ -130,3 +134,4 @@ class AircraftManager:
         """
         for thread in self.threads:
             thread.join()
+        logger.info("All simulation threads have terminated.")
