@@ -1,4 +1,4 @@
-// map_renderer.js
+// // static/js/map_renderer.js
 const CONFIG_URL = "gao_airspace_config.json";
 export let map; // Export map instance for use in other scripts
 
