@@ -1,2 +1,3 @@
 def say_hello():
-    return "Hello, world changhhhhheesss from AirSpaceSim!"
+    """Return a friendly greeting."""
+    return "Hello, world from AirSpaceSim!"
