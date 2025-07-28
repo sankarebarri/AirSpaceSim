@@ -1,4 +1,4 @@
-// static/js/aricraft_simulation.py
+// static/js/aircraft_simulation.js
 import { map } from "./map_renderer.js";
 const AIRCRAFT_CONFIG_URL = "aircraft_data.json";
 let markers = {}; // Dictionary to track markers
