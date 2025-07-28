@@ -3,6 +3,7 @@ import os
 import shutil
 import argparse
 from importlib import resources
+import json
 
 def copy_file(src, dest):
     """Safely copy a file from package resources to the user's workspace."""
