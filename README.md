@@ -80,10 +80,3 @@ Once installed, you can quickly set up and run your first simulation:
         ]
     }
     ```
-
-## Links to Further Documentation and Contribution Guidelines
-
-* **Detailed Documentation:** [Link to Sphinx Docs / ReadTheDocs]
-* **Contributing Guide:** [Link to  CONTRIBUTING.md]
-* **Issue Tracker:** [Link to  GitHub Issues page]
-* **License:** See the [LICENSE](LICENSE) file for details.
