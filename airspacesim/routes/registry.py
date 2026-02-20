@@ -22,7 +22,9 @@ class RouteRegistry:
     """Stores airway definitions and resolves route chains into waypoint paths."""
 
     def __init__(self, routes):
-        self.routes = {route_id: list(waypoint_ids) for route_id, waypoint_ids in routes.items()}
+        self.routes = {
+            route_id: list(waypoint_ids) for route_id, waypoint_ids in routes.items()
+        }
 
     def resolve_flight_plan(self, plan):
         if not plan.route_ids:
@@ -66,7 +68,9 @@ class RouteRegistry:
         route = self.routes[route_id]
 
         if route_idx == len(route_ids) - 1:
-            end_candidates = [destination_id] if destination_id in route else [route[0], route[-1]]
+            end_candidates = (
+                [destination_id] if destination_id in route else [route[0], route[-1]]
+            )
             best = None
             for end_wp in end_candidates:
                 segment = self._segment_between(route, start_wp, end_wp)
@@ -109,7 +113,9 @@ class RouteRegistry:
             )
 
         # Deterministic choice: shortest path, then lexicographic path, then join id.
-        ranked = sorted(candidates, key=lambda item: (len(item[1]), tuple(item[1]), item[0]))
+        ranked = sorted(
+            candidates, key=lambda item: (len(item[1]), tuple(item[1]), item[0])
+        )
         chosen_join, chosen_path = ranked[0]
         if len(candidates) > 1:
             logger.info(

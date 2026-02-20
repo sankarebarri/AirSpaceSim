@@ -4,7 +4,12 @@ import os
 
 from airspacesim.core.models import AircraftDefinition, ScenarioBundle, Waypoint
 from airspacesim.io.adapters import FileEventAdapter, FileSnapshotAdapter
-from airspacesim.io.contracts import build_envelope, validate_scenario_aircraft, validate_scenario_airspace, validate_scenario_v01
+from airspacesim.io.contracts import (
+    build_envelope,
+    validate_scenario_aircraft,
+    validate_scenario_airspace,
+    validate_scenario_v01,
+)
 from airspacesim.settings import settings
 from airspacesim.simulation.aircraft_manager import AircraftManager
 from airspacesim.simulation.events import apply_events_idempotent
@@ -32,7 +37,9 @@ def load_scenarios(airspace_path=None, aircraft_path=None, scenario_path=None):
             os.path.join(cwd, "data", "scenario.v0.1.json"),
             os.path.join(cwd, "scenario.v0.1.json"),
         ]
-        scenario_contract_path = next((path for path in scenario_candidates if os.path.exists(path)), None)
+        scenario_contract_path = next(
+            (path for path in scenario_candidates if os.path.exists(path)), None
+        )
 
     if scenario_contract_path:
         scenario_adapter = FileSnapshotAdapter(
@@ -63,7 +70,9 @@ def load_scenarios(airspace_path=None, aircraft_path=None, scenario_path=None):
     route_ids = {route["id"] for route in scenario_airspace["data"]["routes"]}
     aircraft_adapter = FileSnapshotAdapter(
         aircraft_path or settings.SCENARIO_AIRCRAFT_FILE,
-        validator=lambda payload: validate_scenario_aircraft(payload, route_ids=route_ids),
+        validator=lambda payload: validate_scenario_aircraft(
+            payload, route_ids=route_ids
+        ),
     )
     scenario_aircraft = aircraft_adapter.load()
     return scenario_airspace, scenario_aircraft
@@ -79,7 +88,10 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
     points = {
         point_id: Waypoint(
             id=point_id,
-            position_dd=(float(point["coord"]["dd"][0]), float(point["coord"]["dd"][1])),
+            position_dd=(
+                float(point["coord"]["dd"][0]),
+                float(point["coord"]["dd"][1]),
+            ),
         )
         for point_id, point in scenario_airspace["data"]["points"].items()
     }
@@ -105,7 +117,9 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
     )
 
 
-def initialize_manager_from_scenarios(scenario_airspace, scenario_aircraft, execution_mode="thread_per_aircraft"):
+def initialize_manager_from_scenarios(
+    scenario_airspace, scenario_aircraft, execution_mode="thread_per_aircraft"
+):
     routes = _build_routes_from_scenario_airspace(scenario_airspace)
     manager = AircraftManager(routes, execution_mode=execution_mode)
     for item in scenario_aircraft["data"]["aircraft"]:

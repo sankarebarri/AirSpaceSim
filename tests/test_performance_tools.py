@@ -6,7 +6,9 @@ from airspacesim.settings import settings
 
 
 def test_benchmark_update_loop_returns_metrics():
-    metrics = benchmark_update_loop(num_aircraft=5, num_steps=3, speed_kt=300, time_step=0.5)
+    metrics = benchmark_update_loop(
+        num_aircraft=5, num_steps=3, speed_kt=300, time_step=0.5
+    )
     assert metrics["num_aircraft"] == 5
     assert metrics["num_steps"] == 3
     assert metrics["total_updates"] == 15

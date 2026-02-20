@@ -27,7 +27,11 @@ def test_offline_editable_install_script(tmp_path):
         timeout=120,
     )
 
-    venv_python = venv_dir / ("Scripts" if sys.platform == "win32" else "bin") / ("python.exe" if sys.platform == "win32" else "python")
+    venv_python = (
+        venv_dir
+        / ("Scripts" if sys.platform == "win32" else "bin")
+        / ("python.exe" if sys.platform == "win32" else "python")
+    )
     proc = subprocess.run(
         [str(venv_python), "-c", "import airspacesim, setuptools; print('ok')"],
         check=True,

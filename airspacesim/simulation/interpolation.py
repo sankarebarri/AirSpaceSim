@@ -1,8 +1,8 @@
-#simulation/interpolation.py
+# simulation/interpolation.py
 def interpolate_position(start, end, fraction):
     """
     Interpolate position between two waypoints.
-    
+
     :param start: Starting waypoint [lat, lon].
     :param end: Ending waypoint [lat, lon].
     :param fraction: Fraction of the distance between start and end (0 to 1).

@@ -1,5 +1,6 @@
-#routes/manager.py
+# routes/manager.py
 from airspacesim.utils.conversions import dms_to_decimal
+
 
 class RouteManager:
     def __init__(self, name):
@@ -21,15 +22,19 @@ class RouteManager:
         :param altitude: Optional altitude for the waypoint.
         """
         if not isinstance(coords, dict) or "lat" not in coords or "lon" not in coords:
-            raise ValueError("Invalid coordinates format. Expected dict with 'lat' and 'lon'.")
+            raise ValueError(
+                "Invalid coordinates format. Expected dict with 'lat' and 'lon'."
+            )
         dec_coords = [dms_to_decimal(*coords["lat"]), dms_to_decimal(*coords["lon"])]
-        self.waypoints.append({
-            "coords": coords,
-            "dec_coords": dec_coords,
-            "name": name,
-            "distance": distance,
-            "altitude": altitude
-        })
+        self.waypoints.append(
+            {
+                "coords": coords,
+                "dec_coords": dec_coords,
+                "name": name,
+                "distance": distance,
+                "altitude": altitude,
+            }
+        )
 
     def get_waypoints(self):
         """

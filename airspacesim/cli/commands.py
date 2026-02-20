@@ -93,6 +93,7 @@ def _find_config_path():
             return candidate
     return None
 
+
 def initialize_project(overwrite=False):
     """Initialize a new AirSpaceSim project with default files."""
     project_dir = Path.cwd()
@@ -118,7 +119,11 @@ def initialize_project(overwrite=False):
     # Copy necessary files
     package_path = resources.files("airspacesim")
 
-    copy_file(_resolve_resource(package_path, "templates/map.html"), templates_dir / "map.html", overwrite=overwrite)
+    copy_file(
+        _resolve_resource(package_path, "templates/map.html"),
+        templates_dir / "map.html",
+        overwrite=overwrite,
+    )
     copy_file(
         _resolve_resource(package_path, "static/js/map_renderer.js"),
         static_js_dir / "map_renderer.js",
@@ -139,7 +144,11 @@ def initialize_project(overwrite=False):
         static_css_dir / "map_styles.css",
         overwrite=overwrite,
     )
-    copy_directory_contents(_resolve_resource(package_path, "static/icons"), static_icons_dir, overwrite=overwrite)
+    copy_directory_contents(
+        _resolve_resource(package_path, "static/icons"),
+        static_icons_dir,
+        overwrite=overwrite,
+    )
     copy_file(
         _resolve_resource(package_path, "data/airspace_config.json")
         or _resolve_resource(package_path, "data/gao_airspace.json"),
@@ -225,9 +234,11 @@ def initialize_project(overwrite=False):
     _cli_info("3️⃣ Open 'templates/map.html' in a browser to visualize the airspace.\n")
     _cli_info("ℹ️ Need help? Check the documentation!\n")
 
+
 # ------------------------------------------
 # 🚀 Command: List Available Routes
 # ------------------------------------------
+
 
 def list_routes():
     """List all available routes from the active airspace config."""
@@ -239,8 +250,16 @@ def list_routes():
     try:
         with open(config_path, "r", encoding="utf-8") as file:
             config_data = json.load(file)
-        config_root = config_data.get("data", config_data) if isinstance(config_data, dict) else {}
-        routes = [element["name"] for element in config_root.get("elements", []) if element["type"] == "polyline"]
+        config_root = (
+            config_data.get("data", config_data)
+            if isinstance(config_data, dict)
+            else {}
+        )
+        routes = [
+            element["name"]
+            for element in config_root.get("elements", [])
+            if element["type"] == "polyline"
+        ]
 
         if not routes:
             _cli_warn("⚠️ No routes found in the configuration.")
@@ -248,9 +267,10 @@ def list_routes():
             _cli_info("\n🛤️ Available Routes:")
             for route in routes:
                 _cli_info(f"   - {route}")
-    
+
     except json.JSONDecodeError:
         _cli_error(f"❌ Error: Invalid JSON format in '{config_path}'.")
+
 
 # ------------------------------------------
 # 🚀 CLI Entry Point
@@ -258,7 +278,9 @@ def list_routes():
 def main():
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(description="AirSpaceSim Command Line Interface")
-    parser.add_argument("command", choices=["init", "list-routes"], help="Command to run.")
+    parser.add_argument(
+        "command", choices=["init", "list-routes"], help="Command to run."
+    )
     parser.add_argument(
         "--force",
         action="store_true",
@@ -271,6 +293,7 @@ def main():
         initialize_project(overwrite=args.force)
     elif args.command == "list-routes":
         list_routes()
+
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from airspacesim.cli.commands import initialize_project
 
 
@@ -54,13 +52,17 @@ def test_initialized_map_runtime_references_are_coherent(tmp_path, monkeypatch):
     initialize_project()
 
     map_html = (tmp_path / "templates/map.html").read_text(encoding="utf-8")
-    map_renderer_js = (tmp_path / "static/js/map_renderer.js").read_text(encoding="utf-8")
-    aircraft_js = (tmp_path / "static/js/aircraft_simulation.js").read_text(encoding="utf-8")
+    map_renderer_js = (tmp_path / "static/js/map_renderer.js").read_text(
+        encoding="utf-8"
+    )
+    aircraft_js = (tmp_path / "static/js/aircraft_simulation.js").read_text(
+        encoding="utf-8"
+    )
     runtime_js = (tmp_path / "static/js/ui_runtime.js").read_text(encoding="utf-8")
 
     # Avoid duplicate renderer initialization: renderer is imported by aircraft_simulation.js.
-    assert '../static/js/map_renderer.js' not in map_html
-    assert '../static/js/aircraft_simulation.js' in map_html
+    assert "../static/js/map_renderer.js" not in map_html
+    assert "../static/js/aircraft_simulation.js" in map_html
 
     # Core runtime data files used by JS polling/config loading must exist after init.
     assert (tmp_path / "data/airspace_config.json").exists()

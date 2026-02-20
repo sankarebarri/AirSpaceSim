@@ -1,6 +1,7 @@
-#routes/processor.py
+# routes/processor.py
 
 from airspacesim.utils.conversions import dms_to_decimal, haversine
+
 
 def process_waypoints(waypoints):
     """
@@ -25,10 +26,13 @@ def process_waypoints(waypoints):
         next_wp = waypoints[i + 1]
         if "dec_coords" in wp and "dec_coords" in next_wp:
             wp["distance"] = haversine(
-                wp["dec_coords"][0], wp["dec_coords"][1],
-                next_wp["dec_coords"][0], next_wp["dec_coords"][1]
+                wp["dec_coords"][0],
+                wp["dec_coords"][1],
+                next_wp["dec_coords"][0],
+                next_wp["dec_coords"][1],
             )
     return waypoints
+
 
 def process_route(route):
     """

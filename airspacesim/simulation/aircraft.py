@@ -77,7 +77,7 @@ class Aircraft:
         Update the aircraft's position based on its speed and elapsed time.
         This version processes only one update step per call, so that any change in the
         simulation speed is applied on the next tick to all aircraft.
-        
+
         :param time_step: Time elapsed in seconds since the last update.
         """
         if self.current_index >= len(self.waypoints) - 1:
@@ -86,7 +86,10 @@ class Aircraft:
         # `time_step` is real elapsed seconds; simulation speed scales simulated seconds.
         effective_time_seconds = float(time_step) * float(settings.SIMULATION_SPEED)
         # Vertical profile update is independent from horizontal segment progression.
-        self.altitude_ft = max(0.0, self.altitude_ft + (self.vertical_rate_fpm * effective_time_seconds / 60.0))
+        self.altitude_ft = max(
+            0.0,
+            self.altitude_ft + (self.vertical_rate_fpm * effective_time_seconds / 60.0),
+        )
         # Horizontal motion in NM:
         # knots = NM / hour, so NM per second = knots / 3600.
         remaining_travel_distance = (self.speed / 3600.0) * effective_time_seconds
@@ -94,7 +97,10 @@ class Aircraft:
             return
 
         # Consume full travel distance, crossing multiple segments if needed.
-        while remaining_travel_distance > 0 and self.current_index < len(self.waypoints) - 1:
+        while (
+            remaining_travel_distance > 0
+            and self.current_index < len(self.waypoints) - 1
+        ):
             start = self.waypoints[self.current_index]
             end = self.waypoints[self.current_index + 1]
             segment_distance = haversine(start[0], start[1], end[0], end[1])
@@ -105,7 +111,9 @@ class Aircraft:
                 self.segment_progress = 0
                 continue
 
-            remaining_segment_distance = max(segment_distance - self.segment_progress, 0)
+            remaining_segment_distance = max(
+                segment_distance - self.segment_progress, 0
+            )
             if remaining_travel_distance < remaining_segment_distance:
                 # Advance within the current segment.
                 self.segment_progress += remaining_travel_distance

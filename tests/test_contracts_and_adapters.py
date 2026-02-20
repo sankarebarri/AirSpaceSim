@@ -2,7 +2,11 @@ import json
 from io import StringIO
 from types import SimpleNamespace
 
-from airspacesim.io.adapters import FileEventAdapter, FileSnapshotAdapter, StdinEventAdapter
+from airspacesim.io.adapters import (
+    FileEventAdapter,
+    FileSnapshotAdapter,
+    StdinEventAdapter,
+)
 from airspacesim.io.contracts import (
     build_envelope,
     contract_domain,
@@ -74,7 +78,9 @@ def test_combined_scenario_v01_contract_validates_and_loads(tmp_path):
                 "airspaces": [{"id": "A1", "center_point_id": "P1", "radius_nm": 30}],
                 "routes": [{"id": "R1", "name": "R1", "waypoint_ids": ["P1", "P2"]}],
             },
-            "aircraft": {"aircraft": [{"id": "AC1", "route_id": "R1", "speed_kt": 400}]},
+            "aircraft": {
+                "aircraft": [{"id": "AC1", "route_id": "R1", "speed_kt": 400}]
+            },
         },
     }
     scenario_path = tmp_path / "scenario.v0.1.json"
@@ -90,7 +96,16 @@ def test_contract_validators_reject_invalid_payloads():
     with_exception = {
         "schema": {"name": "airspacesim.aircraft_state", "version": "1.0"},
         "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
-        "data": {"aircraft": [{"id": "A", "position_dd": [91.0, 0.0], "status": "active", "updated_utc": "bad"}]},
+        "data": {
+            "aircraft": [
+                {
+                    "id": "A",
+                    "position_dd": [91.0, 0.0],
+                    "status": "active",
+                    "updated_utc": "bad",
+                }
+            ]
+        },
     }
     try:
         validate_aircraft_state(with_exception)
@@ -105,8 +120,20 @@ def test_file_event_adapter_is_idempotent_and_ordered(tmp_path):
         "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
         "data": {
             "events": [
-                {"event_id": "e2", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:02Z", "sequence": 2, "payload": {"aircraft_id": "AC1", "speed_kt": 500}},
-                {"event_id": "e1", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:01Z", "sequence": 1, "payload": {"aircraft_id": "AC1", "speed_kt": 450}},
+                {
+                    "event_id": "e2",
+                    "type": "SET_SPEED",
+                    "created_utc": "2026-02-20T00:00:02Z",
+                    "sequence": 2,
+                    "payload": {"aircraft_id": "AC1", "speed_kt": 500},
+                },
+                {
+                    "event_id": "e1",
+                    "type": "SET_SPEED",
+                    "created_utc": "2026-02-20T00:00:01Z",
+                    "sequence": 1,
+                    "payload": {"aircraft_id": "AC1", "speed_kt": 450},
+                },
             ]
         },
     }
@@ -146,9 +173,24 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
     settings.AIRCRAFT_STATE_FILE = str((tmp_path / "aircraft_state.v1.json"))
     try:
         events = [
-            {"event_id": "e1", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:01Z", "payload": {"aircraft_id": "AC1", "speed_kt": 420}},
-            {"event_id": "e2", "type": "REROUTE", "created_utc": "2026-02-20T00:00:02Z", "payload": {"aircraft_id": "AC1", "route_id": "R2"}},
-            {"event_id": "e3", "type": "SET_VERTICAL_RATE", "created_utc": "2026-02-20T00:00:03Z", "payload": {"aircraft_id": "AC1", "vertical_rate_fpm": 600}},
+            {
+                "event_id": "e1",
+                "type": "SET_SPEED",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"aircraft_id": "AC1", "speed_kt": 420},
+            },
+            {
+                "event_id": "e2",
+                "type": "REROUTE",
+                "created_utc": "2026-02-20T00:00:02Z",
+                "payload": {"aircraft_id": "AC1", "route_id": "R2"},
+            },
+            {
+                "event_id": "e3",
+                "type": "SET_VERTICAL_RATE",
+                "created_utc": "2026-02-20T00:00:03Z",
+                "payload": {"aircraft_id": "AC1", "vertical_rate_fpm": 600},
+            },
         ]
         result = apply_events_idempotent(manager, events)
         assert result["applied"] == ["e1", "e2", "e3"]
@@ -173,7 +215,10 @@ def test_map_config_validator_accepts_legacy_and_versioned_shapes():
     legacy = {
         "center": [16.25, -0.03],
         "zoom": 8,
-        "tile_layer": {"url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "attribution": "OSM"},
+        "tile_layer": {
+            "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            "attribution": "OSM",
+        },
         "elements": [],
     }
     validate_map_config(legacy)
@@ -266,8 +311,20 @@ def test_ingestion_conformance_file_event_adapter(tmp_path):
         "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
         "data": {
             "events": [
-                {"event_id": "e2", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:02Z", "sequence": 2, "payload": {"aircraft_id": "AC1", "speed_kt": 500}},
-                {"event_id": "e1", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:01Z", "sequence": 1, "payload": {"aircraft_id": "AC1", "speed_kt": 450}},
+                {
+                    "event_id": "e2",
+                    "type": "SET_SPEED",
+                    "created_utc": "2026-02-20T00:00:02Z",
+                    "sequence": 2,
+                    "payload": {"aircraft_id": "AC1", "speed_kt": 500},
+                },
+                {
+                    "event_id": "e1",
+                    "type": "SET_SPEED",
+                    "created_utc": "2026-02-20T00:00:01Z",
+                    "sequence": 1,
+                    "payload": {"aircraft_id": "AC1", "speed_kt": 450},
+                },
             ]
         },
     }
@@ -281,8 +338,24 @@ def test_ingestion_conformance_stdin_event_adapter():
     stream = StringIO(
         "\n".join(
             [
-                json.dumps({"event_id": "e2", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:02Z", "sequence": 2, "payload": {"aircraft_id": "AC1", "speed_kt": 500}}),
-                json.dumps({"event_id": "e1", "type": "SET_SPEED", "created_utc": "2026-02-20T00:00:01Z", "sequence": 1, "payload": {"aircraft_id": "AC1", "speed_kt": 450}}),
+                json.dumps(
+                    {
+                        "event_id": "e2",
+                        "type": "SET_SPEED",
+                        "created_utc": "2026-02-20T00:00:02Z",
+                        "sequence": 2,
+                        "payload": {"aircraft_id": "AC1", "speed_kt": 500},
+                    }
+                ),
+                json.dumps(
+                    {
+                        "event_id": "e1",
+                        "type": "SET_SPEED",
+                        "created_utc": "2026-02-20T00:00:01Z",
+                        "sequence": 1,
+                        "payload": {"aircraft_id": "AC1", "speed_kt": 450},
+                    }
+                ),
                 "",
             ]
         )

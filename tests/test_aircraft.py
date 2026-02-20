@@ -116,7 +116,9 @@ def test_time_acceleration_changes_wall_clock_only_not_physics():
         settings.SIMULATION_SPEED = 10.0
         accelerated = Aircraft("AC10", "R6", [[0.0, 0.0], [0.0, 20.0]], speed=480)
         accelerated.update_position(360)
-        accelerated_nm = haversine(0.0, 0.0, accelerated.position[0], accelerated.position[1])
+        accelerated_nm = haversine(
+            0.0, 0.0, accelerated.position[0], accelerated.position[1]
+        )
 
         assert accelerated_nm == pytest.approx(baseline_nm, abs=0.1)
     finally:

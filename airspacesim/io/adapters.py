@@ -24,7 +24,9 @@ def _atomic_write(path, payload):
     directory = os.path.dirname(path)
     if directory:
         os.makedirs(directory, exist_ok=True)
-    fd, temp_path = tempfile.mkstemp(prefix=".airspacesim.", suffix=".tmp", dir=directory or ".")
+    fd, temp_path = tempfile.mkstemp(
+        prefix=".airspacesim.", suffix=".tmp", dir=directory or "."
+    )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as tmp:
             json.dump(payload, tmp, indent=4)
@@ -73,7 +75,9 @@ def _extract_events(payload):
         return payload
     if not isinstance(payload, dict):
         return []
-    if isinstance(payload.get("data"), dict) and isinstance(payload["data"].get("events"), list):
+    if isinstance(payload.get("data"), dict) and isinstance(
+        payload["data"].get("events"), list
+    ):
         return payload["data"]["events"]
     if isinstance(payload.get("events"), list):
         return payload["events"]

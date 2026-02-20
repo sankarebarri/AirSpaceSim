@@ -15,7 +15,6 @@ import importlib.util
 import shutil
 import subprocess
 import sys
-import sysconfig
 import venv
 from pathlib import Path
 
@@ -32,7 +31,11 @@ def _venv_python(venv_dir: Path) -> Path:
 
 def _target_site_packages(python_exe: Path) -> Path:
     output = subprocess.check_output(
-        [str(python_exe), "-c", "import sysconfig; print(sysconfig.get_paths()['purelib'])"],
+        [
+            str(python_exe),
+            "-c",
+            "import sysconfig; print(sysconfig.get_paths()['purelib'])",
+        ],
         text=True,
     ).strip()
     return Path(output)
@@ -106,7 +109,9 @@ def install_offline_editable(project_root: Path, venv_dir: Path) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Offline editable installer for AirSpaceSim.")
+    parser = argparse.ArgumentParser(
+        description="Offline editable installer for AirSpaceSim."
+    )
     parser.add_argument(
         "--project-root",
         type=Path,

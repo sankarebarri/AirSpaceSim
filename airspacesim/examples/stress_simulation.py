@@ -41,9 +41,15 @@ def run_stress(num_aircraft, duration_seconds, speed_kt):
 
 def main():
     parser = argparse.ArgumentParser(description="Run a stress simulation scenario.")
-    parser.add_argument("--aircraft", type=int, default=100, help="Number of aircraft to spawn.")
-    parser.add_argument("--duration", type=float, default=5.0, help="Run duration in seconds.")
-    parser.add_argument("--speed", type=float, default=420.0, help="Aircraft speed in knots.")
+    parser.add_argument(
+        "--aircraft", type=int, default=100, help="Number of aircraft to spawn."
+    )
+    parser.add_argument(
+        "--duration", type=float, default=5.0, help="Run duration in seconds."
+    )
+    parser.add_argument(
+        "--speed", type=float, default=420.0, help="Aircraft speed in knots."
+    )
     args = parser.parse_args()
 
     metrics = run_stress(args.aircraft, args.duration, args.speed)

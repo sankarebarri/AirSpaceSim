@@ -22,7 +22,7 @@ class DynamicMarkerManager:
             "call_sign": call_sign,
             "coords": coords,
             "heading": heading,
-            "speed": speed
+            "speed": speed,
         }
 
     def update_marker(self, marker_id, new_coords, new_heading=None, new_speed=None):

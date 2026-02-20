@@ -80,7 +80,10 @@ def contract_domain(schema_name):
 def _require_lat_lon(coords, name):
     _require_list(coords, name)
     _require(len(coords) == 2, f"{name} must contain exactly [lat, lon]")
-    _require(all(isinstance(v, (int, float)) for v in coords), f"{name} values must be numeric")
+    _require(
+        all(isinstance(v, (int, float)) for v in coords),
+        f"{name} values must be numeric",
+    )
     _require(-90 <= coords[0] <= 90, f"{name}[0] latitude out of range")
     _require(-180 <= coords[1] <= 180, f"{name}[1] longitude out of range")
 
@@ -88,11 +91,23 @@ def _require_lat_lon(coords, name):
 def validate_envelope(payload, schema_name, schema_version="1.0"):
     _require_dict(payload, "payload")
     _require_dict(payload.get("schema"), "schema")
-    _require(payload["schema"].get("name") == schema_name, f"schema.name must be '{schema_name}'")
-    _require(payload["schema"].get("version") == schema_version, f"schema.version must be '{schema_version}'")
+    _require(
+        payload["schema"].get("name") == schema_name,
+        f"schema.name must be '{schema_name}'",
+    )
+    _require(
+        payload["schema"].get("version") == schema_version,
+        f"schema.version must be '{schema_version}'",
+    )
     _require_dict(payload.get("metadata"), "metadata")
-    _require(isinstance(payload["metadata"].get("source"), str), "metadata.source must be a string")
-    _require(_is_iso8601_utc(payload["metadata"].get("generated_utc")), "metadata.generated_utc must be ISO-8601")
+    _require(
+        isinstance(payload["metadata"].get("source"), str),
+        "metadata.source must be a string",
+    )
+    _require(
+        _is_iso8601_utc(payload["metadata"].get("generated_utc")),
+        "metadata.generated_utc must be ISO-8601",
+    )
     _require_dict(payload.get("data"), "data")
     return payload
 
@@ -127,18 +142,29 @@ def validate_trajectory_v01(payload):
     _require_list(tracks, "data.tracks")
     for idx, item in enumerate(tracks):
         _require_dict(item, f"data.tracks[{idx}]")
-        _require(isinstance(item.get("id"), str) and item["id"], f"data.tracks[{idx}].id required")
+        _require(
+            isinstance(item.get("id"), str) and item["id"],
+            f"data.tracks[{idx}].id required",
+        )
         _require_lat_lon(item.get("position_dd"), f"data.tracks[{idx}].position_dd")
-        _require(isinstance(item.get("route_id"), str), f"data.tracks[{idx}].route_id must be string")
-        _require(isinstance(item.get("status"), str), f"data.tracks[{idx}].status must be string")
+        _require(
+            isinstance(item.get("route_id"), str),
+            f"data.tracks[{idx}].route_id must be string",
+        )
+        _require(
+            isinstance(item.get("status"), str),
+            f"data.tracks[{idx}].status must be string",
+        )
         if "speed_kt" in item:
             _require(
-                isinstance(item.get("speed_kt"), (int, float)) and item["speed_kt"] >= 0,
+                isinstance(item.get("speed_kt"), (int, float))
+                and item["speed_kt"] >= 0,
                 f"data.tracks[{idx}].speed_kt must be >= 0",
             )
         if "altitude_ft" in item:
             _require(
-                isinstance(item.get("altitude_ft"), (int, float)) and item["altitude_ft"] >= 0,
+                isinstance(item.get("altitude_ft"), (int, float))
+                and item["altitude_ft"] >= 0,
                 f"data.tracks[{idx}].altitude_ft must be >= 0",
             )
         if "vertical_rate_fpm" in item:
@@ -146,7 +172,10 @@ def validate_trajectory_v01(payload):
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.tracks[{idx}].vertical_rate_fpm must be numeric",
             )
-        _require(_is_iso8601_utc(item.get("updated_utc")), f"data.tracks[{idx}].updated_utc must be ISO-8601")
+        _require(
+            _is_iso8601_utc(item.get("updated_utc")),
+            f"data.tracks[{idx}].updated_utc must be ISO-8601",
+        )
     return payload
 
 
@@ -163,9 +192,15 @@ def validate_scenario_airspace(payload):
     _require_list(airspaces, "data.airspaces")
 
     for point_id, point in points.items():
-        _require(isinstance(point_id, str) and point_id, "point keys must be non-empty strings")
+        _require(
+            isinstance(point_id, str) and point_id,
+            "point keys must be non-empty strings",
+        )
         _require_dict(point, f"data.points.{point_id}")
-        _require(isinstance(point.get("type"), str), f"points.{point_id}.type must be a string")
+        _require(
+            isinstance(point.get("type"), str),
+            f"points.{point_id}.type must be a string",
+        )
         _require_dict(point.get("coord"), f"points.{point_id}.coord")
         _require_lat_lon(point["coord"].get("dd"), f"points.{point_id}.coord.dd")
 
@@ -173,25 +208,43 @@ def validate_scenario_airspace(payload):
     for idx, route in enumerate(routes):
         _require_dict(route, f"data.routes[{idx}]")
         route_id = route.get("id")
-        _require(isinstance(route_id, str) and route_id, f"data.routes[{idx}].id must be a non-empty string")
+        _require(
+            isinstance(route_id, str) and route_id,
+            f"data.routes[{idx}].id must be a non-empty string",
+        )
         _require(route_id not in route_ids, f"duplicate route id: {route_id}")
         route_ids.add(route_id)
         waypoint_ids = route.get("waypoint_ids")
         _require_list(waypoint_ids, f"data.routes[{idx}].waypoint_ids")
-        _require(len(waypoint_ids) >= 2, f"route {route_id} must contain at least 2 waypoint_ids")
+        _require(
+            len(waypoint_ids) >= 2,
+            f"route {route_id} must contain at least 2 waypoint_ids",
+        )
         for waypoint_id in waypoint_ids:
-            _require(isinstance(waypoint_id, str), f"route {route_id} waypoint_ids must contain strings")
-            _require(waypoint_id in points, f"route {route_id} references unknown point: {waypoint_id}")
+            _require(
+                isinstance(waypoint_id, str),
+                f"route {route_id} waypoint_ids must contain strings",
+            )
+            _require(
+                waypoint_id in points,
+                f"route {route_id} references unknown point: {waypoint_id}",
+            )
 
     for idx, airspace in enumerate(airspaces):
         _require_dict(airspace, f"data.airspaces[{idx}]")
-        _require(isinstance(airspace.get("id"), str), f"data.airspaces[{idx}].id must be a string")
+        _require(
+            isinstance(airspace.get("id"), str),
+            f"data.airspaces[{idx}].id must be a string",
+        )
         center_point_id = airspace.get("center_point_id")
         _require(
             isinstance(center_point_id, str) and center_point_id in points,
             f"data.airspaces[{idx}].center_point_id must reference an existing point",
         )
-        _require(isinstance(airspace.get("radius_nm"), (int, float)), f"data.airspaces[{idx}].radius_nm must be numeric")
+        _require(
+            isinstance(airspace.get("radius_nm"), (int, float)),
+            f"data.airspaces[{idx}].radius_nm must be numeric",
+        )
 
     return payload
 
@@ -206,20 +259,30 @@ def validate_scenario_aircraft(payload, route_ids=None):
     for idx, item in enumerate(aircraft):
         _require_dict(item, f"data.aircraft[{idx}]")
         ac_id = item.get("id")
-        _require(isinstance(ac_id, str) and ac_id, f"data.aircraft[{idx}].id must be non-empty string")
+        _require(
+            isinstance(ac_id, str) and ac_id,
+            f"data.aircraft[{idx}].id must be non-empty string",
+        )
         _require(ac_id not in seen_ids, f"duplicate aircraft id: {ac_id}")
         seen_ids.add(ac_id)
         route_id = item.get("route_id")
-        _require(isinstance(route_id, str) and route_id, f"data.aircraft[{idx}].route_id must be non-empty string")
+        _require(
+            isinstance(route_id, str) and route_id,
+            f"data.aircraft[{idx}].route_id must be non-empty string",
+        )
         if route_ids is not None:
-            _require(route_id in route_ids, f"aircraft {ac_id} references unknown route_id: {route_id}")
+            _require(
+                route_id in route_ids,
+                f"aircraft {ac_id} references unknown route_id: {route_id}",
+            )
         _require(
             isinstance(item.get("speed_kt"), (int, float)) and item["speed_kt"] > 0,
             f"data.aircraft[{idx}].speed_kt must be > 0",
         )
         if "altitude_ft" in item:
             _require(
-                isinstance(item.get("altitude_ft"), (int, float)) and item["altitude_ft"] >= 0,
+                isinstance(item.get("altitude_ft"), (int, float))
+                and item["altitude_ft"] >= 0,
                 f"data.aircraft[{idx}].altitude_ft must be >= 0",
             )
         if "vertical_rate_fpm" in item:
@@ -236,15 +299,32 @@ def validate_inbox_events(payload):
     events = data.get("events")
     _require_list(events, "data.events")
 
-    allowed_types = {"ADD_AIRCRAFT", "SET_SPEED", "REMOVE_AIRCRAFT", "REROUTE", "SET_VERTICAL_RATE"}
+    allowed_types = {
+        "ADD_AIRCRAFT",
+        "SET_SPEED",
+        "REMOVE_AIRCRAFT",
+        "REROUTE",
+        "SET_VERTICAL_RATE",
+    }
     for idx, event in enumerate(events):
         _require_dict(event, f"data.events[{idx}]")
-        _require(isinstance(event.get("event_id"), str) and event["event_id"], f"data.events[{idx}].event_id required")
-        _require(event.get("type") in allowed_types, f"data.events[{idx}].type unsupported")
-        _require(_is_iso8601_utc(event.get("created_utc")), f"data.events[{idx}].created_utc must be ISO-8601")
+        _require(
+            isinstance(event.get("event_id"), str) and event["event_id"],
+            f"data.events[{idx}].event_id required",
+        )
+        _require(
+            event.get("type") in allowed_types, f"data.events[{idx}].type unsupported"
+        )
+        _require(
+            _is_iso8601_utc(event.get("created_utc")),
+            f"data.events[{idx}].created_utc must be ISO-8601",
+        )
         _require_dict(event.get("payload"), f"data.events[{idx}].payload")
         if "sequence" in event:
-            _require(isinstance(event["sequence"], int), f"data.events[{idx}].sequence must be integer")
+            _require(
+                isinstance(event["sequence"], int),
+                f"data.events[{idx}].sequence must be integer",
+            )
 
     return payload
 
@@ -257,12 +337,19 @@ def validate_aircraft_state(payload):
 
     for idx, item in enumerate(aircraft):
         _require_dict(item, f"data.aircraft[{idx}]")
-        _require(isinstance(item.get("id"), str) and item["id"], f"data.aircraft[{idx}].id required")
+        _require(
+            isinstance(item.get("id"), str) and item["id"],
+            f"data.aircraft[{idx}].id required",
+        )
         _require_lat_lon(item.get("position_dd"), f"data.aircraft[{idx}].position_dd")
-        _require(isinstance(item.get("status"), str), f"data.aircraft[{idx}].status must be string")
+        _require(
+            isinstance(item.get("status"), str),
+            f"data.aircraft[{idx}].status must be string",
+        )
         if "altitude_ft" in item:
             _require(
-                isinstance(item.get("altitude_ft"), (int, float)) and item["altitude_ft"] >= 0,
+                isinstance(item.get("altitude_ft"), (int, float))
+                and item["altitude_ft"] >= 0,
                 f"data.aircraft[{idx}].altitude_ft must be >= 0",
             )
         if "vertical_rate_fpm" in item:
@@ -270,7 +357,10 @@ def validate_aircraft_state(payload):
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
             )
-        _require(_is_iso8601_utc(item.get("updated_utc")), f"data.aircraft[{idx}].updated_utc must be ISO-8601")
+        _require(
+            _is_iso8601_utc(item.get("updated_utc")),
+            f"data.aircraft[{idx}].updated_utc must be ISO-8601",
+        )
 
     return payload
 
@@ -305,16 +395,30 @@ def validate_map_config(payload):
 
     has_center = isinstance(cfg.get("center"), list)
     render_center = cfg.get("render", {}).get("map", {}).get("center")
-    has_render_center = isinstance(render_center, dict) and isinstance(render_center.get("point_id"), str)
-    _require(has_center or has_render_center, f"{prefix}.center or {prefix}.render.map.center.point_id is required")
+    has_render_center = isinstance(render_center, dict) and isinstance(
+        render_center.get("point_id"), str
+    )
+    _require(
+        has_center or has_render_center,
+        f"{prefix}.center or {prefix}.render.map.center.point_id is required",
+    )
     if has_center:
         _require_lat_lon(cfg.get("center"), f"{prefix}.center")
 
-    _require(isinstance(cfg.get("zoom"), int) or isinstance(cfg.get("render", {}).get("map", {}).get("zoom"), int), f"{prefix}.zoom or {prefix}.render.map.zoom must be integer")
+    _require(
+        isinstance(cfg.get("zoom"), int)
+        or isinstance(cfg.get("render", {}).get("map", {}).get("zoom"), int),
+        f"{prefix}.zoom or {prefix}.render.map.zoom must be integer",
+    )
 
-    tile_layer = cfg.get("tile_layer") or cfg.get("render", {}).get("map", {}).get("tile_layer")
+    tile_layer = cfg.get("tile_layer") or cfg.get("render", {}).get("map", {}).get(
+        "tile_layer"
+    )
     _require_dict(tile_layer, f"{prefix}.tile_layer")
-    _require(isinstance(tile_layer.get("url"), str) and tile_layer["url"], f"{prefix}.tile_layer.url must be a non-empty string")
+    _require(
+        isinstance(tile_layer.get("url"), str) and tile_layer["url"],
+        f"{prefix}.tile_layer.url must be a non-empty string",
+    )
     _require(
         isinstance(tile_layer.get("attribution"), str),
         f"{prefix}.tile_layer.attribution must be a string",
@@ -354,13 +458,21 @@ def validate_aircraft_data(payload):
     for idx, item in enumerate(aircraft_data):
         _require_dict(item, f"{prefix}.aircraft_data[{idx}]")
         ac_id = item.get("id")
-        _require(isinstance(ac_id, str) and ac_id, f"{prefix}.aircraft_data[{idx}].id must be non-empty string")
+        _require(
+            isinstance(ac_id, str) and ac_id,
+            f"{prefix}.aircraft_data[{idx}].id must be non-empty string",
+        )
         _require(ac_id not in seen_ids, f"duplicate aircraft id: {ac_id}")
         seen_ids.add(ac_id)
         if "position" in item:
-            _require_lat_lon(item.get("position"), f"{prefix}.aircraft_data[{idx}].position")
+            _require_lat_lon(
+                item.get("position"), f"{prefix}.aircraft_data[{idx}].position"
+            )
         if "callsign" in item:
-            _require(isinstance(item.get("callsign"), str), f"{prefix}.aircraft_data[{idx}].callsign must be string")
+            _require(
+                isinstance(item.get("callsign"), str),
+                f"{prefix}.aircraft_data[{idx}].callsign must be string",
+            )
         if "speed" in item:
             _require(
                 isinstance(item.get("speed"), (int, float)) and item["speed"] >= 0,

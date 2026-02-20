@@ -35,7 +35,9 @@ def test_batched_mode_steps_without_spawning_threads():
         ]
     }
     manager = AircraftManager(routes, execution_mode="batched")
-    manager.add_aircraft("AC_BATCH_01", "R1", speed=600, altitude_ft=10000, vertical_rate_fpm=600)
+    manager.add_aircraft(
+        "AC_BATCH_01", "R1", speed=600, altitude_ft=10000, vertical_rate_fpm=600
+    )
     assert len(manager.threads) == 0
 
     manager.run_batched_for(duration_seconds=0.2, update_interval=0.05)
@@ -51,7 +53,9 @@ def test_cleanup_finished_aircraft_releases_lock_before_save(monkeypatch):
     ]
 
     # Avoid waiting 10 seconds in cleanup loop.
-    monkeypatch.setattr("airspacesim.simulation.aircraft_manager.time.sleep", lambda _: None)
+    monkeypatch.setattr(
+        "airspacesim.simulation.aircraft_manager.time.sleep", lambda _: None
+    )
 
     lock_acquired_inside_save = {"value": False}
 
@@ -65,7 +69,9 @@ def test_cleanup_finished_aircraft_releases_lock_before_save(monkeypatch):
 
     monkeypatch.setattr(manager, "save_aircraft_data", fake_save_aircraft_data)
 
-    worker = threading.Thread(target=manager.cleanup_finished_aircraft, args=(stop_flag,))
+    worker = threading.Thread(
+        target=manager.cleanup_finished_aircraft, args=(stop_flag,)
+    )
     worker.start()
     worker.join(timeout=1.0)
 

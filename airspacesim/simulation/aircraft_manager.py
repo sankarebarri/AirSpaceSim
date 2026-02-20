@@ -19,7 +19,9 @@ def _utc_now_iso():
 
 def _atomic_write_json(path, payload):
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    fd, tmp_path = tempfile.mkstemp(prefix=".airspacesim.", suffix=".tmp", dir=os.path.dirname(path))
+    fd, tmp_path = tempfile.mkstemp(
+        prefix=".airspacesim.", suffix=".tmp", dir=os.path.dirname(path)
+    )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as tmp_file:
             json.dump(payload, tmp_file, indent=4)
@@ -30,11 +32,12 @@ def _atomic_write_json(path, payload):
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
 
+
 class AircraftManager:
     def __init__(self, routes, execution_mode="thread_per_aircraft"):
         """
         Initialize an Aircraft Manager to handle multiple aircraft simulations.
-        
+
         :param routes: Dictionary of predefined routes with waypoints in DMS format.
         :param execution_mode: "thread_per_aircraft" (legacy) or "batched".
         """
@@ -72,10 +75,12 @@ class AircraftManager:
                 try:
                     coords = [
                         dms_to_decimal(*wp["coords"]["lat"]),
-                        dms_to_decimal(*wp["coords"]["lon"])
+                        dms_to_decimal(*wp["coords"]["lon"]),
                     ]
-                except Exception as e:
-                    logger.exception("Error converting DMS to decimal for waypoint: %s", wp)
+                except Exception:
+                    logger.exception(
+                        "Error converting DMS to decimal for waypoint: %s", wp
+                    )
                     raise
             waypoints.append(coords)
 
@@ -90,25 +95,33 @@ class AircraftManager:
                 vertical_rate_fpm=vertical_rate_fpm,
             )
             self.aircraft_list.append(aircraft)
-        except Exception as e:
+        except Exception:
             logger.exception("Error creating Aircraft instance for ID: %s", id)
             raise
 
         if self.execution_mode == "batched":
-            logger.debug("Aircraft %s added on route %s (batched mode).", id, route_name)
+            logger.debug(
+                "Aircraft %s added on route %s (batched mode).", id, route_name
+            )
             return
 
         active_stop_flag = stop_flag or self.stop_event
-        thread = threading.Thread(target=self.simulate_aircraft, args=(aircraft, active_stop_flag))
+        thread = threading.Thread(
+            target=self.simulate_aircraft, args=(aircraft, active_stop_flag)
+        )
         thread.start()
         self.threads.append(thread)
-        logger.info("Aircraft %s added on route %s with callsign %s.", id, route_name, callsign)
+        logger.info(
+            "Aircraft %s added on route %s with callsign %s.", id, route_name, callsign
+        )
 
     def simulate_aircraft(self, aircraft, stop_flag):
         """
         Simulate the aircraft's movement based on its speed.
         """
-        logger.info("🛫 Starting simulation for %s (%s)...", aircraft.id, aircraft.callsign)
+        logger.info(
+            "🛫 Starting simulation for %s (%s)...", aircraft.id, aircraft.callsign
+        )
         try:
             while aircraft.current_index < len(aircraft.waypoints) - 1:
                 if stop_flag and stop_flag.is_set():
@@ -120,8 +133,12 @@ class AircraftManager:
             # Mark aircraft as finished and record the finish time.
             aircraft.finished_time = time.time()
             self.save_aircraft_data()
-            logger.info("✅ %s has completed its route at %s.", aircraft.id, aircraft.finished_time)
-        except Exception as e:
+            logger.info(
+                "✅ %s has completed its route at %s.",
+                aircraft.id,
+                aircraft.finished_time,
+            )
+        except Exception:
             logger.exception("Error during simulation for aircraft %s", aircraft.id)
 
     def save_aircraft_data(self):
@@ -166,7 +183,9 @@ class AircraftManager:
                             "vertical_rate_fpm": ac.vertical_rate_fpm,
                             "route_id": ac.route,
                             "position_dd": ac.position,
-                            "status": "finished" if hasattr(ac, "finished_time") else "active",
+                            "status": "finished"
+                            if hasattr(ac, "finished_time")
+                            else "active",
                             "updated_utc": timestamp,
                         }
                         for ac in self.aircraft_list
@@ -188,7 +207,9 @@ class AircraftManager:
                             speed_kt=float(ac.speed),
                             altitude_ft=float(ac.altitude_ft),
                             vertical_rate_fpm=float(ac.vertical_rate_fpm),
-                            status="finished" if hasattr(ac, "finished_time") else "active",
+                            status="finished"
+                            if hasattr(ac, "finished_time")
+                            else "active",
                             updated_utc=timestamp,
                         ).as_contract_dict()
                         for ac in self.aircraft_list
@@ -201,8 +222,10 @@ class AircraftManager:
                 _atomic_write_json(settings.AIRCRAFT_STATE_FILE, canonical_data)
                 _atomic_write_json(settings.TRAJECTORY_FILE, trajectory_data)
                 ids = [ac["id"] for ac in legacy_data["aircraft_data"]]
-                logger.debug("Saved aircraft data: %d aircraft in list. IDs: %s", len(ids), ids)
-            except Exception as e:
+                logger.debug(
+                    "Saved aircraft data: %d aircraft in list. IDs: %s", len(ids), ids
+                )
+            except Exception:
                 logger.exception("Failed to write aircraft data to file.")
 
     def monitor_new_aircraft(self, stop_flag):
@@ -220,10 +243,14 @@ class AircraftManager:
                     for entry in new_data["aircraft"]:
                         if "route" in entry:
                             batch.append(entry)
-                        elif "aircraft" in entry and isinstance(entry["aircraft"], list):
+                        elif "aircraft" in entry and isinstance(
+                            entry["aircraft"], list
+                        ):
                             batch.extend(entry["aircraft"])
                         else:
-                            logger.error("New aircraft entry missing 'route': %s", entry)
+                            logger.error(
+                                "New aircraft entry missing 'route': %s", entry
+                            )
 
                     for ac in batch:
                         if "route" not in ac:
@@ -243,7 +270,7 @@ class AircraftManager:
                         json.dump({"aircraft": []}, f, indent=4)
             except (json.JSONDecodeError, FileNotFoundError) as e:
                 logger.warning("Error reading aircraft ingest file: %s", e)
-            except Exception as e:
+            except Exception:
                 logger.exception("Unexpected error in monitor_new_aircraft.")
             time.sleep(2)
 
@@ -261,18 +288,26 @@ class AircraftManager:
                 # Log status of finished aircraft.
                 finished_aircraft = [
                     (ac.id, ac.finished_time, current_time - ac.finished_time)
-                    for ac in self.aircraft_list if hasattr(ac, "finished_time")
+                    for ac in self.aircraft_list
+                    if hasattr(ac, "finished_time")
                 ]
                 if finished_aircraft:
                     for ac_id, finish_time, elapsed in finished_aircraft:
-                        logger.debug("Aircraft %s finished at %s, elapsed time: %.2f sec", ac_id, finish_time, elapsed)
+                        logger.debug(
+                            "Aircraft %s finished at %s, elapsed time: %.2f sec",
+                            ac_id,
+                            finish_time,
+                            elapsed,
+                        )
                 else:
                     logger.debug("No aircraft marked as finished in this cycle.")
 
                 before_cleanup = len(self.aircraft_list)
                 self.aircraft_list = [
-                    ac for ac in self.aircraft_list
-                    if not hasattr(ac, "finished_time") or (current_time - ac.finished_time) < 120
+                    ac
+                    for ac in self.aircraft_list
+                    if not hasattr(ac, "finished_time")
+                    or (current_time - ac.finished_time) < 120
                 ]
                 after_cleanup = len(self.aircraft_list)
                 cleaned_count = before_cleanup - after_cleanup
@@ -292,7 +327,9 @@ class AircraftManager:
         """
         with self.lock:
             initial_count = len(self.aircraft_list)
-            self.aircraft_list = [ac for ac in self.aircraft_list if ac.id != aircraft_id]
+            self.aircraft_list = [
+                ac for ac in self.aircraft_list if ac.id != aircraft_id
+            ]
             if len(self.aircraft_list) < initial_count:
                 logger.info("Aircraft %s deleted.", aircraft_id)
             else:
@@ -308,8 +345,14 @@ class AircraftManager:
         This mode scales better for high aircraft counts than thread-per-aircraft.
         """
         if self.execution_mode != "batched":
-            raise ValueError("run_batched_for is only available when execution_mode='batched'")
-        interval = update_interval if update_interval is not None else settings.SIMULATION_UPDATE_INTERVAL
+            raise ValueError(
+                "run_batched_for is only available when execution_mode='batched'"
+            )
+        interval = (
+            update_interval
+            if update_interval is not None
+            else settings.SIMULATION_UPDATE_INTERVAL
+        )
         end_time = time.time() + duration_seconds
         while time.time() < end_time and not self.stop_event.is_set():
             self._step_all_aircraft(interval)
@@ -320,7 +363,9 @@ class AircraftManager:
         for aircraft in self.aircraft_list:
             if aircraft.current_index < len(aircraft.waypoints) - 1:
                 aircraft.update_position(interval)
-                if aircraft.current_index >= len(aircraft.waypoints) - 1 and not hasattr(aircraft, "finished_time"):
+                if aircraft.current_index >= len(
+                    aircraft.waypoints
+                ) - 1 and not hasattr(aircraft, "finished_time"):
                     aircraft.finished_time = time.time()
 
     def terminate_simulations(self, timeout_seconds=None):
@@ -335,7 +380,9 @@ class AircraftManager:
         if self._batch_thread is not None:
             self._batch_thread.join(timeout=timeout_seconds)
             if self._batch_thread.is_alive():
-                logger.warning("Batched simulation thread did not terminate within timeout.")
+                logger.warning(
+                    "Batched simulation thread did not terminate within timeout."
+                )
         logger.info("All simulation threads have terminated.")
 
     def wait_for_completion(self, timeout_seconds=None):
@@ -346,9 +393,16 @@ class AircraftManager:
         if self.execution_mode == "batched":
             interval = settings.SIMULATION_UPDATE_INTERVAL
             start_time = time.time()
-            while any(ac.current_index < len(ac.waypoints) - 1 for ac in self.aircraft_list):
-                if timeout_seconds is not None and (time.time() - start_time) > timeout_seconds:
-                    logger.warning("Timed out while waiting for batched simulations to complete.")
+            while any(
+                ac.current_index < len(ac.waypoints) - 1 for ac in self.aircraft_list
+            ):
+                if (
+                    timeout_seconds is not None
+                    and (time.time() - start_time) > timeout_seconds
+                ):
+                    logger.warning(
+                        "Timed out while waiting for batched simulations to complete."
+                    )
                     timed_out = True
                     break
                 if self.stop_event.is_set():

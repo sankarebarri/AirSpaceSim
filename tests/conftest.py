@@ -67,7 +67,9 @@ def pytest_sessionfinish(session, exitstatus):
     covered_lines = 0
     for filename, statements in TRACKED_FILES.items():
         total_lines += len(statements)
-        covered_lines += len(statements.intersection(EXECUTED_LINES.get(filename, set())))
+        covered_lines += len(
+            statements.intersection(EXECUTED_LINES.get(filename, set()))
+        )
 
     coverage_percent = (covered_lines / total_lines * 100.0) if total_lines else 100.0
     terminal = session.config.pluginmanager.get_plugin("terminalreporter")

@@ -2,6 +2,7 @@
 import json
 from airspacesim.settings import settings
 
+
 class MapRenderer:
     def __init__(self, center=None, zoom=10):
         """
@@ -13,7 +14,7 @@ class MapRenderer:
             "center": center or settings.AIRSPACE_CENTER,
             "zoom": zoom or settings.DEFAULT_ZOOM_LEVEL,
             "tile_layer": None,
-            "elements": []
+            "elements": [],
         }
 
     def add_element(self, element_type, **kwargs):
@@ -32,7 +33,7 @@ class MapRenderer:
         """
         self.config["tile_layer"] = {
             "url": url or "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "attribution": attribution or "© OpenStreetMap contributors"
+            "attribution": attribution or "© OpenStreetMap contributors",
         }
 
     def export_config(self):

@@ -13,4 +13,6 @@ def test_setup_logger_without_file_has_no_file_handler():
     logger_name = "airspacesim.test.no_file_handler"
     logger = setup_logger(logger_name, log_file=None)
     assert logger.name == logger_name
-    assert all(not isinstance(handler, logging.FileHandler) for handler in logger.handlers)
+    assert all(
+        not isinstance(handler, logging.FileHandler) for handler in logger.handlers
+    )
