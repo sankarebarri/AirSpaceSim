@@ -84,6 +84,7 @@ Primary design rule:
 1. Initialize project files in your working directory:
    - `airspacesim init --force`
    - for offline editable setup in fresh venvs: `python3 scripts/offline_editable_install.py --venv .venv-offline`
+   - enforce no-network bootstrap behavior: `python3 scripts/offline_editable_install.py --venv .venv-offline --strict-offline`
 2. Run a simulation script (example):
    - `python3 examples/example_simulation.py`
    - optional: `python3 examples/example_simulation.py --max-wait 5`

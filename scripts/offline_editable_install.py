@@ -57,13 +57,10 @@ def _copy_tree_if_exists(src: Path, dst: Path) -> None:
         shutil.copytree(src, dst)
 
 
-def _seed_setuptools_into_venv(python_exe: Path) -> None:
+def _seed_setuptools_into_venv(python_exe: Path) -> bool:
     spec = importlib.util.find_spec("setuptools")
     if spec is None or spec.origin is None:
-        raise RuntimeError(
-            "Host interpreter does not provide setuptools. "
-            "Install setuptools in host env or use a wheelhouse."
-        )
+        return False
 
     host_site = Path(spec.origin).resolve().parent.parent
     host_setuptools = host_site / "setuptools"
@@ -82,16 +79,48 @@ def _seed_setuptools_into_venv(python_exe: Path) -> None:
     _copy_tree_if_exists(host_dist_info, target_site / host_dist_info.name)
 
     if not _has_setuptools(python_exe):
-        raise RuntimeError("Failed to seed setuptools into target venv.")
+        return False
+    return True
 
 
-def install_offline_editable(project_root: Path, venv_dir: Path) -> None:
+def _install_setuptools_with_pip(python_exe: Path, strict_offline: bool) -> None:
+    # First try offline/no-index install for true offline workflows.
+    offline_cmd = [
+        str(python_exe),
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "setuptools",
+    ]
+    offline_result = subprocess.run(
+        offline_cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    if offline_result.returncode == 0 and _has_setuptools(python_exe):
+        return
+
+    if strict_offline:
+        raise RuntimeError(
+            "Target venv is missing setuptools and offline bootstrap failed. "
+            "Provide setuptools via host env/wheelhouse or disable strict offline mode."
+        )
+
+    _run([str(python_exe), "-m", "pip", "install", "setuptools"])
+
+
+def install_offline_editable(
+    project_root: Path, venv_dir: Path, strict_offline: bool = False
+) -> None:
     builder = venv.EnvBuilder(with_pip=True)
     builder.create(str(venv_dir))
     python_exe = _venv_python(venv_dir)
 
     if not _has_setuptools(python_exe):
-        _seed_setuptools_into_venv(python_exe)
+        seeded = _seed_setuptools_into_venv(python_exe)
+        if not seeded and not _has_setuptools(python_exe):
+            _install_setuptools_with_pip(python_exe, strict_offline=strict_offline)
 
     _run(
         [
@@ -124,6 +153,11 @@ def parse_args() -> argparse.Namespace:
         default=Path(".venv-offline"),
         help="Target virtual environment path",
     )
+    parser.add_argument(
+        "--strict-offline",
+        action="store_true",
+        help="Fail instead of using online pip fallback when setuptools is unavailable.",
+    )
     return parser.parse_args()
 
 
@@ -136,7 +170,7 @@ def main() -> int:
         print(f"ERROR: pyproject.toml not found under {project_root}", file=sys.stderr)
         return 2
 
-    install_offline_editable(project_root, venv_dir)
+    install_offline_editable(project_root, venv_dir, strict_offline=args.strict_offline)
     print(f"Offline editable install completed in {venv_dir}")
     return 0
 

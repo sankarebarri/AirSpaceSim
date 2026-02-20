@@ -5,7 +5,7 @@
     },
     "metadata": {
         "source": "airspacesim.simulation.aircraft_manager",
-        "generated_utc": "2026-02-20T20:25:10.142608Z"
+        "generated_utc": "2026-02-20T20:30:37.125612Z"
     },
     "data": {
         "tracks": [
@@ -17,7 +17,7 @@
                     -0.03
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-20T20:25:10.142608Z",
+                "updated_utc": "2026-02-20T20:30:37.125612Z",
                 "callsign": "B0000",
                 "speed_kt": 420.0,
                 "altitude_ft": 10000.0,
@@ -31,7 +31,7 @@
                     -0.0299
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-20T20:25:10.142608Z",
+                "updated_utc": "2026-02-20T20:30:37.125612Z",
                 "callsign": "B0001",
                 "speed_kt": 420.0,
                 "altitude_ft": 10000.0,
@@ -45,7 +45,7 @@
                     -0.0298
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-20T20:25:10.142608Z",
+                "updated_utc": "2026-02-20T20:30:37.125612Z",
                 "callsign": "B0002",
                 "speed_kt": 420.0,
                 "altitude_ft": 10000.0,
@@ -59,7 +59,7 @@
                     -0.029699999999999997
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-20T20:25:10.142608Z",
+                "updated_utc": "2026-02-20T20:30:37.125612Z",
                 "callsign": "B0003",
                 "speed_kt": 420.0,
                 "altitude_ft": 10000.0,
@@ -73,7 +73,7 @@
                     -0.029599999999999998
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-20T20:25:10.142608Z",
+                "updated_utc": "2026-02-20T20:30:37.125612Z",
                 "callsign": "B0004",
                 "speed_kt": 420.0,
                 "altitude_ft": 10000.0,
