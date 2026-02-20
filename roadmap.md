@@ -100,7 +100,7 @@ Exit criteria:
 - [x] Decouple UI from backend so either side can evolve independently
 
 Exit criteria:
-- [ ] Browser console remains clean in normal run
+- [x] Browser console remains clean in normal run
 - [x] Frontend can recover from temporary missing/empty aircraft data files
 - [x] UI replacement does not require backend engine changes
 - [x] Backend replacement does not require UI rework beyond adapter configuration
@@ -142,7 +142,7 @@ Exit criteria:
 
 Exit criteria:
 - [x] CI workflow configured for supported Python versions
-- [ ] CI passes core tests on supported Python versions (remote run evidence pending)
+- [x] CI passes core tests on supported Python versions (remote run evidence recorded)
 
 ### Phase 2: Data Contracts (v0.3)
 
@@ -168,10 +168,10 @@ Exit criteria:
 ## Suggested execution order
 
 - [x] Batch A: blockers + config/path alignment
-- [ ] Batch B: packaging + test baseline
-- [ ] Batch C: structural cleanup + naming finalization
-- [ ] Batch D: data ingestion architecture + UI/backend decoupling
-- [ ] Batch E: docs/ADRs finalization and roadmap kickoff
+- [x] Batch B: packaging + test baseline
+- [x] Batch C: structural cleanup + naming finalization
+- [x] Batch D: data ingestion architecture + UI/backend decoupling
+- [x] Batch E: docs/ADRs finalization and roadmap kickoff
 
 ## Safety and limitations track
 

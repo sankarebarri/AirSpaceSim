@@ -22,7 +22,14 @@ jobs:
           python -m pip install -U pip
           python -m pip install -e . && python -m pip install -r requirements-dev.txt
 
+      - name: Install browser for smoke test
+        if: matrix.python-version == '3.12'
+        run: |
+          python -m playwright install --with-deps chromium
+
       - name: test
+        env:
+          AIRSPACESIM_BROWSER_SMOKE: ${{ matrix.python-version == '3.12' && '1' || '0' }}
         run: |
           pytest -q
 

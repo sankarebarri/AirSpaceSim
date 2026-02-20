@@ -172,7 +172,7 @@ Completed:
 - Core typed models/interfaces added (`airspacesim/core/*`) and adopted in scenario normalization + trajectory output generation.
 - Framework-agnostic core guard added (`tests/test_framework_agnostic_core.py`).
 - CI workflow added for Python `3.10/3.11/3.12` (`.github/workflows/ci.yml`).
-- CI currently configured locally; remote GitHub run confirmation is still pending.
+- CI is configured and has passed remotely on GitHub Actions for supported Python versions (`3.10`, `3.11`, `3.12`).
 - `.gitignore` now scopes runtime artifact ignores to repository-root (`/data`, `/static`, `/templates`, `/logs`) so package assets under `airspacesim/` are tracked and included in CI.
 
 Pending (from `sim_ui.md`):
@@ -188,6 +188,7 @@ Roadmap simulation work still pending (from `roadmap.md`):
 3. Run tests:
    - `.venv/bin/pytest -q`
    - baseline coverage is enforced (default threshold `45%`, configurable via `AIRSPACESIM_MIN_COVERAGE`)
+   - browser console smoke test is opt-in locally via `AIRSPACESIM_BROWSER_SMOKE=1 pytest -q tests/test_browser_console_clean.py`
 4. Do a runtime sanity check:
    - run simulation, confirm `data/aircraft_state.v1.json` updates.
 5. Verify UI renders from served files.
