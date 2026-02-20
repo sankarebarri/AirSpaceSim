@@ -1,0 +1,84 @@
+{
+    "schema": {
+        "name": "airspacesim.trajectory",
+        "version": "0.1"
+    },
+    "metadata": {
+        "source": "airspacesim.simulation.aircraft_manager",
+        "generated_utc": "2026-02-20T20:17:48.566554Z"
+    },
+    "data": {
+        "tracks": [
+            {
+                "id": "BENCH_0000",
+                "route_id": "BENCH_ROUTE",
+                "position_dd": [
+                    16.25,
+                    -0.03
+                ],
+                "status": "active",
+                "updated_utc": "2026-02-20T20:17:48.566554Z",
+                "callsign": "B0000",
+                "speed_kt": 420.0,
+                "altitude_ft": 10000.0,
+                "vertical_rate_fpm": 0.0
+            },
+            {
+                "id": "BENCH_0001",
+                "route_id": "BENCH_ROUTE",
+                "position_dd": [
+                    16.2501,
+                    -0.0299
+                ],
+                "status": "active",
+                "updated_utc": "2026-02-20T20:17:48.566554Z",
+                "callsign": "B0001",
+                "speed_kt": 420.0,
+                "altitude_ft": 10000.0,
+                "vertical_rate_fpm": 0.0
+            },
+            {
+                "id": "BENCH_0002",
+                "route_id": "BENCH_ROUTE",
+                "position_dd": [
+                    16.2502,
+                    -0.0298
+                ],
+                "status": "active",
+                "updated_utc": "2026-02-20T20:17:48.566554Z",
+                "callsign": "B0002",
+                "speed_kt": 420.0,
+                "altitude_ft": 10000.0,
+                "vertical_rate_fpm": 0.0
+            },
+            {
+                "id": "BENCH_0003",
+                "route_id": "BENCH_ROUTE",
+                "position_dd": [
+                    16.2503,
+                    -0.029699999999999997
+                ],
+                "status": "active",
+                "updated_utc": "2026-02-20T20:17:48.566554Z",
+                "callsign": "B0003",
+                "speed_kt": 420.0,
+                "altitude_ft": 10000.0,
+                "vertical_rate_fpm": 0.0
+            },
+            {
+                "id": "BENCH_0004",
+                "route_id": "BENCH_ROUTE",
+                "position_dd": [
+                    16.2504,
+                    -0.029599999999999998
+                ],
+                "status": "active",
+                "updated_utc": "2026-02-20T20:17:48.566554Z",
+                "callsign": "B0004",
+                "speed_kt": 420.0,
+                "altitude_ft": 10000.0,
+                "vertical_rate_fpm": 0.0
+            }
+        ]
+    }
+}

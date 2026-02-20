@@ -1,0 +1,243 @@
+{
+  "schema": {
+    "name": "airspacesim.airspace_data",
+    "version": "1.0"
+  },
+  "metadata": {
+    "id": "mali.gao.demo",
+    "name": "Gao Demo Airspace",
+    "icao_region": "GMMM",
+    "country": "Mali",
+    "source": "AirSpaceSim example dataset",
+    "generated_utc": "2026-02-20T00:00:00Z",
+    "notes": "Derived from Gao demo dataset with real fixes/routes and DD+DMS coordinates."
+  },
+  "validation": {
+    "min_waypoints_per_airspace": 1
+  },
+  "airspaces": [
+    {
+      "airspace_id": "GAO_TMA_DEMO",
+      "name": "Gao Airspace: 60 NM Radius",
+      "center": {
+        "dec_coords": [16.25, -0.03]
+      },
+      "waypoints": [
+        {
+          "id": "GAO_VOR",
+          "name": "Gao VOR",
+          "type": "navaid",
+          "ident": "GAO",
+          "dec_coords": [16.25, -0.03],
+          "coords": {
+            "lat": [16, 15, 0, "N"],
+            "lon": [0, 1, 48, "W"]
+          }
+        },
+        {
+          "id": "ETRUL",
+          "name": "ETRUL",
+          "type": "fix",
+          "dec_coords": [15.8425, -0.9811111111],
+          "coords": {
+            "lat": [15, 50, 33, "N"],
+            "lon": [0, 58, 52, "W"]
+          }
+        },
+        {
+          "id": "PILTI",
+          "name": "PILTI",
+          "type": "fix",
+          "dec_coords": [15.285, -2.3038888889],
+          "coords": {
+            "lat": [15, 17, 6, "N"],
+            "lon": [2, 18, 14, "W"]
+          }
+        },
+        {
+          "id": "TESTI",
+          "name": "TESTI",
+          "type": "fix",
+          "dec_coords": [20.2569444444, 0.9880555556],
+          "coords": {
+            "lat": [20, 15, 25, "N"],
+            "lon": [0, 59, 17, "E"]
+          }
+        },
+        {
+          "id": "ILDAD",
+          "name": "ILDAD",
+          "type": "fix",
+          "dec_coords": [17.2144444444, 0.2158333333],
+          "coords": {
+            "lat": [17, 12, 52, "N"],
+            "lon": [0, 12, 57, "E"]
+          }
+        },
+        {
+          "id": "UNOTA",
+          "name": "UNOTA",
+          "type": "fix",
+          "dec_coords": [15.8491666667, 0.2933333333],
+          "coords": {
+            "lat": [15, 50, 57, "N"],
+            "lon": [0, 17, 36, "E"]
+          }
+        },
+        {
+          "id": "ERGIL",
+          "name": "ERGIL",
+          "type": "fix",
+          "dec_coords": [15.4513888889, 0.6186111111],
+          "coords": {
+            "lat": [15, 27, 5, "N"],
+            "lon": [0, 37, 7, "E"]
+          }
+        },
+        {
+          "id": "EBVAP",
+          "name": "EBVAP",
+          "type": "fix",
+          "dec_coords": [15.5461111111, 0.1733333333],
+          "coords": {
+            "lat": [15, 32, 46, "N"],
+            "lon": [0, 10, 24, "E"]
+          }
+        },
+        {
+          "id": "ARGAM",
+          "name": "ARGAM",
+          "type": "fix",
+          "dec_coords": [13.7961111111, 0.6727777778],
+          "coords": {
+            "lat": [13, 47, 46, "N"],
+            "lon": [0, 40, 22, "E"]
+          }
+        },
+        {
+          "id": "LIPET",
+          "name": "LIPET",
+          "type": "fix",
+          "dec_coords": [13.9330555556, -0.0138888889],
+          "coords": {
+            "lat": [13, 55, 59, "N"],
+            "lon": [0, 0, 50, "W"]
+          }
+        },
+        {
+          "id": "OPUGO",
+          "name": "OPUGO",
+          "type": "fix",
+          "dec_coords": [14.0969444444, -0.8511111111],
+          "coords": {
+            "lat": [14, 5, 49, "N"],
+            "lon": [0, 51, 4, "W"]
+          }
+        },
+        {
+          "id": "LUKNA",
+          "name": "LUKNA",
+          "type": "fix",
+          "dec_coords": [17.7347222222, -1.8883333333],
+          "coords": {
+            "lat": [17, 44, 5, "N"],
+            "lon": [1, 53, 18, "W"]
+          }
+        },
+        {
+          "id": "TAVIL",
+          "name": "TAVIL",
+          "type": "fix",
+          "dec_coords": [18.1455555556, -1.4288888889],
+          "coords": {
+            "lat": [18, 8, 44, "N"],
+            "lon": [1, 25, 44, "W"]
+          }
+        },
+        {
+          "id": "BIDUX",
+          "name": "BIDUX",
+          "type": "fix",
+          "dec_coords": [18.6408333333, -0.8708333333],
+          "coords": {
+            "lat": [18, 38, 27, "N"],
+            "lon": [0, 52, 15, "W"]
+          }
+        }
+      ],
+      "routes": [
+        {
+          "route_id": "UA612",
+          "name": "UA612",
+          "waypoint_ids": ["GAO_VOR", "ETRUL", "PILTI"]
+        },
+        {
+          "route_id": "UG859",
+          "name": "UG859",
+          "waypoint_ids": ["TESTI", "ILDAD", "GAO_VOR"]
+        },
+        {
+          "route_id": "UR971",
+          "name": "UR971",
+          "waypoint_ids": ["GAO_VOR", "UNOTA", "ERGIL"]
+        },
+        {
+          "route_id": "UM629",
+          "name": "UM629",
+          "waypoint_ids": ["GAO_VOR", "EBVAP", "ARGAM"]
+        },
+        {
+          "route_id": "UA603",
+          "name": "UA603",
+          "waypoint_ids": ["GAO_VOR", "LIPET"]
+        },
+        {
+          "route_id": "UG859_ALT",
+          "name": "UG859 (direct)",
+          "waypoint_ids": ["GAO_VOR", "OPUGO"]
+        },
+        {
+          "route_id": "UT365",
+          "name": "UT365",
+          "waypoint_ids": ["GAO_VOR", "LUKNA"]
+        },
+        {
+          "route_id": "UR981",
+          "name": "UR981",
+          "waypoint_ids": ["GAO_VOR", "TAVIL"]
+        },
+        {
+          "route_id": "UM629_ALT",
+          "name": "UM629 (direct)",
+          "waypoint_ids": ["GAO_VOR", "BIDUX"]
+        }
+      ],
+      "zones": [
+        {
+          "zone_id": "GAO_TMA_60NM",
+          "type": "circle",
+          "name": "Gao Airspace: 60 NM Radius",
+          "center": {
+            "dec_coords": [16.25, -0.03]
+          },
+          "radius_m": 111120,
+          "lower_limit_ft": 0,
+          "upper_limit_ft": 99999
+        }
+      ],
+      "navaids": [
+        {
+          "id": "GAO_VOR",
+          "name": "Gao VOR",
+          "ident": "GAO",
+          "type": "VOR",
+          "dec_coords": [16.25, -0.03],
+          "coords": {
+            "lat": [16, 15, 0, "N"],
+            "lon": [0, 1, 48, "W"]
+          }
+        }
+      ]
+    }
+  ]
+}

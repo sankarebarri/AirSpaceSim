@@ -33,11 +33,11 @@ todo
 AirSpaceSim.csv
 *.bat
 
-# Local runtime artifacts from `airspacesim init` runs
-data/
-static/
-templates/
-logs/
+# Local runtime artifacts from `airspacesim init` runs (root-level only)
+/data/
+/static/
+/templates/
+/logs/
 
 # Local tool/runtime caches
 .pytest_cache/

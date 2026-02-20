@@ -1,0 +1,445 @@
+{
+  "schema": {
+    "name": "airspacesim.scenario_airspace",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.data.airspace_data",
+    "generated_utc": "2026-02-20T00:00:00Z"
+  },
+  "data": {
+    "reference": {
+      "datum": "WGS84",
+      "earth_model": "spherical",
+      "nm_to_m": 1852
+    },
+    "points": {
+      "GAO_VOR": {
+        "type": "navaid",
+        "name": "Gao VOR",
+        "coord": {
+          "dd": [
+            16.25,
+            -0.03
+          ],
+          "dms": {
+            "lat": [
+              16,
+              15,
+              0,
+              "N"
+            ],
+            "lon": [
+              0,
+              1,
+              48,
+              "W"
+            ]
+          }
+        },
+        "ident": "GAO"
+      },
+      "ETRUL": {
+        "type": "fix",
+        "name": "ETRUL",
+        "coord": {
+          "dd": [
+            15.8425,
+            -0.9811111111
+          ],
+          "dms": {
+            "lat": [
+              15,
+              50,
+              33,
+              "N"
+            ],
+            "lon": [
+              0,
+              58,
+              52,
+              "W"
+            ]
+          }
+        }
+      },
+      "PILTI": {
+        "type": "fix",
+        "name": "PILTI",
+        "coord": {
+          "dd": [
+            15.285,
+            -2.3038888889
+          ],
+          "dms": {
+            "lat": [
+              15,
+              17,
+              6,
+              "N"
+            ],
+            "lon": [
+              2,
+              18,
+              14,
+              "W"
+            ]
+          }
+        }
+      },
+      "TESTI": {
+        "type": "fix",
+        "name": "TESTI",
+        "coord": {
+          "dd": [
+            20.2569444444,
+            0.9880555556
+          ],
+          "dms": {
+            "lat": [
+              20,
+              15,
+              25,
+              "N"
+            ],
+            "lon": [
+              0,
+              59,
+              17,
+              "E"
+            ]
+          }
+        }
+      },
+      "ILDAD": {
+        "type": "fix",
+        "name": "ILDAD",
+        "coord": {
+          "dd": [
+            17.2144444444,
+            0.2158333333
+          ],
+          "dms": {
+            "lat": [
+              17,
+              12,
+              52,
+              "N"
+            ],
+            "lon": [
+              0,
+              12,
+              57,
+              "E"
+            ]
+          }
+        }
+      },
+      "UNOTA": {
+        "type": "fix",
+        "name": "UNOTA",
+        "coord": {
+          "dd": [
+            15.8491666667,
+            0.2933333333
+          ],
+          "dms": {
+            "lat": [
+              15,
+              50,
+              57,
+              "N"
+            ],
+            "lon": [
+              0,
+              17,
+              36,
+              "E"
+            ]
+          }
+        }
+      },
+      "ERGIL": {
+        "type": "fix",
+        "name": "ERGIL",
+        "coord": {
+          "dd": [
+            15.4513888889,
+            0.6186111111
+          ],
+          "dms": {
+            "lat": [
+              15,
+              27,
+              5,
+              "N"
+            ],
+            "lon": [
+              0,
+              37,
+              7,
+              "E"
+            ]
+          }
+        }
+      },
+      "EBVAP": {
+        "type": "fix",
+        "name": "EBVAP",
+        "coord": {
+          "dd": [
+            15.5461111111,
+            0.1733333333
+          ],
+          "dms": {
+            "lat": [
+              15,
+              32,
+              46,
+              "N"
+            ],
+            "lon": [
+              0,
+              10,
+              24,
+              "E"
+            ]
+          }
+        }
+      },
+      "ARGAM": {
+        "type": "fix",
+        "name": "ARGAM",
+        "coord": {
+          "dd": [
+            13.7961111111,
+            0.6727777778
+          ],
+          "dms": {
+            "lat": [
+              13,
+              47,
+              46,
+              "N"
+            ],
+            "lon": [
+              0,
+              40,
+              22,
+              "E"
+            ]
+          }
+        }
+      },
+      "LIPET": {
+        "type": "fix",
+        "name": "LIPET",
+        "coord": {
+          "dd": [
+            13.9330555556,
+            -0.0138888889
+          ],
+          "dms": {
+            "lat": [
+              13,
+              55,
+              59,
+              "N"
+            ],
+            "lon": [
+              0,
+              0,
+              50,
+              "W"
+            ]
+          }
+        }
+      },
+      "OPUGO": {
+        "type": "fix",
+        "name": "OPUGO",
+        "coord": {
+          "dd": [
+            14.0969444444,
+            -0.8511111111
+          ],
+          "dms": {
+            "lat": [
+              14,
+              5,
+              49,
+              "N"
+            ],
+            "lon": [
+              0,
+              51,
+              4,
+              "W"
+            ]
+          }
+        }
+      },
+      "LUKNA": {
+        "type": "fix",
+        "name": "LUKNA",
+        "coord": {
+          "dd": [
+            17.7347222222,
+            -1.8883333333
+          ],
+          "dms": {
+            "lat": [
+              17,
+              44,
+              5,
+              "N"
+            ],
+            "lon": [
+              1,
+              53,
+              18,
+              "W"
+            ]
+          }
+        }
+      },
+      "TAVIL": {
+        "type": "fix",
+        "name": "TAVIL",
+        "coord": {
+          "dd": [
+            18.1455555556,
+            -1.4288888889
+          ],
+          "dms": {
+            "lat": [
+              18,
+              8,
+              44,
+              "N"
+            ],
+            "lon": [
+              1,
+              25,
+              44,
+              "W"
+            ]
+          }
+        }
+      },
+      "BIDUX": {
+        "type": "fix",
+        "name": "BIDUX",
+        "coord": {
+          "dd": [
+            18.6408333333,
+            -0.8708333333
+          ],
+          "dms": {
+            "lat": [
+              18,
+              38,
+              27,
+              "N"
+            ],
+            "lon": [
+              0,
+              52,
+              15,
+              "W"
+            ]
+          }
+        }
+      }
+    },
+    "airspaces": [
+      {
+        "id": "GAO_TMA_DEMO",
+        "type": "circle",
+        "name": "Gao Airspace: 60 NM Radius",
+        "center_point_id": "GAO_VOR",
+        "radius_nm": 60,
+        "lower_limit_ft": 0,
+        "upper_limit_ft": 99999
+      }
+    ],
+    "routes": [
+      {
+        "id": "UA612",
+        "name": "UA612",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "ETRUL",
+          "PILTI"
+        ]
+      },
+      {
+        "id": "UG859",
+        "name": "UG859",
+        "waypoint_ids": [
+          "TESTI",
+          "ILDAD",
+          "GAO_VOR"
+        ]
+      },
+      {
+        "id": "UR971",
+        "name": "UR971",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "UNOTA",
+          "ERGIL"
+        ]
+      },
+      {
+        "id": "UM629",
+        "name": "UM629",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "EBVAP",
+          "ARGAM"
+        ]
+      },
+      {
+        "id": "UA603",
+        "name": "UA603",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "LIPET"
+        ]
+      },
+      {
+        "id": "UG859_ALT",
+        "name": "UG859 (direct)",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "OPUGO"
+        ]
+      },
+      {
+        "id": "UT365",
+        "name": "UT365",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "LUKNA"
+        ]
+      },
+      {
+        "id": "UR981",
+        "name": "UR981",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "TAVIL"
+        ]
+      },
+      {
+        "id": "UM629_ALT",
+        "name": "UM629 (direct)",
+        "waypoint_ids": [
+          "GAO_VOR",
+          "BIDUX"
+        ]
+      }
+    ]
+  }
+}

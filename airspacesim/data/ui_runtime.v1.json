@@ -1,0 +1,33 @@
+{
+  "schema": {
+    "name": "airspacesim.ui_runtime",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.seed",
+    "generated_utc": "2026-02-20T00:00:00Z"
+  },
+  "data": {
+    "sources": {
+      "map_config": {
+        "provider": "json_snapshot",
+        "candidates": [
+          "map_config.v1.json",
+          "airspace_config.json",
+          "gao_airspace.json",
+          "gao_airspace_config.json"
+        ]
+      },
+      "aircraft_state": {
+        "provider": "json_snapshot",
+        "candidates": [
+          "aircraft_state.v1.json",
+          "aircraft_data.json"
+        ]
+      }
+    },
+    "ui": {
+      "aircraft_poll_interval_ms": 1000
+    }
+  }
+}

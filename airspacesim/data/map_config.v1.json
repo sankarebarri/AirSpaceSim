@@ -1,0 +1,545 @@
+{
+  "schema": {
+    "name": "airspacesim.map_config",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.seed",
+    "generated_utc": "2026-02-20T00:00:00Z"
+  },
+  "data": {
+    "data_source": {
+      "airspace_data_file": "airspace_data.json",
+      "selected_airspaces": [
+        "GAO_TMA_DEMO"
+      ],
+      "allow_manual_elements": true
+    },
+    "selection_policy": {
+      "min_waypoints_per_airspace": 1,
+      "coordinates": {
+        "canonical": "lat_lon_decimal",
+        "fallback_order": [
+          "dec_coords",
+          "coords_dms"
+        ]
+      }
+    },
+    "center": [
+      16.25,
+      -0.03
+    ],
+    "zoom": 8,
+    "tile_layer": {
+      "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap contributors"
+    },
+    "selected_airspaces_metadata": [
+      {
+        "airspace_id": "GAO_TMA_DEMO",
+        "name": "Gao Airspace: 60 NM Radius"
+      }
+    ],
+    "elements": [
+      {
+        "type": "circle",
+        "name": "Gao Airspace: 60 NM Radius",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_zone_id": "GAO_TMA_60NM",
+        "center": [
+          16.25,
+          -0.03
+        ],
+        "radius": 111120,
+        "color": "blue",
+        "fill_color": "lightblue",
+        "fill_opacity": 0.4,
+        "opacity": 0.5,
+        "dash_array": "5,10"
+      },
+      {
+        "type": "polyline",
+        "name": "UA612",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UA612",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            15.8425,
+            -0.9811111111
+          ],
+          [
+            15.285,
+            -2.3038888889
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UG859",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UG859",
+        "coords": [
+          [
+            20.2569444444,
+            0.9880555556
+          ],
+          [
+            17.2144444444,
+            0.2158333333
+          ],
+          [
+            16.25,
+            -0.03
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UR971",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UR971",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            15.8491666667,
+            0.2933333333
+          ],
+          [
+            15.4513888889,
+            0.6186111111
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UM629",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UM629",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            15.5461111111,
+            0.1733333333
+          ],
+          [
+            13.7961111111,
+            0.6727777778
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UA603",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UA603",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            13.9330555556,
+            -0.0138888889
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UG859 (direct)",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UG859_ALT",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            14.0969444444,
+            -0.8511111111
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UT365",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UT365",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            17.7347222222,
+            -1.8883333333
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UR981",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UR981",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            18.1455555556,
+            -1.4288888889
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "polyline",
+        "name": "UM629 (direct)",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_route_id": "UM629_ALT",
+        "coords": [
+          [
+            16.25,
+            -0.03
+          ],
+          [
+            18.6408333333,
+            -0.8708333333
+          ]
+        ],
+        "color": "lightcoral",
+        "weight": 3,
+        "opacity": 1
+      },
+      {
+        "type": "marker",
+        "name": "ETRUL",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "ETRUL",
+        "coords": [
+          15.8425,
+          -0.9811111111
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "ETRUL (ETRUL)",
+        "label_text": "ETRUL"
+      },
+      {
+        "type": "marker",
+        "name": "PILTI",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "PILTI",
+        "coords": [
+          15.285,
+          -2.3038888889
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "PILTI (PILTI)",
+        "label_text": "PILTI"
+      },
+      {
+        "type": "marker",
+        "name": "TESTI",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "TESTI",
+        "coords": [
+          20.2569444444,
+          0.9880555556
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "TESTI (TESTI)",
+        "label_text": "TESTI"
+      },
+      {
+        "type": "marker",
+        "name": "ILDAD",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "ILDAD",
+        "coords": [
+          17.2144444444,
+          0.2158333333
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "ILDAD (ILDAD)",
+        "label_text": "ILDAD"
+      },
+      {
+        "type": "marker",
+        "name": "UNOTA",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "UNOTA",
+        "coords": [
+          15.8491666667,
+          0.2933333333
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "UNOTA (UNOTA)",
+        "label_text": "UNOTA"
+      },
+      {
+        "type": "marker",
+        "name": "ERGIL",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "ERGIL",
+        "coords": [
+          15.4513888889,
+          0.6186111111
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "ERGIL (ERGIL)",
+        "label_text": "ERGIL"
+      },
+      {
+        "type": "marker",
+        "name": "EBVAP",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "EBVAP",
+        "coords": [
+          15.5461111111,
+          0.1733333333
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "EBVAP (EBVAP)",
+        "label_text": "EBVAP"
+      },
+      {
+        "type": "marker",
+        "name": "ARGAM",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "ARGAM",
+        "coords": [
+          13.7961111111,
+          0.6727777778
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "ARGAM (ARGAM)",
+        "label_text": "ARGAM"
+      },
+      {
+        "type": "marker",
+        "name": "LIPET",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "LIPET",
+        "coords": [
+          13.9330555556,
+          -0.0138888889
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "LIPET (LIPET)",
+        "label_text": "LIPET"
+      },
+      {
+        "type": "marker",
+        "name": "OPUGO",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "OPUGO",
+        "coords": [
+          14.0969444444,
+          -0.8511111111
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "OPUGO (OPUGO)",
+        "label_text": "OPUGO"
+      },
+      {
+        "type": "marker",
+        "name": "LUKNA",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "LUKNA",
+        "coords": [
+          17.7347222222,
+          -1.8883333333
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "LUKNA (LUKNA)",
+        "label_text": "LUKNA"
+      },
+      {
+        "type": "marker",
+        "name": "TAVIL",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "TAVIL",
+        "coords": [
+          18.1455555556,
+          -1.4288888889
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "TAVIL (TAVIL)",
+        "label_text": "TAVIL"
+      },
+      {
+        "type": "marker",
+        "name": "BIDUX",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_point_id": "BIDUX",
+        "coords": [
+          18.6408333333,
+          -0.8708333333
+        ],
+        "icon_url": "../icons/triangle_9.svg",
+        "icon_size": [
+          10,
+          10
+        ],
+        "popup_text": "BIDUX (BIDUX)",
+        "label_text": "BIDUX"
+      },
+      {
+        "type": "marker",
+        "name": "Gao VOR",
+        "source_airspace_id": "GAO_TMA_DEMO",
+        "source_navaid_id": "GAO_VOR",
+        "coords": [
+          16.25,
+          -0.03
+        ],
+        "icon_url": "../icons/vor.svg",
+        "icon_size": [
+          30,
+          30
+        ],
+        "popup_text": "GAO VOR",
+        "label_text": "GAO"
+      }
+    ],
+    "render": {
+      "map": {
+        "center": {
+          "point_id": "GAO_VOR"
+        },
+        "zoom": 8,
+        "tile_layer": {
+          "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          "attribution": "© OpenStreetMap contributors"
+        }
+      },
+      "layers": [
+        {
+          "id": "airspace_circles",
+          "type": "airspaces",
+          "style": {
+            "stroke": {
+              "color": "blue",
+              "opacity": 0.5,
+              "dash_array": "5,10"
+            },
+            "fill": {
+              "color": "lightblue",
+              "opacity": 0.4
+            }
+          }
+        },
+        {
+          "id": "routes",
+          "type": "routes",
+          "style": {
+            "color": "lightcoral",
+            "weight": 3,
+            "opacity": 1
+          }
+        },
+        {
+          "id": "points",
+          "type": "points",
+          "defaults": {
+            "marker_icon": "static/icons/circle.svg",
+            "marker_icon_size": [
+              10,
+              10
+            ]
+          },
+          "overrides": {
+            "GAO_VOR": {
+              "marker_icon": "static/icons/vor.svg",
+              "marker_icon_size": [
+                30,
+                30
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

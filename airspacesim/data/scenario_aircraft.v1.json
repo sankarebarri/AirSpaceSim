@@ -1,0 +1,20 @@
+{
+  "schema": {
+    "name": "airspacesim.scenario_aircraft",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.seed",
+    "generated_utc": "2026-02-20T00:00:00Z"
+  },
+  "data": {
+    "aircraft": [
+      {
+        "id": "AC_UA612_01",
+        "callsign": "UA612SIM",
+        "route_id": "UA612",
+        "speed_kt": 460
+      }
+    ]
+  }
+}

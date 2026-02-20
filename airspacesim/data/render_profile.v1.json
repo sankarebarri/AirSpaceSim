@@ -1,0 +1,49 @@
+{
+  "schema": {
+    "name": "airspacesim.render_profile",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.seed",
+    "generated_utc": "2026-02-20T00:00:00Z"
+  },
+  "data": {
+    "map": {
+      "center": {"point_id": "GAO_VOR"},
+      "zoom": 8,
+      "tile_layer": {
+        "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "attribution": "© OpenStreetMap contributors"
+      }
+    },
+    "layers": [
+      {
+        "id": "airspace_circles",
+        "type": "airspaces",
+        "style": {
+          "stroke": {"color": "blue", "opacity": 0.5, "dash_array": "5,10"},
+          "fill": {"color": "lightblue", "opacity": 0.4}
+        }
+      },
+      {
+        "id": "routes",
+        "type": "routes",
+        "style": {"color": "lightcoral", "weight": 3, "opacity": 1}
+      },
+      {
+        "id": "points",
+        "type": "points",
+        "defaults": {
+          "marker_icon": "static/icons/circle.svg",
+          "marker_icon_size": [10, 10]
+        },
+        "overrides": {
+          "GAO_VOR": {
+            "marker_icon": "static/icons/vor.svg",
+            "marker_icon_size": [30, 30]
+          }
+        }
+      }
+    ]
+  }
+}

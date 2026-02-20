@@ -172,6 +172,7 @@ Completed:
 - Framework-agnostic core guard added (`tests/test_framework_agnostic_core.py`).
 - CI workflow added for Python `3.10/3.11/3.12` (`.github/workflows/ci.yml`).
 - CI currently configured locally; remote GitHub run confirmation is still pending.
+- `.gitignore` now scopes runtime artifact ignores to repository-root (`/data`, `/static`, `/templates`, `/logs`) so package assets under `airspacesim/` are tracked and included in CI.
 
 Pending (from `sim_ui.md`):
 - none currently marked pending in `sim_ui.md`.
