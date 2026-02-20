@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://airspacesim.local/schemas/airspacesim.scenario.v0.1.schema.json",
+  "title": "AirSpaceSim Scenario v0.1",
+  "type": "object",
+  "required": ["schema", "metadata", "data"],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "airspacesim.scenario" },
+        "version": { "const": "0.1" }
+      },
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["source", "generated_utc"],
+      "properties": {
+        "source": { "type": "string" },
+        "generated_utc": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "data": {
+      "type": "object",
+      "required": ["airspace", "aircraft"],
+      "properties": {
+        "airspace": { "type": "object" },
+        "aircraft": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

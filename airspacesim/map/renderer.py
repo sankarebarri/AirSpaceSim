@@ -47,6 +47,6 @@ class MapRenderer:
         Export the map configuration to a JSON file.
         :param filepath: Path to save the JSON file.
         """
-        filepath = filepath or settings.AIRSPACE_DATA_FILE
+        filepath = filepath or settings.AIRSPACE_FILE
         with open(filepath, "w") as f:
             json.dump(self.config, f, indent=4)

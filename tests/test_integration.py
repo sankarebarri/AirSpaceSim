@@ -8,5 +8,5 @@ from airspacesim.hello import say_hello
 
 
 def test_say_hello_returns_expected_greeting():
-    expected = "Hello, world changhhhhheesss from AirSpaceSim!"
+    expected = "Hello, world from AirSpaceSim!"
     assert say_hello() == expected

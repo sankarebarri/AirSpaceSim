@@ -4,4 +4,10 @@ include requirements.txt
 
 include airspacesim/static/js/*.js
 include airspacesim/static/css/*.css
+include airspacesim/static/icons/*.svg
 include airspacesim/templates/*.html
+include airspacesim/data/*.json
+include airspacesim/examples/*.py
+
+prune airspacesim-playground
+exclude airspacesim-playground/examples/example_simulation.py

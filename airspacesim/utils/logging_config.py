@@ -1,52 +1,50 @@
-# utils/logging_config.py
 import logging
 import logging.handlers
 import os
 import sys
-from datetime import datetime
 
-def setup_logger(name, log_file, level=logging.DEBUG):
+
+def setup_logger(name, log_file=None, level=logging.DEBUG):
     """
-    Setup a logger with a RotatingFileHandler and a StreamHandler.
-    Reconfigures sys.stdout for UTF-8 and sets the stream handler to INFO level.
-    
+    Setup a logger with optional file logging and console output.
+
     :param name: Logger name.
-    :param log_file: File to write logs to.
-    :param level: Logging level for the file handler.
+    :param log_file: Optional file to write logs to.
+    :param level: Logger level.
     :return: Configured logger.
     """
     logger = logging.getLogger(name)
     logger.setLevel(level)
-    
+
     if not logger.handlers:
-        # Rotating File Handler with UTF-8 encoding.
-        file_handler = logging.handlers.RotatingFileHandler(
-            log_file, maxBytes=5*1024*1024, backupCount=3, encoding='utf-8'
-        )
         formatter = logging.Formatter(
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         )
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-    
-        # Reconfigure sys.stdout for UTF-8 if possible.
+
+        if log_file:
+            log_dir = os.path.dirname(log_file)
+            if log_dir:
+                os.makedirs(log_dir, exist_ok=True)
+            file_handler = logging.handlers.RotatingFileHandler(
+                log_file,
+                maxBytes=5 * 1024 * 1024,
+                backupCount=3,
+                encoding='utf-8',
+            )
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+
+        # Reconfigure sys.stdout for UTF-8 if supported.
         if hasattr(sys.stdout, "reconfigure"):
             sys.stdout.reconfigure(encoding="utf-8")
-    
-        # Create a stream handler for console output at INFO level.
+
         stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setLevel(logging.INFO)
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
-    
+
     return logger
 
-# Create logs directory if it doesn't exist.
-LOG_DIR = os.path.join(os.getcwd(), "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
-
-# Generate a unique log file name using the current date and time.
-timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-log_file_name = os.path.join(LOG_DIR, f"simulation_{timestamp}.log")
-
-default_logger = setup_logger("airspacesim", log_file_name)
+# Intentionally configured without a file path by default to avoid import-time
+# filesystem side effects. Callers can use setup_logger(..., log_file=...) when needed.
+default_logger = setup_logger("airspacesim")

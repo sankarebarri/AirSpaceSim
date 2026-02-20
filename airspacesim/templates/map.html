@@ -4,22 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gao Airspace Visualization</title>
+    <title>Airspace Operations View</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/css/map_styles.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        #map {
-            width: 100%;
-            height: 700px;
-        }
-    </style>
 </head>
 
 <body>
-    <h1>Gao Airspace Visualization</h1>
-    <div id="map"></div>
-    <script type="module" src="map_renderer.js"></script>
-    <script type="module" src="aircraft_simulation.js"></script>
+    <main class="layout">
+        <section class="map-shell">
+            <header class="shell-header">
+                <h1>Airspace Operations View</h1>
+                <p id="config-status" class="status-pill">Loading config...</p>
+            </header>
+            <div id="map" aria-label="Airspace map"></div>
+        </section>
+
+        <aside class="panel-shell" aria-label="Airspace telemetry panel">
+            <section class="panel-card">
+                <h2>Map Elements</h2>
+                <div class="metrics">
+                    <div><span class="metric-label">Routes</span><span id="route-count">0</span></div>
+                    <div><span class="metric-label">Zones</span><span id="zone-count">0</span></div>
+                    <div><span class="metric-label">Nav Aids</span><span id="nav-count">0</span></div>
+                </div>
+                <ul id="route-list" class="list"></ul>
+            </section>
+
+            <section class="panel-card">
+                <h2>Aircraft</h2>
+                <div class="metrics">
+                    <div><span class="metric-label">Tracked</span><span id="aircraft-count">0</span></div>
+                    <div><span class="metric-label">Last Sync</span><span id="aircraft-sync">Never</span></div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Callsign</th>
+                                <th>Speed</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aircraft-table-body"></tbody>
+                    </table>
+                </div>
+                <p id="aircraft-status" class="status-line">Waiting for aircraft feed...</p>
+            </section>
+        </aside>
+    </main>
+
+    <script type="module" src="../static/js/aircraft_simulation.js?v=20260220"></script>
 </body>
 
 </html>

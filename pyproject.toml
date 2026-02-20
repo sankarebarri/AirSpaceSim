@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "AirSpaceSim"
+version = "0.1.2"
+description = "A modular library for aircraft simulation, airspace and route visualization, and flight tracking."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "sankarebarri", email = "sankarebarri_dev@yahoo.com" }
+]
+license = "MIT"
+dependencies = []
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+keywords = [
+  "atc",
+  "atm",
+  "airspace",
+  "flight route",
+  "airspace simulation",
+  "map visualization",
+  "flight tracking",
+]
+
+[project.urls]
+Homepage = "https://github.com/sankarebarri/AirSpaceSim"
+
+[project.scripts]
+airspacesim = "airspacesim.cli.commands:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools]
+include-package-data = false
+license-files = ["LICENSE"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["airspacesim", "airspacesim.*"]
+exclude = ["airspacesim-playground*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+airspacesim = [
+  "templates/*.html",
+  "static/js/*.js",
+  "static/css/*.css",
+  "static/icons/*.svg",
+  "data/*.json",
+  "schemas/*.json",
+  "examples/*.py",
+]

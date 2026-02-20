@@ -9,14 +9,20 @@ __pycache__/
 
 # Virtual environment
 venv/
+.venv/
+.venv-offline/
 
 # The project how to for me
 how_to
 
 # PyPISettings
 PyPISettings.txt
-airspacesim/data
+# Keep generated root-level examples ignored, but track package defaults.
 examples/
+airspacesim/data/*
+!airspacesim/data/*.json
+!airspacesim/examples/
+!airspacesim/examples/*.py
 
 # TO-DO
 todo
@@ -27,5 +33,26 @@ todo
 AirSpaceSim.csv
 *.bat
 
-# roadmap
-roadmap.md
+# Local runtime artifacts from `airspacesim init` runs
+data/
+static/
+templates/
+logs/
+
+# Local tool/runtime caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Potential local Intent cache/state dirs
+.intent/
+.intent-cache/
+
+# Local manual playgrounds
+airspacesim-playground/
+
+# palyground
+airspacesim-palyground/

@@ -16,7 +16,7 @@ It is designed to be useful as a standalone simulator.
 ## Scope
 
 Current focus:
-- multi-aircraft movement simulation with per-aircraft threads
+- multi-aircraft movement simulation with both legacy thread-per-aircraft mode and scalable batched scheduler mode
 - waypoint and route processing (DMS and decimal coordinates)
 - map configuration and visualization helpers (Leaflet-compatible)
 - JSON-based aircraft state output for downstream tooling
@@ -45,6 +45,25 @@ cd AirSpaceSim
 pip install -e .
 ```
 
+Offline-constrained source install (no index access):
+
+```bash
+pip install --no-build-isolation --no-deps -e .
+```
+
+If a fresh offline venv lacks `setuptools`, bootstrap it and install editable:
+
+```bash
+python3 scripts/offline_editable_install.py --venv .venv-offline
+```
+
+Offline install from local wheel:
+
+```bash
+python3 setup.py sdist bdist_wheel
+pip install --no-index --find-links dist airspacesim
+```
+
 ## Quick Start
 
 Initialize project files in your working directory:
@@ -53,9 +72,62 @@ Initialize project files in your working directory:
 airspacesim init
 ```
 
-Then run your simulation script (for example `example_simulation.py`) and open `map.html` in a browser.
+Then run your simulation script (for example `examples/example_simulation.py`) and open `templates/map.html` in a browser.
 
-Note: in the current repository state, template/static scaffolding exists, but some CLI-seeded data/example assets referenced by `init` are not yet present in `airspacesim/data` and `airspacesim/examples`.
+The default generated data files are:
+- `data/map_config.v1.json`
+- `data/airspace_config.json`
+- `data/airspace_data.json`
+- `data/scenario_airspace.v1.json`
+- `data/scenario.v0.1.json`
+- `data/scenario_aircraft.v1.json`
+- `data/inbox_events.v1.json`
+- `data/render_profile.v1.json`
+- `data/aircraft_data.json`
+- `data/aircraft_state.v1.json`
+- `data/trajectory.v0.1.json`
+- `data/ui_runtime.v1.json`
+- `data/aircraft_ingest.json`
+
+## UI Simulation Test
+
+Run these in separate terminals from your initialized project directory:
+
+```bash
+python3 examples/example_simulation.py
+```
+
+Optional quick run:
+
+```bash
+python3 examples/example_simulation.py --max-wait 5
+```
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000/templates/map.html`.
+
+## Simulation Quality Tools
+
+Stress scenario:
+
+```bash
+python3 -m airspacesim.examples.stress_simulation --aircraft 100 --duration 5 --speed 420
+```
+
+Performance benchmark:
+
+```bash
+python3 -m airspacesim.examples.benchmark_simulation --aircraft 200 --steps 50 --writes 25
+```
+
+Interoperability export example:
+
+```bash
+python3 examples/interoperability_export.py
+```
 
 ## Minimal Runnable Example
 
@@ -115,6 +187,8 @@ Production claims:
 ## Roadmap
 
 Execution milestones are in `roadmap.md`.
+
+Operational/developer guide is maintained in `documentation.md`.
 
 ## Ecosystem Compatibility
 
