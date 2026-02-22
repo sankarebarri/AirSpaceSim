@@ -57,9 +57,36 @@ Map/UI JS has graceful fallback behavior:
 - config loading tries multiple candidate paths
 - aircraft polling tries canonical then legacy files
 - missing data updates status panel to warning state
+- operator event sink tries configured URL then fallback candidates (including `127.0.0.1:8080`)
 
 Behavior:
 - UI stays up with degraded telemetry instead of hard crash
+
+Common operator-control failures:
+- `405 Method Not Allowed` on `/api/events`
+  - Cause: page served from static-only dev server that does not accept POST.
+  - Action: use `python3 dev_server.py` and open map from its URL.
+- `SET_SPEED` skipped with "aircraft not found"
+  - Cause: `payload.aircraft_id` was a callsign, not aircraft ID.
+  - Action: use the runtime `id` value (for example `AC800`), not callsign (`OPS800`).
+- `ADD_AIRCRAFT` skipped with duplicate ID
+  - Cause: aircraft with same ID already active.
+  - Action: send unique `aircraft_id` or remove existing aircraft first.
+- speed rejected above guardrail
+  - Cause: value exceeded configured absurd threshold (`MAX_ABSURD_SPEED_KTS`).
+  - Action: use lower speed, or change guardrail mode/threshold intentionally.
+
+## Restart Replay Behavior
+
+File-based ingestion keeps event history in `data/inbox_events.v1.json`.
+When process restarts, events still present can be applied again.
+
+Behavior:
+- safe for idempotent event types where repeated application is acceptable
+- surprising for additive events (`ADD_AIRCRAFT`) unless IDs are unique or duplicates are blocked
+
+Action:
+- clear consumed events before a clean restart, or introduce checkpoint/compaction workflow.
 
 ## Known Operational Limits
 
@@ -67,4 +94,3 @@ Behavior:
 - no certified separation assurance logic
 - no weather, intent uncertainty, or surveillance fusion model
 - intended for simulation/research, not live control
-

@@ -20,6 +20,13 @@ Each file/message should include:
 - `metadata.generated_utc`
 - `data`
 
+## Event stream notes (`airspacesim.inbox_events`)
+
+- Required event keys: `event_id`, `type`, `created_utc`, `payload`.
+- Runtime ordering key: `(sequence, created_utc, event_id)`.
+- Idempotency key: `event_id` (process-local dedupe for file/stdin adapters).
+- Restart behavior: events still present in inbox file can replay after process restart unless compacted/cleared.
+
 ## Naming policy
 Canonical generic names:
 - `data/airspace_data.json`

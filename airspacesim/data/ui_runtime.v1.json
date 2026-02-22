@@ -28,6 +28,9 @@
     },
     "ui": {
       "aircraft_poll_interval_ms": 1000
+    },
+    "sinks": {
+      "aircraft_events": "/api/events"
     }
   }
 }

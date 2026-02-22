@@ -226,6 +226,11 @@ def initialize_project(overwrite=False):
         examples_dir / "interoperability_export.py",
         overwrite=overwrite,
     )
+    copy_file(
+        _resolve_resource(package_path, "dev_server.py"),
+        project_dir / "dev_server.py",
+        overwrite=overwrite,
+    )
 
     _cli_info("\n🎉 AirSpaceSim project initialized successfully!\n")
     _cli_info("📌 Next Steps:")

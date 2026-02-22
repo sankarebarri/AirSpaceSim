@@ -10,6 +10,10 @@ const DEFAULT_AIRCRAFT_CONFIG_CANDIDATES = [
 const markers = {};
 let pollHandle = null;
 let lastFeedIssue = "";
+let runtimeConfigCache = {};
+let controlsReady = false;
+let pendingEvents = [];
+let sinkMode = false;
 
 function getPollIntervalMs() {
   const candidate = Number(globalThis.__airspacesimAircraftPollIntervalMs);
@@ -18,6 +22,13 @@ function getPollIntervalMs() {
 
 function updateAircraftStatus(message, level = "") {
   const node = document.getElementById("aircraft-status");
+  if (!node) return;
+  node.textContent = message;
+  node.className = `status-line${level ? ` ${level}` : ""}`;
+}
+
+function updateControlsStatus(message, level = "") {
+  const node = document.getElementById("controls-status");
   if (!node) return;
   node.textContent = message;
   node.className = `status-line${level ? ` ${level}` : ""}`;
@@ -67,6 +78,269 @@ async function fetchFirstAvailableJson(candidates) {
     }
   }
   return null;
+}
+
+function isoNow() {
+  return new Date().toISOString();
+}
+
+function eventEnvelope(events) {
+  return {
+    schema: {
+      name: "airspacesim.inbox_events",
+      version: "1.0",
+    },
+    metadata: {
+      source: "airspacesim.ui.operator_controls",
+      generated_utc: isoNow(),
+    },
+    data: { events },
+  };
+}
+
+function refreshEventPayloadView() {
+  const textarea = document.getElementById("events-payload");
+  if (!textarea) return;
+  textarea.value = JSON.stringify(eventEnvelope(pendingEvents), null, 2);
+}
+
+function deriveWorkspacePrefix() {
+  const path = window.location?.pathname || "";
+  const marker = "/templates/";
+  const markerIndex = path.indexOf(marker);
+  if (markerIndex <= 0) return "";
+  return path.slice(0, markerIndex);
+}
+
+function defaultEventSinkUrl() {
+  const prefix = deriveWorkspacePrefix();
+  return `${prefix}/api/events`;
+}
+
+function normalizeSinkUrl(candidate) {
+  if (typeof candidate !== "string" || !candidate) return null;
+  try {
+    if (/^https?:\/\//.test(candidate)) {
+      return new URL(candidate).toString();
+    }
+    if (candidate.startsWith("/")) {
+      return new URL(candidate, window.location.origin).toString();
+    }
+    return new URL(candidate, window.location.href).toString();
+  } catch (_) {
+    return null;
+  }
+}
+
+function resolveEventSinkCandidates(runtimeConfig) {
+  const sink = runtimeConfig?.sinks?.aircraft_events;
+  const prefix = deriveWorkspacePrefix();
+  const host = window.location.hostname || "127.0.0.1";
+  const configuredCandidates = [];
+  if (typeof sink === "string") {
+    configuredCandidates.push(sink);
+  } else if (typeof sink === "object" && sink !== null && typeof sink.url === "string") {
+    configuredCandidates.push(sink.url);
+  }
+
+  const fallbackCandidates = [
+    defaultEventSinkUrl(),
+    "/api/events",
+    `http://${host}:8080${prefix}/api/events`,
+    `http://${host}:8080/api/events`,
+    `http://${host}:8080/airspacesim-playground/api/events`,
+  ];
+
+  const resolved = [...configuredCandidates, ...fallbackCandidates]
+    .map(normalizeSinkUrl)
+    .filter(Boolean);
+
+  return [...new Set(resolved)];
+}
+
+function getEventSinkUrl(runtimeConfig) {
+  const candidates = resolveEventSinkCandidates(runtimeConfig);
+  return candidates[0] || "";
+}
+
+async function sendEventToSink(event) {
+  const sinkCandidates = resolveEventSinkCandidates(runtimeConfigCache);
+  if (sinkCandidates.length === 0) return false;
+
+  let lastError = "unknown error";
+  for (const sinkUrl of sinkCandidates) {
+    try {
+      const response = await fetch(sinkUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventEnvelope([event])),
+      });
+      if (!response.ok) {
+        lastError = `HTTP ${response.status}`;
+        continue;
+      }
+      const responseBody = await response.json().catch(() => ({}));
+      const targetPath =
+        typeof responseBody?.target === "string" ? responseBody.target : sinkUrl;
+      const acceptedCount = Number(responseBody?.accepted);
+      const acceptedSuffix = Number.isFinite(acceptedCount)
+        ? ` accepted=${acceptedCount}`
+        : "";
+      console.info(
+        `[EVENT SINK] sent event_id=${event.event_id} type=${event.type} target=${targetPath}${acceptedSuffix}`
+      );
+      updateControlsStatus(`Event ${event.event_id} sent -> ${targetPath}.`, "ok");
+      return true;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+    }
+  }
+
+  console.warn("Failed to POST event to all sink candidates:", {
+    sinkCandidates,
+    lastError,
+  });
+  const primarySink = sinkCandidates[0];
+  updateControlsStatus(
+    `Event sink unavailable (${primarySink}). Last error: ${lastError}. Event queued in payload box.`,
+    "warn"
+  );
+  return false;
+}
+
+function buildEvent(type, payload) {
+  return {
+    event_id: `evt-${type.toLowerCase()}-${Date.now()}`,
+    type,
+    created_utc: isoNow(),
+    payload,
+  };
+}
+
+async function queueOrSendEvent(event) {
+  const sent = await sendEventToSink(event);
+  if (!sent) {
+    pendingEvents.push(event);
+    refreshEventPayloadView();
+    updateControlsStatus("Event queued locally. Start dev_server.py or paste payload into inbox file.", "warn");
+  }
+}
+
+function applyControlButtonLabels() {
+  const addBtn = document.querySelector("#form-add-aircraft button[type='submit']");
+  const speedBtn = document.querySelector("#form-set-speed button[type='submit']");
+  const simRateBtn = document.querySelector("#form-set-sim-rate button[type='submit']");
+
+  if (sinkMode) {
+    if (addBtn) addBtn.textContent = "Send ADD_AIRCRAFT";
+    if (speedBtn) speedBtn.textContent = "Send SET_SPEED";
+    if (simRateBtn) simRateBtn.textContent = "Send SET_SIMULATION_SPEED";
+    return;
+  }
+
+  if (addBtn) addBtn.textContent = "Queue ADD_AIRCRAFT";
+  if (speedBtn) speedBtn.textContent = "Queue SET_SPEED";
+  if (simRateBtn) simRateBtn.textContent = "Queue SET_SIMULATION_SPEED";
+}
+
+function wireOperatorControls() {
+  if (controlsReady) return;
+  controlsReady = true;
+
+  const addForm = document.getElementById("form-add-aircraft");
+  const speedForm = document.getElementById("form-set-speed");
+  const simRateForm = document.getElementById("form-set-sim-rate");
+  const copyBtn = document.getElementById("btn-copy-events");
+  const clearBtn = document.getElementById("btn-clear-events");
+
+  if (addForm) {
+    addForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const aircraftId = document.getElementById("add-aircraft-id")?.value?.trim();
+      const callsign = document.getElementById("add-callsign")?.value?.trim();
+      const routeId = document.getElementById("add-route-id")?.value?.trim();
+      const speedKt = Number(document.getElementById("add-speed-kt")?.value);
+      if (!aircraftId || !routeId || !Number.isFinite(speedKt) || speedKt <= 0) {
+        updateControlsStatus("Invalid ADD_AIRCRAFT input.", "err");
+        return;
+      }
+      await queueOrSendEvent(
+        buildEvent("ADD_AIRCRAFT", {
+          aircraft_id: aircraftId,
+          route_id: routeId,
+          callsign: callsign || aircraftId,
+          speed_kt: speedKt,
+        })
+      );
+    });
+  }
+
+  if (speedForm) {
+    speedForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const aircraftId = document.getElementById("set-speed-aircraft-id")?.value?.trim();
+      const speedKt = Number(document.getElementById("set-speed-kt")?.value);
+      if (!aircraftId || !Number.isFinite(speedKt) || speedKt <= 0) {
+        updateControlsStatus("Invalid SET_SPEED input.", "err");
+        return;
+      }
+      await queueOrSendEvent(
+        buildEvent("SET_SPEED", {
+          aircraft_id: aircraftId,
+          speed_kt: speedKt,
+        })
+      );
+    });
+  }
+
+  if (simRateForm) {
+    simRateForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const simRate = Number(document.getElementById("set-sim-rate")?.value);
+      if (!Number.isFinite(simRate) || simRate <= 0) {
+        updateControlsStatus("Invalid SET_SIMULATION_SPEED input.", "err");
+        return;
+      }
+      await queueOrSendEvent(
+        buildEvent("SET_SIMULATION_SPEED", {
+          sim_rate: simRate,
+        })
+      );
+    });
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener("click", async () => {
+      const payload = document.getElementById("events-payload")?.value || "";
+      if (!payload) return;
+      try {
+        await navigator.clipboard.writeText(payload);
+        updateControlsStatus("Event payload copied.", "ok");
+      } catch (_) {
+        updateControlsStatus("Clipboard copy failed. Select and copy manually.", "warn");
+      }
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      pendingEvents = [];
+      refreshEventPayloadView();
+      updateControlsStatus("Pending events cleared.", "ok");
+    });
+  }
+
+  sinkMode = Boolean(getEventSinkUrl(runtimeConfigCache));
+  applyControlButtonLabels();
+  const sinkCandidates = resolveEventSinkCandidates(runtimeConfigCache);
+  if (sinkCandidates.length > 0) {
+    console.info("[EVENT SINK] candidates", sinkCandidates);
+    updateControlsStatus(`Command sink target: ${sinkCandidates[0]}`, "ok");
+  } else {
+    updateControlsStatus("No command sink configured. Queue then copy payload into data/inbox_events.v1.json.", "warn");
+  }
+
+  refreshEventPayloadView();
 }
 
 function normalizeAircraftData(payload) {
@@ -163,13 +437,14 @@ async function fetchAircraftData() {
 
 async function startPolling() {
   if (pollHandle) return;
-  const runtimeConfig = await loadUiRuntimeConfig();
+  runtimeConfigCache = await loadUiRuntimeConfig();
   globalThis.__airspacesimAircraftDataCandidates = resolveUiCandidates(
-    runtimeConfig,
+    runtimeConfigCache,
     "aircraft_state",
     DEFAULT_AIRCRAFT_CONFIG_CANDIDATES
   );
-  const pollIntervalMs = resolveUiPollIntervalMs(runtimeConfig, getPollIntervalMs());
+  const pollIntervalMs = resolveUiPollIntervalMs(runtimeConfigCache, getPollIntervalMs());
+  wireOperatorControls();
   fetchAircraftData();
   pollHandle = setInterval(fetchAircraftData, pollIntervalMs);
 }

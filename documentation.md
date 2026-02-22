@@ -1,6 +1,6 @@
 # AirSpaceSim Documentation (Living Guide)
 
-Last updated: 2026-02-20
+Last updated: 2026-02-22
 
 ## 1) What This Project Is
 
@@ -89,9 +89,11 @@ Primary design rule:
    - `python3 examples/example_simulation.py`
    - optional: `python3 examples/example_simulation.py --max-wait 5`
 3. Serve files for browser UI:
-   - `python3 -m http.server 8000`
+   - `python3 dev_server.py`
 4. Open:
-   - `http://127.0.0.1:8000/templates/map.html`
+   - `http://127.0.0.1:8080/templates/map.html`
+   - if simulation runs in `airspacesim-playground/`: `http://127.0.0.1:8080/airspacesim-playground/templates/map.html`
+5. For live Operator Controls, do not open map from static-only dev servers (for example `:5500`) unless they support `POST /api/events`.
 
 ## 5) What To Modify (and When)
 
@@ -100,6 +102,21 @@ Primary design rule:
 - Modify `aircraft_simulation.js` only for UI read/mapping logic (never simulation behavior).
 - Modify `aircraft_manager.py` for simulation runtime behavior and contract writes.
 - Modify `settings.py` when adding new canonical file path resolution.
+
+## 5.1) Contract Ownership Boundaries
+
+- Airspace authoring owns:
+  - waypoint definitions
+  - route/airway sequences
+  - airspace geometry and metadata
+- Simulation backend owns:
+  - motion physics
+  - stepping/time model
+  - resolved aircraft paths and runtime outputs
+- UI owns:
+  - rendering
+  - polling cadence and view behavior
+  - operator presentation and interaction
 
 ## 6) What Not To Touch Casually
 
@@ -131,6 +148,61 @@ Primary design rule:
   (minimum 250 ms, default 1000 ms).
 - If aircraft feed files are missing/unreadable, UI shows warning state and clears markers/table (recovers automatically when files return).
 - Frontend endpoint mapping is driven by `data/ui_runtime.v1.json`, so backend transport/output can change without UI code edits.
+- Operator controls use sink candidates with fallback:
+  - configured sink from `ui_runtime.v1.json`
+  - same-origin `/api/events`
+  - fallback to `http://127.0.0.1:8080/.../api/events` when opened from another dev host/port
+
+## 7.2) Simulation Units and Time-Stepping
+
+- Authoritative units:
+  - `speed_kt`: knots (NM/hour)
+  - `altitude_ft`: feet
+  - `vertical_rate_fpm`: feet/minute
+  - `dt_seconds`: seconds
+  - route geometry distance: NM (via haversine), not raw lat/lon degree deltas
+- Motion update rule:
+  - `distance_nm = (speed_kt / 3600) * dt_seconds * SIMULATION_SPEED`
+  - `SIMULATION_SPEED` is global time acceleration (default `1.0`)
+- Guardrails:
+  - warn above `REALISTIC_ENROUTE_SPEED_WARNING_KTS` (default `700`)
+  - reject/clamp/off behavior controlled by `SPEED_GUARDRAIL_MODE`
+  - hard absurd threshold `MAX_ABSURD_SPEED_KTS` (default `1200`)
+- Implemented in:
+  - `airspacesim/simulation/aircraft.py`
+  - tested in `tests/test_aircraft.py` (`480 kt ~= 480 NM in 1 sim hour`, `10x acceleration` equivalence)
+
+## 7.3) Route Registry and Flight Plan Resolution
+
+- `RouteRegistry` maps `route_id -> ordered waypoint IDs` and resolves route chains deterministically.
+- `FlightPlan` contract:
+  - `departure_id`
+  - `destination_id`
+  - `route_ids` (ordered)
+- Consecutive route stitching:
+  - if no intersection: raise `RouteResolutionError`
+  - if multiple intersections: choose deterministic shortest/ordered candidate and log selection
+- Example:
+  - `departure=NIAMEY`, `destination=BAMAKO`, `routes=[UR981, UA612]`
+  - resolved path includes turn at `GAO_VOR`
+- Current integration status:
+  - registry + tests implemented in `airspacesim/routes/registry.py` and `tests/test_route_registry.py`
+  - not yet wired as the default path resolver inside runtime scenario/event pipelines
+
+## 7.4) Operator Event Runtime Behavior
+
+- `SET_SPEED.payload.aircraft_id` expects aircraft ID, not callsign.
+  - Example:
+    - valid: `AC800`
+    - invalid for this field: `OPS800` (callsign)
+- `ADD_AIRCRAFT` with existing `aircraft_id` is skipped to prevent duplicate runtime instances.
+- Speed updates go through guardrails in `Aircraft._sanitize_speed_kt(...)`:
+  - warning above `700 kt`
+  - default rejection above `1200 kt`
+- Inbox event dedupe is process-local:
+  - events are deduped by `event_id` during one process lifetime
+  - restarting simulation re-reads existing events still present in `data/inbox_events.v1.json`
+  - for a clean run, clear consumed events before restart
 
 ## 8) UI/Backend Independence Rules
 
@@ -174,12 +246,25 @@ Completed:
 - CI workflow added for Python `3.10/3.11/3.12` (`.github/workflows/ci.yml`).
 - CI is configured and has passed remotely on GitHub Actions for supported Python versions (`3.10`, `3.11`, `3.12`).
 - `.gitignore` now scopes runtime artifact ignores to repository-root (`/data`, `/static`, `/templates`, `/logs`) so package assets under `airspacesim/` are tracked and included in CI.
+- Browser console smoke check added and wired in CI (`tests/test_browser_console_clean.py`).
+- Operator controls sink pathing hardened:
+  - supports `/api/events` and `/airspacesim-playground/api/events`
+  - resilient fallback when UI is opened from a static-only server host/port
+- Operator event handling improvements:
+  - duplicate `ADD_AIRCRAFT` IDs are skipped
+  - `SET_SPEED` now logs explicit hints when callsign is provided instead of aircraft ID
 
 Pending (from `sim_ui.md`):
 - none currently marked pending in `sim_ui.md`.
 
-Roadmap simulation work still pending (from `roadmap.md`):
-- none in Phase 3 currently.
+Current improvement backlog (post-roadmap):
+- Wire `RouteRegistry` as the default resolver for flight plans/events so route chains do not require manual waypoint expansion.
+- Persist ingestion checkpoints / compact inbox events so simulation restarts do not replay already-applied historical events.
+- Add UI affordances that reduce operator errors:
+  - route ID autocomplete from loaded scenario routes
+  - aircraft ID selector for speed/reroute commands
+  - de-dup warning before submitting an existing aircraft ID
+- Add event outcome feedback channel from backend to UI (applied/skipped/rejected with reason) so operator panel shows authoritative result.
 
 ## 10) Safe Change Workflow
 
@@ -192,6 +277,7 @@ Roadmap simulation work still pending (from `roadmap.md`):
 4. Do a runtime sanity check:
    - run simulation, confirm `data/aircraft_state.v1.json` updates.
 5. Verify UI renders from served files.
+6. Prefer `dev_server.py` for operator controls (`POST /api/events` or `POST /airspacesim-playground/api/events`) and use static servers only when command sink is not required.
 
 ## 11) Documentation Maintenance Rule
 

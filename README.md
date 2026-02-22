@@ -104,10 +104,20 @@ python3 examples/example_simulation.py --max-wait 5
 ```
 
 ```bash
-python3 -m http.server 8000
+python3 dev_server.py
 ```
 
-Then open `http://localhost:8000/templates/map.html`.
+Then open one of:
+- `http://127.0.0.1:8080/templates/map.html`
+- `http://127.0.0.1:8080/airspacesim-playground/templates/map.html` (when running simulation from `airspacesim-playground`)
+
+Operator controls notes:
+- Use `dev_server.py` for POST support. Static-only servers (for example Live Server on `:5500`) may return `405` on `/api/events`.
+- `SET_SPEED.payload.aircraft_id` must be the aircraft ID (for example `AC800`), not callsign (for example `OPS800`).
+- `ADD_AIRCRAFT` now skips duplicate aircraft IDs instead of creating duplicate runtime entries.
+- Speed guardrails apply:
+  - warning above `700 kt`
+  - rejection above `1200 kt` (default mode)
 
 ## Simulation Quality Tools
 
@@ -189,6 +199,7 @@ Production claims:
 Execution milestones are in `roadmap.md`.
 
 Operational/developer guide is maintained in `documentation.md`.
+Hands-on walkthrough is in `docs/tutorial.md`.
 
 ## Ecosystem Compatibility
 

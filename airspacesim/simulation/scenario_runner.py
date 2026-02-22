@@ -1,6 +1,7 @@
 """Scenario-first simulation bootstrap using canonical v1 contracts."""
 
 import os
+import time
 
 from airspacesim.core.models import AircraftDefinition, ScenarioBundle, Waypoint
 from airspacesim.io.adapters import FileEventAdapter, FileSnapshotAdapter
@@ -13,6 +14,7 @@ from airspacesim.io.contracts import (
 from airspacesim.settings import settings
 from airspacesim.simulation.aircraft_manager import AircraftManager
 from airspacesim.simulation.events import apply_events_idempotent
+from airspacesim.utils.logging_config import default_logger as logger
 
 
 def _build_routes_from_scenario_airspace(scenario_airspace):
@@ -42,6 +44,7 @@ def load_scenarios(airspace_path=None, aircraft_path=None, scenario_path=None):
         )
 
     if scenario_contract_path:
+        logger.info("[SCENARIO] loading unified scenario from %s", scenario_contract_path)
         scenario_adapter = FileSnapshotAdapter(
             scenario_contract_path,
             validator=validate_scenario_v01,
@@ -65,6 +68,11 @@ def load_scenarios(airspace_path=None, aircraft_path=None, scenario_path=None):
     airspace_adapter = FileSnapshotAdapter(
         airspace_path or settings.SCENARIO_AIRSPACE_FILE,
         validator=validate_scenario_airspace,
+    )
+    logger.info(
+        "[SCENARIO] loading split contracts airspace=%s aircraft=%s",
+        airspace_path or settings.SCENARIO_AIRSPACE_FILE,
+        aircraft_path or settings.SCENARIO_AIRCRAFT_FILE,
     )
     scenario_airspace = airspace_adapter.load()
     route_ids = {route["id"] for route in scenario_airspace["data"]["routes"]}
@@ -138,3 +146,46 @@ def apply_inbox_events_once(manager, events_path=None):
     event_adapter = FileEventAdapter(events_path or settings.INBOX_EVENTS_FILE)
     events = event_adapter.poll()
     return apply_events_idempotent(manager, events)
+
+
+def run_inbox_events_loop(manager, events_path=None, poll_interval_seconds=1.0):
+    """
+    Continuously poll canonical inbox events and apply them until shutdown.
+    """
+    resolved_events_path = events_path or settings.INBOX_EVENTS_FILE
+    logger.info(
+        "[EVENT LOOP] started events_path=%s poll_interval_seconds=%.2f",
+        resolved_events_path,
+        float(poll_interval_seconds),
+    )
+    event_adapter = FileEventAdapter(resolved_events_path)
+    interval_seconds = max(float(poll_interval_seconds), 0.1)
+    while not manager.stop_event.is_set():
+        try:
+            events = event_adapter.poll()
+        except FileNotFoundError:
+            logger.warning(
+                "[EVENT LOOP] inbox file missing path=%s; waiting for file creation",
+                resolved_events_path,
+            )
+            time.sleep(interval_seconds)
+            continue
+        except Exception:
+            logger.exception(
+                "[EVENT LOOP] poll/apply failed for path=%s; loop will continue",
+                resolved_events_path,
+            )
+            time.sleep(interval_seconds)
+            continue
+
+        if events:
+            logger.info("[EVENT LOOP] polled %d new event(s)", len(events))
+            result = apply_events_idempotent(manager, events)
+            logger.info(
+                "[EVENT LOOP] applied=%d skipped=%d rejected=%d",
+                len(result["applied"]),
+                len(result["skipped"]),
+                len(result["rejected"]),
+            )
+        time.sleep(interval_seconds)
+    logger.info("[EVENT LOOP] stopped")

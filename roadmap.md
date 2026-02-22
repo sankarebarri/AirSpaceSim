@@ -179,3 +179,13 @@ Ongoing across all phases:
 - [x] keep explicit non-operational safety disclaimer
 - [x] avoid operational readiness claims without validation evidence
 - [x] maintain failure-mode documentation for malformed input and runtime issues
+
+## Post-v0.5 improvement backlog (active)
+
+- [ ] Add persistent ingestion checkpoint/compaction so processed inbox events are not replayed after simulation restart
+- [ ] Add operator feedback channel (`applied/skipped/rejected`) from backend to UI panel
+- [ ] Add UI operator guardrails:
+  - [ ] aircraft ID picker/autocomplete from current runtime state
+  - [ ] route ID picker/autocomplete from loaded scenario routes
+  - [ ] duplicate-ID warning before `ADD_AIRCRAFT` submit
+- [ ] Make batched scheduler default for large aircraft counts and publish guidance thresholds in docs

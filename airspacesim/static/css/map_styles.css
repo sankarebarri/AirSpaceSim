@@ -83,6 +83,12 @@ body {
     font-size: 1rem;
 }
 
+.panel-card h3 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
 .metrics {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -170,6 +176,68 @@ th {
     color: var(--err);
 }
 
+.control-form {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f8fbfd;
+    display: grid;
+    gap: 8px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.control-form label {
+    display: grid;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--muted);
+}
+
+.control-form input,
+#events-payload {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font: inherit;
+    color: var(--ink);
+    background: #fff;
+}
+
+.control-form button,
+.control-actions button {
+    border: 1px solid #115c94;
+    background: #1d72b8;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.control-form button:hover,
+.control-actions button:hover {
+    background: #115c94;
+}
+
+.control-actions {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+#events-payload {
+    width: 100%;
+    resize: vertical;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+}
+
 @media (max-width: 980px) {
     .layout {
         grid-template-columns: 1fr;
@@ -178,5 +246,9 @@ th {
     #map {
         height: 56vh;
         min-height: 420px;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
     }
 }

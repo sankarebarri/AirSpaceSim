@@ -51,6 +51,12 @@ htmlcov/
 .intent/
 .intent-cache/
 
+# Editor/IDE state
+.vscode/
+.idea/
+*.swp
+*.swo
+
 # Local manual playgrounds
 airspacesim-playground/
 

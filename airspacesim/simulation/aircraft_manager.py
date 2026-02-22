@@ -49,6 +49,17 @@ class AircraftManager:
         self.stop_event = threading.Event()
         self._batch_thread = None
 
+    def set_simulation_speed(self, sim_rate):
+        """
+        Set global simulation speed multiplier applied by Aircraft.update_position().
+        """
+        value = float(sim_rate)
+        if value <= 0:
+            raise ValueError("Simulation speed multiplier must be > 0")
+        settings.SIMULATION_SPEED = value
+        logger.info("Simulation speed multiplier set to %.3f", value)
+        self.save_aircraft_data()
+
     def add_aircraft(
         self,
         id,

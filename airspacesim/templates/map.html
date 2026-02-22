@@ -52,10 +52,51 @@
                 </div>
                 <p id="aircraft-status" class="status-line">Waiting for aircraft feed...</p>
             </section>
+
+            <section class="panel-card">
+                <h2>Operator Controls</h2>
+
+                <form id="form-add-aircraft" class="control-form">
+                    <h3>Add Aircraft</h3>
+                    <div class="grid-2">
+                        <label>Aircraft ID<input id="add-aircraft-id" type="text" required placeholder="AC900" /></label>
+                        <label>Callsign<input id="add-callsign" type="text" placeholder="OPS900" /></label>
+                        <label>Route ID<input id="add-route-id" type="text" required placeholder="UA612" /></label>
+                        <label>Speed (kt)<input id="add-speed-kt" type="number" min="1" step="1" value="420" required /></label>
+                    </div>
+                    <button type="submit">Queue ADD_AIRCRAFT</button>
+                </form>
+
+                <form id="form-set-speed" class="control-form">
+                    <h3>Set Aircraft Speed</h3>
+                    <div class="grid-2">
+                        <label>Aircraft ID<input id="set-speed-aircraft-id" type="text" required placeholder="AC900" /></label>
+                        <label>Speed (kt)<input id="set-speed-kt" type="number" min="1" step="1" value="240" required /></label>
+                    </div>
+                    <button type="submit">Queue SET_SPEED</button>
+                </form>
+
+                <form id="form-set-sim-rate" class="control-form">
+                    <h3>Set Simulation Rate</h3>
+                    <div class="grid-2">
+                        <label>Sim Rate<input id="set-sim-rate" type="number" min="0.1" step="0.1" value="1.0" required /></label>
+                    </div>
+                    <button type="submit">Queue SET_SIMULATION_SPEED</button>
+                </form>
+
+                <div class="control-actions">
+                    <button id="btn-copy-events" type="button">Copy Event Payload</button>
+                    <button id="btn-clear-events" type="button">Clear Pending Events</button>
+                </div>
+                <textarea id="events-payload" rows="8" readonly aria-label="Generated event payload"></textarea>
+                <p id="controls-status" class="status-line">
+                    Initializing command sink...
+                </p>
+            </section>
         </aside>
     </main>
 
-    <script type="module" src="../static/js/aircraft_simulation.js?v=20260220"></script>
+    <script type="module" src="../static/js/aircraft_simulation.js?v=20260225"></script>
 </body>
 
 </html>

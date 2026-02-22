@@ -169,6 +169,7 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
 
     original_aircraft_file = settings.AIRCRAFT_FILE
     original_aircraft_state_file = settings.AIRCRAFT_STATE_FILE
+    original_sim_speed = settings.SIMULATION_SPEED
     settings.AIRCRAFT_FILE = str((tmp_path / "aircraft_data.json"))
     settings.AIRCRAFT_STATE_FILE = str((tmp_path / "aircraft_state.v1.json"))
     try:
@@ -191,15 +192,123 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
                 "created_utc": "2026-02-20T00:00:03Z",
                 "payload": {"aircraft_id": "AC1", "vertical_rate_fpm": 600},
             },
+            {
+                "event_id": "e4",
+                "type": "SET_SIMULATION_SPEED",
+                "created_utc": "2026-02-20T00:00:04Z",
+                "payload": {"sim_rate": 2.0},
+            },
         ]
         result = apply_events_idempotent(manager, events)
-        assert result["applied"] == ["e1", "e2", "e3"]
+        assert result["applied"] == ["e1", "e2", "e3", "e4"]
         assert manager.aircraft_list[0].speed == 420
         assert manager.aircraft_list[0].route == "R2"
         assert manager.aircraft_list[0].vertical_rate_fpm == 600
+        assert settings.SIMULATION_SPEED == 2.0
     finally:
         settings.AIRCRAFT_FILE = original_aircraft_file
         settings.AIRCRAFT_STATE_FILE = original_aircraft_state_file
+        settings.SIMULATION_SPEED = original_sim_speed
+
+
+def test_apply_events_skips_duplicate_add_aircraft_id():
+    manager = AircraftManager({"R1": [{"dec_coords": [10.0, 1.0]}, {"dec_coords": [11.0, 1.5]}]})
+    manager.aircraft_list = [SimpleNamespace(id="AC1", callsign="OPS1")]
+
+    result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-add-dup",
+                "type": "ADD_AIRCRAFT",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {
+                    "aircraft_id": "AC1",
+                    "route_id": "R1",
+                    "callsign": "OPS1",
+                    "speed_kt": 420,
+                },
+            }
+        ],
+    )
+
+    assert result["applied"] == []
+    assert result["rejected"] == []
+    assert result["skipped"] == [("evt-add-dup", "aircraft_id already exists")]
+    assert len(manager.aircraft_list) == 1
+
+
+def test_apply_events_set_speed_with_callsign_hint():
+    manager = AircraftManager({"R1": [{"dec_coords": [10.0, 1.0]}, {"dec_coords": [11.0, 1.5]}]})
+    manager.aircraft_list = [
+        SimpleNamespace(
+            id="AC800",
+            callsign="OPS800",
+            speed=420,
+            route="R1",
+            altitude_ft=9000,
+            vertical_rate_fpm=0,
+            position=[10.0, 1.0],
+            waypoints=[[10.0, 1.0], [11.0, 1.5]],
+            current_index=0,
+            segment_progress=0,
+        )
+    ]
+
+    result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-speed-callsign",
+                "type": "SET_SPEED",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"aircraft_id": "OPS800", "speed_kt": 600},
+            }
+        ],
+    )
+
+    assert result["applied"] == []
+    assert result["rejected"] == []
+    assert len(result["skipped"]) == 1
+    skipped_reason = result["skipped"][0][1]
+    assert "matched callsign 'OPS800'" in skipped_reason
+    assert "use aircraft id 'AC800'" in skipped_reason
+    assert manager.aircraft_list[0].speed == 420
+
+
+def test_validate_inbox_events_accepts_set_simulation_speed():
+    payload = {
+        "schema": {"name": "airspacesim.inbox_events", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "events": [
+                {
+                    "event_id": "evt-sim-rate-1",
+                    "type": "SET_SIMULATION_SPEED",
+                    "created_utc": "2026-02-20T00:00:01Z",
+                    "payload": {"sim_rate": 2.5},
+                }
+            ]
+        },
+    }
+    validate_inbox_events(payload)
+
+
+def test_apply_events_rejects_invalid_simulation_speed():
+    manager = AircraftManager({"R1": [{"dec_coords": [10.0, 1.0]}, {"dec_coords": [11.0, 1.5]}]})
+    result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-bad-sim-rate",
+                "type": "SET_SIMULATION_SPEED",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"sim_rate": 0},
+            }
+        ],
+    )
+    assert result["applied"] == []
+    assert result["rejected"] == [("evt-bad-sim-rate", "invalid sim_rate")]
 
 
 def test_render_profile_validator_accepts_minimum_shape():

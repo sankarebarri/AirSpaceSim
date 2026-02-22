@@ -82,6 +82,9 @@ Minimum structure:
 - `data.sources.map_config` (candidate endpoints/paths)
 - `data.sources.aircraft_state` (candidate endpoints/paths)
 - `data.ui.aircraft_poll_interval_ms` (optional, minimum 250)
+- Optional event sink configuration:
+  - `data.sinks.aircraft_events` (string URL or `{ "url": "..." }`)
+  - Example for playground pathing: `"/airspacesim-playground/api/events"`
 
 ### `data/scenario.v0.1.json`
 Purpose: unified scenario input contract for simulation startup.
@@ -112,3 +115,9 @@ Minimum structure:
 - `new_aircraft.json`
 
 Writers should use canonical files only.
+
+## Event inbox lifecycle note
+
+`data/inbox_events.v1.json` is an append/read file by default.
+`FileEventAdapter` dedupes by `event_id` within one process lifetime only.
+On process restart, events left in this file are visible again.

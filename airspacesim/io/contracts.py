@@ -305,6 +305,7 @@ def validate_inbox_events(payload):
         "REMOVE_AIRCRAFT",
         "REROUTE",
         "SET_VERTICAL_RATE",
+        "SET_SIMULATION_SPEED",
     }
     for idx, event in enumerate(events):
         _require_dict(event, f"data.events[{idx}]")
