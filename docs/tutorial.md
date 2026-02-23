@@ -47,21 +47,42 @@ Important:
 - `dev_server.py` serves files and accepts:
   - `POST /api/events`
   - `POST /airspacesim-playground/api/events`
+- If you accidentally open `/airspacesim/templates/map.html` from repo root, `dev_server.py` now serves playground assets/data behind that path so events still land in `airspacesim-playground/data/inbox_events.v1.json`.
 - If you use `python3 -m http.server` instead, controls can only queue payloads unless you add another POST-capable endpoint.
 - If the page is opened from another static server (for example `:5500`) and that server rejects POST (`405`), UI now automatically retries `http://127.0.0.1:8080/.../api/events`.
 
 Use the **Operator Controls** panel in the right sidebar to generate:
 - `ADD_AIRCRAFT`
 - `SET_SPEED`
+- `SET_FL`
 - `SET_SIMULATION_SPEED`
 
 Operator payload rules:
 - `SET_SPEED.payload.aircraft_id` must be aircraft ID (for example `AC800`), not callsign (for example `OPS800`).
 - `ADD_AIRCRAFT` with an existing `aircraft_id` is skipped to avoid duplicate runtime aircraft entries.
 
+Aircraft map presentation:
+- Aircraft use an SVG aircraft icon marker (not circle marker).
+- Color semantics:
+  - outbound from Gao center: green
+  - inbound to Gao center: red
+  - transit/unknown: amber/gray
+- Flow colors are also shown in the **Flow Legend** card on the right panel.
+- Permanent label shows flight level (`FLxxx`) instead of speed.
+- FL display uses explicit `flight_level` when provided; otherwise it falls back to `altitude_ft / 100`.
+- Click an aircraft icon to open metadata popup (`id`, `callsign`, `route`, `FL`, `vertical_rate_fpm`, `status`, `updated_utc`).
+- Click a marker or aircraft table row to select aircraft:
+  - selected aircraft is highlighted in map and table
+  - `SET_SPEED` and `SET_FL` aircraft ID fields auto-fill
+  - `Set Flight Level` panel shows `Current FL`
+  - aircraft ID inputs (`SET_SPEED`, `SET_FL`) no longer overwrite manual edits while you are typing
+  - FL input suggestion no longer overwrites manual edits while you are typing
+
 If no command API sink is configured, the panel builds a canonical JSON payload you can paste into `data/inbox_events.v1.json`.
 In that mode, button labels start with `Queue ...` (queued only, not yet applied).
 When a sink is connected, labels switch to `Send ...` and changes apply live.
+While sending commands, submit buttons are temporarily disabled (`Sending...`) to prevent accidental duplicate clicks.
+If you try to add an existing `aircraft_id`, the UI warns and does not submit.
 
 For the playground setup, start the simulation with:
 
@@ -119,6 +140,22 @@ Add another event to the same file:
   "payload": {
     "aircraft_id": "AC900",
     "speed_kt": 240
+  }
+}
+```
+
+## 5.1) Set flight level metadata
+
+`SET_FL` changes displayed FL only. It does not alter movement physics.
+
+```json
+{
+  "event_id": "evt-fl-001",
+  "type": "SET_FL",
+  "created_utc": "2026-02-20T00:00:02Z",
+  "payload": {
+    "aircraft_id": "AC900",
+    "flight_level": 330
   }
 }
 ```

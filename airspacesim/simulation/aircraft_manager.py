@@ -9,7 +9,7 @@ from airspacesim.core.models import TrajectoryTrack
 from airspacesim.simulation.aircraft import Aircraft
 from airspacesim.io.contracts import build_envelope, validate_trajectory_v01
 from airspacesim.settings import settings
-from airspacesim.utils.conversions import dms_to_decimal
+from airspacesim.utils.conversions import dms_to_decimal, haversine
 from airspacesim.utils.logging_config import default_logger as logger
 
 
@@ -33,6 +33,16 @@ def _atomic_write_json(path, payload):
             os.unlink(tmp_path)
 
 
+def _resolve_flight_level_for_output(aircraft):
+    raw_flight_level = getattr(aircraft, "flight_level", None)
+    if isinstance(raw_flight_level, (int, float)):
+        return int(round(float(raw_flight_level)))
+    altitude_ft = float(getattr(aircraft, "altitude_ft", 0.0))
+    if altitude_ft < 0:
+        altitude_ft = 0.0
+    return int(round(altitude_ft / 100.0))
+
+
 class AircraftManager:
     def __init__(self, routes, execution_mode="thread_per_aircraft"):
         """
@@ -48,6 +58,44 @@ class AircraftManager:
         self.lock = threading.Lock()  # Thread safety
         self.stop_event = threading.Event()
         self._batch_thread = None
+
+    def _is_near_airspace_center(self, point_dd):
+        if not isinstance(point_dd, (list, tuple)) or len(point_dd) != 2:
+            return False
+        center_lat, center_lon = settings.AIRSPACE_CENTER
+        distance_nm = haversine(
+            float(point_dd[0]),
+            float(point_dd[1]),
+            float(center_lat),
+            float(center_lon),
+        )
+        return distance_nm <= 1.0
+
+    def classify_traffic_flow_from_waypoints(self, waypoints):
+        """
+        Classify aircraft flow relative to configured airspace center:
+        - outbound: starts near center and leaves
+        - inbound: ends near center
+        - transit: crosses/contains center internally
+        - unknown: cannot infer from route geometry
+        """
+        if not isinstance(waypoints, list) or len(waypoints) < 2:
+            return "unknown"
+
+        start_near_center = self._is_near_airspace_center(waypoints[0])
+        end_near_center = self._is_near_airspace_center(waypoints[-1])
+        if start_near_center and not end_near_center:
+            return "outbound"
+        if end_near_center and not start_near_center:
+            return "inbound"
+
+        if any(self._is_near_airspace_center(point) for point in waypoints[1:-1]):
+            return "transit"
+
+        if start_near_center and end_near_center:
+            return "transit"
+
+        return "unknown"
 
     def set_simulation_speed(self, sim_rate):
         """
@@ -69,6 +117,7 @@ class AircraftManager:
         speed=None,
         altitude_ft=0.0,
         vertical_rate_fpm=0.0,
+        flight_level=None,
     ):
         """
         Adds a new aircraft and starts its simulation.
@@ -104,7 +153,9 @@ class AircraftManager:
                 callsign=callsign,
                 altitude_ft=altitude_ft,
                 vertical_rate_fpm=vertical_rate_fpm,
+                flight_level=flight_level,
             )
+            aircraft.traffic_flow = self.classify_traffic_flow_from_waypoints(waypoints)
             self.aircraft_list.append(aircraft)
         except Exception:
             logger.exception("Error creating Aircraft instance for ID: %s", id)
@@ -165,8 +216,10 @@ class AircraftManager:
                     "position": ac.position,
                     "callsign": ac.callsign,
                     "speed": ac.speed,
+                    "flight_level": _resolve_flight_level_for_output(ac),
                     "altitude_ft": ac.altitude_ft,
                     "vertical_rate_fpm": ac.vertical_rate_fpm,
+                    "traffic_flow": getattr(ac, "traffic_flow", "unknown"),
                 }
                 for ac in self.aircraft_list
             ]
@@ -190,8 +243,10 @@ class AircraftManager:
                             "id": ac.id,
                             "callsign": ac.callsign,
                             "speed_kt": ac.speed,
+                            "flight_level": _resolve_flight_level_for_output(ac),
                             "altitude_ft": ac.altitude_ft,
                             "vertical_rate_fpm": ac.vertical_rate_fpm,
+                            "traffic_flow": getattr(ac, "traffic_flow", "unknown"),
                             "route_id": ac.route,
                             "position_dd": ac.position,
                             "status": "finished"
@@ -216,6 +271,7 @@ class AircraftManager:
                             route_id=ac.route,
                             position_dd=(float(ac.position[0]), float(ac.position[1])),
                             speed_kt=float(ac.speed),
+                            flight_level=_resolve_flight_level_for_output(ac),
                             altitude_ft=float(ac.altitude_ft),
                             vertical_rate_fpm=float(ac.vertical_rate_fpm),
                             status="finished"
@@ -275,6 +331,7 @@ class AircraftManager:
                             ac.get("speed", None),
                             ac.get("altitude_ft", 0.0),
                             ac.get("vertical_rate_fpm", 0.0),
+                            ac.get("flight_level"),
                         )
                     # Clear the JSON file after processing.
                     with open(settings.NEW_AIRCRAFT_FILE, "w") as f:

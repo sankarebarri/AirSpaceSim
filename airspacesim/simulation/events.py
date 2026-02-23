@@ -72,6 +72,7 @@ def apply_events_idempotent(manager, events):
                     route_name=route_id,
                     callsign=payload.get("callsign", aircraft_id),
                     speed=payload.get("speed_kt"),
+                    flight_level=payload.get("flight_level"),
                     altitude_ft=payload.get("altitude_ft", 0.0),
                     vertical_rate_fpm=payload.get("vertical_rate_fpm", 0.0),
                 )
@@ -134,6 +135,54 @@ def apply_events_idempotent(manager, events):
                     aircraft_id,
                     aircraft.speed,
                 )
+            elif event_type == "SET_FL":
+                aircraft_id = payload.get("aircraft_id")
+                flight_level = payload.get("flight_level")
+                aircraft = _find_aircraft(manager, aircraft_id)
+                if not aircraft:
+                    callsign_matches = (
+                        _find_callsign_matches(manager, aircraft_id)
+                        if isinstance(aircraft_id, str) and aircraft_id
+                        else []
+                    )
+                    if len(callsign_matches) == 1:
+                        reason = (
+                            f"aircraft not found by id; payload.aircraft_id matched callsign "
+                            f"'{aircraft_id}'. use aircraft id '{callsign_matches[0].id}'"
+                        )
+                    elif len(callsign_matches) > 1:
+                        reason = (
+                            f"aircraft not found by id; payload.aircraft_id matched multiple callsigns "
+                            f"'{aircraft_id}'. use aircraft id"
+                        )
+                    else:
+                        reason = "aircraft not found (payload.aircraft_id must be aircraft id, not callsign)"
+                    skipped.append((event_id, reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        reason,
+                        aircraft_id,
+                    )
+                    continue
+                if not isinstance(flight_level, (int, float)) or flight_level < 0:
+                    rejected.append((event_id, "invalid flight_level"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s flight_level=%s",
+                        event_id,
+                        "invalid flight_level",
+                        flight_level,
+                    )
+                    continue
+                aircraft.flight_level = int(round(float(flight_level)))
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=SET_FL aircraft_id=%s flight_level=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.flight_level,
+                )
             elif event_type == "REMOVE_AIRCRAFT":
                 aircraft_id = payload.get("aircraft_id")
                 if not aircraft_id:
@@ -177,6 +226,10 @@ def apply_events_idempotent(manager, events):
                 new_waypoints = _route_to_decimal_waypoints(manager.routes[route_id])
                 aircraft.route = route_id
                 aircraft.waypoints = new_waypoints
+                if hasattr(manager, "classify_traffic_flow_from_waypoints"):
+                    aircraft.traffic_flow = manager.classify_traffic_flow_from_waypoints(
+                        new_waypoints
+                    )
                 aircraft.current_index = 0
                 aircraft.segment_progress = 0
                 aircraft.position = new_waypoints[0]

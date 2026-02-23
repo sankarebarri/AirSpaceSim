@@ -113,6 +113,11 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
             route_id=item["route_id"],
             speed_kt=float(item["speed_kt"]),
             callsign=item.get("callsign"),
+            flight_level=(
+                int(round(float(item["flight_level"])))
+                if item.get("flight_level") is not None
+                else None
+            ),
             altitude_ft=float(item.get("altitude_ft", 0.0)),
             vertical_rate_fpm=float(item.get("vertical_rate_fpm", 0.0)),
         )
@@ -136,6 +141,7 @@ def initialize_manager_from_scenarios(
             route_name=item["route_id"],
             callsign=item.get("callsign", item["id"]),
             speed=item["speed_kt"],
+            flight_level=item.get("flight_level"),
             altitude_ft=item.get("altitude_ft", 0.0),
             vertical_rate_fpm=item.get("vertical_rate_fpm", 0.0),
         )

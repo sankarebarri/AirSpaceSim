@@ -13,6 +13,30 @@ function asUrl(ref) {
   return new URL(ref, DATA_BASE_URL).toString();
 }
 
+function devServerEquivalent(url) {
+  try {
+    const parsed = new URL(url, window.location.href);
+    const isHttp = parsed.protocol === "http:" || parsed.protocol === "https:";
+    if (!isHttp) return null;
+    if (parsed.hostname !== window.location.hostname) return null;
+    if (parsed.port === "8080") return null;
+    parsed.port = "8080";
+    return parsed.toString();
+  } catch (_) {
+    return null;
+  }
+}
+
+function prioritizeDevServer(urls) {
+  const list = (Array.isArray(urls) ? urls : [])
+    .filter((item) => typeof item === "string" && item.length > 0);
+  if (window.location.port === "8080") {
+    return [...new Set(list)];
+  }
+  const devCandidates = list.map(devServerEquivalent).filter(Boolean);
+  return [...new Set([...devCandidates, ...list])];
+}
+
 function normalizeRuntimePayload(payload) {
   if (payload?.schema?.name === "airspacesim.ui_runtime" && payload?.schema?.version === "1.0") {
     return payload.data || {};
@@ -20,20 +44,30 @@ function normalizeRuntimePayload(payload) {
   return payload || {};
 }
 
-async function fetchJson(url) {
-  const separator = url.includes("?") ? "&" : "?";
-  const response = await fetch(`${url}${separator}_ts=${Date.now()}`, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} for ${url}`);
+async function fetchJsonFirst(candidates) {
+  const orderedCandidates = prioritizeDevServer(candidates);
+  let lastError = null;
+  for (const url of orderedCandidates) {
+    try {
+      const separator = url.includes("?") ? "&" : "?";
+      const response = await fetch(`${url}${separator}_ts=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) {
+        lastError = new Error(`HTTP ${response.status} for ${url}`);
+        continue;
+      }
+      return response.json();
+    } catch (error) {
+      lastError = error;
+    }
   }
-  return response.json();
+  throw lastError || new Error("No runtime candidate URLs available.");
 }
 
 export async function loadUiRuntimeConfig() {
   if (!globalThis.__airspacesimUiRuntimePromise) {
     globalThis.__airspacesimUiRuntimePromise = (async () => {
       try {
-        const payload = await fetchJson(UI_RUNTIME_URL);
+        const payload = await fetchJsonFirst([UI_RUNTIME_URL]);
         return normalizeRuntimePayload(payload);
       } catch (_) {
         return {};
@@ -55,7 +89,8 @@ export function resolveUiCandidates(runtimeConfig, sourceKey, fallbackCandidates
   }
 
   const resolved = refs.map(asUrl).filter(Boolean);
-  return resolved.length > 0 ? resolved : fallbackCandidates;
+  const candidates = resolved.length > 0 ? resolved : fallbackCandidates;
+  return prioritizeDevServer(candidates);
 }
 
 export function resolveUiPollIntervalMs(runtimeConfig, fallbackMs = 1000) {

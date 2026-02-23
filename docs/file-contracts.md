@@ -51,6 +51,7 @@ Minimum structure:
   - `position`: `[lat, lon]`
   - `callsign`: string
   - `speed`: number
+  - optional: `flight_level`, `altitude_ft`, `vertical_rate_fpm`, `traffic_flow`
 
 Contract versioning:
 - Versioned envelope is now written to this file:
@@ -62,6 +63,18 @@ Contract versioning:
 
 Path resolution:
 - Frontend loader resolves `aircraft_state.v1.json` and `aircraft_data.json` from `../../data/...` relative to `static/js`.
+
+### `data/aircraft_state.v1.json`
+Purpose: canonical runtime aircraft snapshot consumed by current UI and downstream tools.
+
+Minimum structure:
+- `schema.name = airspacesim.aircraft_state`
+- `schema.version = 1.0`
+- `metadata.source`
+- `metadata.generated_utc`
+- `data.aircraft[]`
+  - required: `id`, `position_dd`, `route_id`, `status`, `updated_utc`
+  - optional: `callsign`, `speed_kt`, `flight_level`, `altitude_ft`, `vertical_rate_fpm`, `traffic_flow`
 
 ### `data/aircraft_ingest.json`
 Purpose: ingest queue/input for new aircraft instructions.
@@ -96,6 +109,7 @@ Minimum structure:
 - `metadata.generated_utc`
 - `data.airspace` (same shape as `scenario_airspace.v1.json` `data`)
 - `data.aircraft` (same shape as `scenario_aircraft.v1.json` `data`)
+  - aircraft entries may include optional `flight_level` metadata
 
 ### `data/trajectory.v0.1.json`
 Purpose: canonical simulation trajectory/state output feed.
@@ -107,7 +121,7 @@ Minimum structure:
 - `metadata.generated_utc`
 - `data.tracks[]`
   - `id`, `route_id`, `position_dd`, `status`, `updated_utc`
-  - optional: `callsign`, `speed_kt`, `altitude_ft`, `vertical_rate_fpm`
+  - optional: `callsign`, `speed_kt`, `flight_level`, `altitude_ft`, `vertical_rate_fpm`
 
 ## Legacy fallback reads (temporary)
 - `gao_airspace.json`

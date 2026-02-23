@@ -1,20 +1,28 @@
 # Simulation + UI Contract Plan (v1)
 
 This document captures the agreed direction for a scalable, data-driven, UI/backend-decoupled AirSpaceSim architecture.
+Roadmap/status tracking lives in `new_roadmap.md` (single source of truth).
 
-## Implementation Status
+## Capability Snapshot (technical state only)
 
-- [x] Data-driven airspace files (`airspace_data.json` + `airspace_config.json`) drive rendering.
-- [x] Coordinate fallback (`dec_coords` then DMS conversion) is in place.
-- [x] UI/backend separation: backend does not import Leaflet; UI reads JSON files only.
-- [x] Runtime canonical state file added: `data/aircraft_state.v1.json`.
-- [x] Atomic write behavior implemented for runtime aircraft outputs.
-- [x] UI now polls canonical `aircraft_state.v1.json` first, with legacy fallback to `aircraft_data.json`.
-- [x] Strict schema validators for all v1 contracts.
-- [x] Event contract + idempotent event application (`inbox_events.v1.json`).
-- [x] Canonical startup contracts (`scenario_airspace.v1.json`, `scenario_aircraft.v1.json`) as primary runtime inputs.
-- [x] Adapter abstraction layer (file snapshot/event adapters).
-- [x] Conformance test suite for contract validation/adapters.
+- Data-driven airspace files (`airspace_data.json` + `airspace_config.json`) drive rendering.
+- Coordinate fallback (`dec_coords` then DMS conversion) is in place.
+- UI/backend separation: backend does not import Leaflet; UI reads JSON files only.
+- Runtime canonical state file is `data/aircraft_state.v1.json`.
+- Atomic write behavior is used for runtime aircraft outputs.
+- UI polls canonical `aircraft_state.v1.json` first, with legacy fallback to `aircraft_data.json`.
+- Strict schema validators are in place for v1 contracts.
+- Event contract + idempotent event application uses `inbox_events.v1.json`.
+- Canonical startup contracts (`scenario_airspace.v1.json`, `scenario_aircraft.v1.json`) are primary runtime inputs.
+- Adapter abstraction layer exists (file snapshot/event adapters).
+- Conformance tests cover contracts and adapters.
+- Aircraft map markers use SVG aircraft icon with flow colors (`outbound` green, `inbound` red).
+- Aircraft tooltip labels show flight level (`FL`) instead of speed.
+- Aircraft metadata popup is available on marker click.
+- Flight level (`flight_level`) is editable from Operator Controls (`ADD_AIRCRAFT` + `SET_FL`) as metadata-only.
+- Operator forms debounce submits while POST is in-flight to reduce duplicate commands.
+- UI includes a flow-color legend and explicit `aircraft_id` hint for speed changes.
+- Selecting an aircraft highlights it on map/table and pre-fills operator forms (`SET_SPEED`, `SET_FL`).
 
 ## Core Decisions
 
@@ -54,7 +62,7 @@ This document captures the agreed direction for a scalable, data-driven, UI/back
 - Initial aircraft set at simulation start.
 
 3. `inbox_events.v1.json`
-- Mid-sim commands/events (`ADD_AIRCRAFT`, `SET_SPEED`, `REMOVE_AIRCRAFT`, `REROUTE`).
+- Mid-sim commands/events (`ADD_AIRCRAFT`, `SET_SPEED`, `SET_FL`, `REMOVE_AIRCRAFT`, `REROUTE`).
 
 4. `aircraft_state.v1.json`
 - Runtime aircraft snapshot for UI and downstream tools.
@@ -138,7 +146,9 @@ This document captures the agreed direction for a scalable, data-driven, UI/back
 - New contracts become canonical.
 - Add compatibility adapters to map legacy -> v1 canonical structures.
 
-## Execution Roadmap (Implementation Order)
+## Implementation Order (historical reference)
+
+For active prioritization and delivery status, use `new_roadmap.md`.
 
 1. Define schema files + strict validators for all v1 contracts.
 2. Add IO adapters:

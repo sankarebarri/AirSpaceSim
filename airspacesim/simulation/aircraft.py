@@ -15,6 +15,7 @@ class Aircraft:
         callsign=None,
         altitude_ft=0.0,
         vertical_rate_fpm=0.0,
+        flight_level=None,
     ):
         """
         Initialize the aircraft.
@@ -26,6 +27,7 @@ class Aircraft:
         :param callsign: Optional callsign for the aircraft.
         :param altitude_ft: Initial altitude in feet.
         :param vertical_rate_fpm: Climb(+)/descent(-) rate in feet per minute.
+        :param flight_level: Optional metadata flight level (FL). No physics impact.
         """
         self.id = id
         self.route = route
@@ -34,6 +36,7 @@ class Aircraft:
         self.callsign = callsign
         self.altitude_ft = float(altitude_ft)
         self.vertical_rate_fpm = float(vertical_rate_fpm)
+        self.flight_level = self._sanitize_flight_level(flight_level, self.altitude_ft)
         self.current_index = 0  # Current waypoint index.
         self.position = waypoints[0]  # Start at the first waypoint.
         self.segment_progress = 0  # Nautical miles travelled along the current segment.
@@ -71,6 +74,22 @@ class Aircraft:
         raise ValueError(
             f"Aircraft speed {speed:.1f} kt exceeds MAX_ABSURD_SPEED_KTS={settings.MAX_ABSURD_SPEED_KTS:.1f}"
         )
+
+    def _sanitize_flight_level(self, flight_level, altitude_ft):
+        """
+        Normalize FL metadata.
+        If no explicit FL is provided, derive display FL from altitude_ft.
+        """
+        if flight_level is None:
+            altitude = float(altitude_ft)
+            if altitude < 0:
+                altitude = 0.0
+            return int(round(altitude / 100.0))
+
+        value = float(flight_level)
+        if value < 0:
+            raise ValueError(f"Flight level must be >= 0, got {flight_level}")
+        return int(round(value))
 
     def update_position(self, time_step):
         """

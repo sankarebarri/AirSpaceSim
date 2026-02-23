@@ -15,6 +15,7 @@ class AircraftDefinition:
     route_id: str
     speed_kt: float
     callsign: str | None = None
+    flight_level: int | None = None
     altitude_ft: float = 0.0
     vertical_rate_fpm: float = 0.0
 
@@ -37,6 +38,7 @@ class TrajectoryTrack:
     updated_utc: str
     callsign: str | None = None
     speed_kt: float | None = None
+    flight_level: int | None = None
     altitude_ft: float | None = None
     vertical_rate_fpm: float | None = None
 
@@ -52,6 +54,8 @@ class TrajectoryTrack:
             payload["callsign"] = self.callsign
         if self.speed_kt is not None:
             payload["speed_kt"] = self.speed_kt
+        if self.flight_level is not None:
+            payload["flight_level"] = self.flight_level
         if self.altitude_ft is not None:
             payload["altitude_ft"] = self.altitude_ft
         if self.vertical_rate_fpm is not None:

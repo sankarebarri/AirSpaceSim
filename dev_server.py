@@ -19,6 +19,46 @@ from urllib.parse import urlparse
 
 PORT = int(os.environ.get("AIRSPACESIM_PORT", "8080"))
 ROOT = Path.cwd()  # Serve from the directory you run this script in.
+PLAYGROUND_SUBDIR = "airspacesim-playground"
+PLAYGROUND_ROOT = ROOT / PLAYGROUND_SUBDIR
+
+
+def _playground_inbox_path() -> Path:
+    if ROOT.name == PLAYGROUND_SUBDIR:
+        return ROOT / "data" / "inbox_events.v1.json"
+    return PLAYGROUND_ROOT / "data" / "inbox_events.v1.json"
+
+
+def _playground_available() -> bool:
+    return _playground_inbox_path().parent.exists()
+
+
+def _resolve_get_target(path: str) -> str:
+    """
+    Resolve request path with workspace-safe aliases.
+
+    If this repository has an `airspacesim-playground/` workspace, force
+    `/airspacesim/{templates,static,data}/...` to serve from playground files.
+    This prevents UI/runtime leaks to package seed files.
+    """
+    normalized = path.lstrip("/")
+    if not normalized:
+        return DEFAULT_MAP_PATH
+    if not _playground_available():
+        return normalized
+    if not normalized.startswith("airspacesim/"):
+        return normalized
+    relative = normalized.removeprefix("airspacesim/")
+    if not (
+        relative.startswith("templates/")
+        or relative.startswith("static/")
+        or relative.startswith("data/")
+    ):
+        return normalized
+    candidate = f"{PLAYGROUND_SUBDIR}/{relative}"
+    if (ROOT / candidate).exists():
+        return candidate
+    return normalized
 
 def _detect_default_map_path(root: Path) -> str:
     playground_map = root / "airspacesim-playground" / "templates" / "map.html"
@@ -96,7 +136,8 @@ class AirSpaceSimHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):  # noqa: N802
         # Strip query string for file resolution.
-        path = self.path.split("?")[0].lstrip("/") or DEFAULT_MAP_PATH
+        raw_path = self.path.split("?")[0]
+        path = _resolve_get_target(raw_path)
         file_path = ROOT / path
         if not file_path.exists() or not file_path.is_file():
             self._send_json(404, {"error": f"Not found: {path}"})
@@ -160,9 +201,12 @@ class AirSpaceSimHandler(BaseHTTPRequestHandler):
     def _resolve_inbox_path(self, request_path: str) -> Path:
         """Resolve target inbox path using request context to avoid root/playground leaks."""
         if request_path.startswith("/airspacesim-playground/"):
-            if ROOT.name == "airspacesim-playground":
-                return ROOT / "data" / "inbox_events.v1.json"
-            candidate = ROOT / "airspacesim-playground" / "data" / "inbox_events.v1.json"
+            candidate = _playground_inbox_path()
+            if candidate.parent.exists():
+                return candidate
+
+        if request_path.startswith("/airspacesim/"):
+            candidate = _playground_inbox_path()
             if candidate.parent.exists():
                 return candidate
 
@@ -171,17 +215,23 @@ class AirSpaceSimHandler(BaseHTTPRequestHandler):
 
         # Case 1: serving from repo root but UI page under /airspacesim-playground/...
         if "/airspacesim-playground/" in referer_path:
-            candidate = ROOT / "airspacesim-playground" / "data" / "inbox_events.v1.json"
+            candidate = _playground_inbox_path()
             if candidate.parent.exists():
                 return candidate
 
-        # Case 2: running server directly from airspacesim-playground directory.
+        # Case 2: UI loaded from /airspacesim/... (alias to playground assets in repo mode).
+        if "/airspacesim/" in referer_path:
+            candidate = _playground_inbox_path()
+            if candidate.parent.exists():
+                return candidate
+
+        # Case 3: running server directly from airspacesim-playground directory.
         if ROOT.name == "airspacesim-playground":
-            candidate = ROOT / "data" / "inbox_events.v1.json"
+            candidate = _playground_inbox_path()
             if candidate.parent.exists():
                 return candidate
 
-        # Default: root data directory.
+        # Default: root data directory (split-contract mode).
         return INBOX_EVENTS_PATH
 
 

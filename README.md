@@ -64,6 +64,34 @@ python3 setup.py sdist bdist_wheel
 pip install --no-index --find-links dist airspacesim
 ```
 
+## PyPI Release Checklist
+
+From repository root:
+
+```bash
+# 1) clean old artifacts
+rm -rf dist build *.egg-info
+
+# 2) run quality gate
+pytest -q
+ruff check .
+
+# 3) build distributions
+python3 -m build
+
+# 4) verify package metadata/rendering
+python3 -m twine check dist/*
+
+# 5) upload (requires PYPI_TOKEN in env)
+python3 -m twine upload dist/*
+```
+
+Recommended:
+- publish first to TestPyPI with `--repository testpypi` before main PyPI.
+- tag release in git after upload.
+- if `python3 -m build` is unavailable in your environment, fallback build is:
+  - `python3 setup.py sdist bdist_wheel`
+
 ## Quick Start
 
 Initialize project files in your working directory:
@@ -196,7 +224,7 @@ Production claims:
 
 ## Roadmap
 
-Execution milestones are in `roadmap.md`.
+Execution milestones are in `new_roadmap.md`.
 
 Operational/developer guide is maintained in `documentation.md`.
 Hands-on walkthrough is in `docs/tutorial.md`.

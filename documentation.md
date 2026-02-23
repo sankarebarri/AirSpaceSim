@@ -1,6 +1,6 @@
 # AirSpaceSim Documentation (Living Guide)
 
-Last updated: 2026-02-22
+Last updated: 2026-02-23
 
 ## 1) What This Project Is
 
@@ -11,6 +11,10 @@ AirSpaceSim is a simulation-first Python project for:
 
 Primary design rule:
 - backend simulation and frontend UI stay independent and communicate through files/contracts only.
+
+Planning source of truth:
+- `new_roadmap.md` is the only active roadmap/status tracker.
+- `roadmap.md` is archived for historical reference.
 
 ## 2) Current Architecture (Practical View)
 
@@ -136,7 +140,7 @@ Primary design rule:
   - `metadata.generated_utc`
   - `data.aircraft[]`
 - Aircraft item includes:
-  - `id`, `callsign`, `speed_kt`, `altitude_ft`, `vertical_rate_fpm`, `route_id`, `position_dd`, `status`, `updated_utc`
+  - `id`, `callsign`, `speed_kt`, `flight_level`, `altitude_ft`, `vertical_rate_fpm`, `route_id`, `position_dd`, `status`, `updated_utc`
 
 ### UI compatibility
 - UI polls `aircraft_state.v1.json` first.
@@ -149,9 +153,22 @@ Primary design rule:
 - If aircraft feed files are missing/unreadable, UI shows warning state and clears markers/table (recovers automatically when files return).
 - Frontend endpoint mapping is driven by `data/ui_runtime.v1.json`, so backend transport/output can change without UI code edits.
 - Operator controls use sink candidates with fallback:
-  - configured sink from `ui_runtime.v1.json`
-  - same-origin `/api/events`
-  - fallback to `http://127.0.0.1:8080/.../api/events` when opened from another dev host/port
+  - when UI runs on `:8080`, same-origin sink is used first
+  - when UI runs on static-only servers (for example `:5500`), controls try `http://127.0.0.1:8080/.../api/events` first, then same-origin fallback
+  - repo-root `dev_server.py` now aliases `/airspacesim/{templates,static,data}/...` to `airspacesim-playground/...` when playground exists, preventing package-vs-playground data leaks
+- Aircraft markers use local SVG icon rendering with flow color semantics:
+  - `outbound` -> green
+  - `inbound` -> red
+  - `transit` -> amber
+  - `unknown` -> gray
+- Aircraft tooltips show `FL` labels; click marker for full metadata popup.
+- FL label prefers explicit `flight_level` metadata and falls back to `altitude_ft/100` when `flight_level` is absent.
+- UI side panel now includes an explicit flow-color legend so marker colors are self-explanatory.
+- Operator submit buttons are debounced/disabled while command POST is in-flight to reduce accidental duplicate submissions.
+- Clicking an aircraft (marker or table row) selects it, highlights it on map/table, and pre-fills `SET_SPEED`/`SET_FL` aircraft IDs.
+- Operator panel shows selected-aircraft status and current FL for quick verification before sending `SET_FL`.
+- ID inputs in `SET_SPEED`/`SET_FL` preserve manual edits during live refresh; autofill updates only on selection change or untouched state.
+- FL input auto-suggests from current aircraft level, but manual edits are preserved (not overwritten by poll refresh while editing).
 
 ## 7.2) Simulation Units and Time-Stepping
 
@@ -195,10 +212,15 @@ Primary design rule:
   - Example:
     - valid: `AC800`
     - invalid for this field: `OPS800` (callsign)
+- `SET_FL.payload.aircraft_id` follows the same rule (runtime aircraft ID only).
 - `ADD_AIRCRAFT` with existing `aircraft_id` is skipped to prevent duplicate runtime instances.
+- `ADD_AIRCRAFT.payload.flight_level` is optional metadata (display only, no motion/physics effect).
+- `SET_FL` updates display FL metadata at runtime (no effect on speed, route progression, or vertical physics).
+- UI pre-check warns before sending `ADD_AIRCRAFT` when entered `aircraft_id` already exists in runtime state.
 - Speed updates go through guardrails in `Aircraft._sanitize_speed_kt(...)`:
   - warning above `700 kt`
   - default rejection above `1200 kt`
+- `traffic_flow` is published in `aircraft_state.v1.json` and derived from route geometry against configured airspace center.
 - Inbox event dedupe is process-local:
   - events are deduped by `event_id` during one process lifetime
   - restarting simulation re-reads existing events still present in `data/inbox_events.v1.json`
@@ -210,61 +232,11 @@ Primary design rule:
 - UI may change styles/layout/rendering freely if contract shape is honored.
 - Backend may evolve simulation internals if contract outputs remain compatible.
 
-## 9) Current Progress Snapshot
+## 9) Planning and Status Tracking
 
-Completed:
-- Data-driven Gao airspace/routes/points integrated.
-- Marker/icon behavior aligned (triangles for fixes, VOR icon for center, circle for aircraft).
-- Runtime canonical aircraft state contract + atomic writes implemented.
-- UI reads canonical aircraft state with legacy fallback.
-- UI runtime adapter contract (`ui_runtime.v1.json`) added to map UI sources without JS code changes.
-- Strict v1 contract validators implemented under `airspacesim/io/contracts.py`.
-- File adapter abstraction implemented under `airspacesim/io/adapters.py`.
-- Ingestion adapter interface added (`EventIngestionAdapter`) with `poll()` + optional `ack()`.
-- `StdinEventAdapter` added for stream-based event ingestion.
-- Event contract handling + idempotent application implemented (`inbox_events.v1.json` + `apply_events_idempotent`).
-- Unified scenario contract support added (`scenario.v0.1.json`) with compatibility to split v1 files.
-- Trajectory output contract added (`trajectory.v0.1.json`) and validated on write.
-- Versioned JSON schema artifacts published under `airspacesim/schemas/`.
-- Canonical scenario startup path implemented via `airspacesim/simulation/scenario_runner.py`.
-- Conformance tests added for validators/adapters/events.
-- Simulation stepping now carries residual distance across multiple segments in a single tick.
-- Aircraft manager now supports explicit shutdown signaling with bounded thread joins.
-- Aircraft model now supports altitude and climb/descent rate (`altitude_ft`, `vertical_rate_fpm`).
-- Aircraft manager now supports batched scheduler mode for higher aircraft counts.
-- Utility module stubs were implemented and duplicate route manager naming was consolidated via compatibility shim.
-- Logging config no longer creates log files/directories at import time.
-- Stress scenario runner added: `python -m airspacesim.examples.stress_simulation`.
-- Performance benchmark runner added: `python -m airspacesim.examples.benchmark_simulation`.
-- Failure-mode guide added: `docs/failure-modes.md`.
-- Shared ingestion conformance tests cover file + stdin adapters (`tests/test_contracts_and_adapters.py`).
-- Phase-1 clean-run smoke test added: CLI `init` + example run end-to-end (`tests/test_phase1_clean_run.py`).
-- Trajectory-to-CSV interoperability exporter added (`airspacesim/io/exporters.py` + `examples/interoperability_export.py`).
-- Offline editable bootstrap installer added and tested (`scripts/offline_editable_install.py` + `tests/test_offline_editable_install.py`).
-- Core typed models/interfaces added (`airspacesim/core/*`) and adopted in scenario normalization + trajectory output generation.
-- Framework-agnostic core guard added (`tests/test_framework_agnostic_core.py`).
-- CI workflow added for Python `3.10/3.11/3.12` (`.github/workflows/ci.yml`).
-- CI is configured and has passed remotely on GitHub Actions for supported Python versions (`3.10`, `3.11`, `3.12`).
-- `.gitignore` now scopes runtime artifact ignores to repository-root (`/data`, `/static`, `/templates`, `/logs`) so package assets under `airspacesim/` are tracked and included in CI.
-- Browser console smoke check added and wired in CI (`tests/test_browser_console_clean.py`).
-- Operator controls sink pathing hardened:
-  - supports `/api/events` and `/airspacesim-playground/api/events`
-  - resilient fallback when UI is opened from a static-only server host/port
-- Operator event handling improvements:
-  - duplicate `ADD_AIRCRAFT` IDs are skipped
-  - `SET_SPEED` now logs explicit hints when callsign is provided instead of aircraft ID
-
-Pending (from `sim_ui.md`):
-- none currently marked pending in `sim_ui.md`.
-
-Current improvement backlog (post-roadmap):
-- Wire `RouteRegistry` as the default resolver for flight plans/events so route chains do not require manual waypoint expansion.
-- Persist ingestion checkpoints / compact inbox events so simulation restarts do not replay already-applied historical events.
-- Add UI affordances that reduce operator errors:
-  - route ID autocomplete from loaded scenario routes
-  - aircraft ID selector for speed/reroute commands
-  - de-dup warning before submitting an existing aircraft ID
-- Add event outcome feedback channel from backend to UI (applied/skipped/rejected with reason) so operator panel shows authoritative result.
+- For all feature status, priorities, and execution tracking, use `new_roadmap.md`.
+- Do not maintain progress/checklist state in this document.
+- Keep this file focused on architecture, contracts, runtime behavior, and safe change workflow.
 
 ## 10) Safe Change Workflow
 
@@ -285,7 +257,7 @@ This file is a living guide. On each meaningful change, update:
 - impacted files/ownership
 - contract behavior changes
 - what is now safe/unsafe to modify
-- progress snapshot section
+- and the linked roadmap location if tracking conventions change.
 
 ## 12) Safety and Failure-Mode Policy
 
@@ -294,3 +266,27 @@ This file is a living guide. On each meaningful change, update:
 - For malformed input or invalid contracts, fail fast with explicit validator errors.
 - For runtime file output, keep atomic writes enabled to avoid partial reads.
 - Keep `docs/failure-modes.md` updated whenever behavior changes.
+
+## 13) PyPI Release Process
+
+Run this from repository root:
+
+1. Verify release version:
+   - update `pyproject.toml` `project.version`
+   - ensure version is not already published on PyPI
+2. Run quality gate:
+   - `pytest -q`
+   - `ruff check .`
+3. Build distributions:
+   - `python3 -m build`
+   - fallback if `build` module is not available: `python3 setup.py sdist bdist_wheel`
+4. Validate package metadata:
+   - `python3 -m twine check dist/*`
+5. Publish:
+   - TestPyPI first (recommended): `python3 -m twine upload --repository testpypi dist/*`
+   - PyPI: `python3 -m twine upload dist/*`
+
+Operational notes:
+- Keep publish credentials outside git (for example, environment variables or local `~/.pypirc`).
+- Do not publish from a dirty working tree.
+- Tag the release after successful upload and update `CHANGELOG.md`.

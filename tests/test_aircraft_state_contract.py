@@ -27,6 +27,7 @@ def test_save_aircraft_data_writes_canonical_aircraft_state(tmp_path):
                 position=[16.25, -0.03],
                 callsign="TEST01",
                 speed=420,
+                flight_level=210,
                 altitude_ft=9000,
                 vertical_rate_fpm=0,
                 route="UA612",
@@ -46,8 +47,10 @@ def test_save_aircraft_data_writes_canonical_aircraft_state(tmp_path):
         assert item["position_dd"] == [16.25, -0.03]
         assert item["status"] == "active"
         assert item["speed_kt"] == 420
+        assert item["flight_level"] == 210
         assert item["altitude_ft"] == 9000
         assert item["vertical_rate_fpm"] == 0
+        assert item["traffic_flow"] == "unknown"
         assert item["route_id"] == "UA612"
 
         trajectory_payload = json.loads(trajectory_file.read_text(encoding="utf-8"))
@@ -58,3 +61,25 @@ def test_save_aircraft_data_writes_canonical_aircraft_state(tmp_path):
         settings.AIRCRAFT_FILE = original_aircraft_file
         settings.AIRCRAFT_STATE_FILE = original_aircraft_state_file
         settings.TRAJECTORY_FILE = original_trajectory_file
+
+
+def test_add_aircraft_sets_traffic_flow_from_route():
+    center_lat, center_lon = settings.AIRSPACE_CENTER
+    routes = {
+        "OUTBOUND": [
+            {"dec_coords": [center_lat, center_lon]},
+            {"dec_coords": [center_lat + 0.6, center_lon + 0.6]},
+        ],
+        "INBOUND": [
+            {"dec_coords": [center_lat + 0.6, center_lon + 0.6]},
+            {"dec_coords": [center_lat, center_lon]},
+        ],
+    }
+    manager = AircraftManager(routes, execution_mode="batched")
+
+    manager.add_aircraft(id="AC_OUT_1", route_name="OUTBOUND", callsign="OUT1", speed=420)
+    manager.add_aircraft(id="AC_IN_1", route_name="INBOUND", callsign="IN1", speed=420)
+
+    by_id = {ac.id: ac for ac in manager.aircraft_list}
+    assert by_id["AC_OUT_1"].traffic_flow == "outbound"
+    assert by_id["AC_IN_1"].traffic_flow == "inbound"

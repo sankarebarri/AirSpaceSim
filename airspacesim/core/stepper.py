@@ -26,6 +26,7 @@ class ManagerStepper:
                     updated_utc=now_iso,
                     callsign=ac.callsign,
                     speed_kt=float(ac.speed),
+                    flight_level=getattr(ac, "flight_level", None),
                     altitude_ft=float(ac.altitude_ft),
                     vertical_rate_fpm=float(ac.vertical_rate_fpm),
                 )

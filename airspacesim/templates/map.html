@@ -43,7 +43,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Callsign</th>
-                                <th>Speed</th>
+                                <th>FL</th>
                                 <th>Position</th>
                             </tr>
                         </thead>
@@ -51,6 +51,17 @@
                     </table>
                 </div>
                 <p id="aircraft-status" class="status-line">Waiting for aircraft feed...</p>
+                <p id="selected-aircraft-status" class="status-line">Selected: none</p>
+            </section>
+
+            <section class="panel-card">
+                <h2>Flow Legend</h2>
+                <ul class="legend-list" aria-label="Traffic flow legend">
+                    <li><span class="legend-swatch outbound" aria-hidden="true"></span>Outbound</li>
+                    <li><span class="legend-swatch inbound" aria-hidden="true"></span>Inbound</li>
+                    <li><span class="legend-swatch transit" aria-hidden="true"></span>Transit</li>
+                    <li><span class="legend-swatch unknown" aria-hidden="true"></span>Unknown</li>
+                </ul>
             </section>
 
             <section class="panel-card">
@@ -63,17 +74,30 @@
                         <label>Callsign<input id="add-callsign" type="text" placeholder="OPS900" /></label>
                         <label>Route ID<input id="add-route-id" type="text" required placeholder="UA612" /></label>
                         <label>Speed (kt)<input id="add-speed-kt" type="number" min="1" step="1" value="420" required /></label>
+                        <label>Flight Level (FL)<input id="add-flight-level" type="number" min="0" step="1" placeholder="350" /></label>
                     </div>
                     <button type="submit">Queue ADD_AIRCRAFT</button>
                 </form>
 
                 <form id="form-set-speed" class="control-form">
                     <h3>Set Aircraft Speed</h3>
+                    <p class="helper-line">Use runtime aircraft ID (for example, <code>AC800</code>), not callsign.</p>
                     <div class="grid-2">
                         <label>Aircraft ID<input id="set-speed-aircraft-id" type="text" required placeholder="AC900" /></label>
                         <label>Speed (kt)<input id="set-speed-kt" type="number" min="1" step="1" value="240" required /></label>
                     </div>
                     <button type="submit">Queue SET_SPEED</button>
+                </form>
+
+                <form id="form-set-flight-level" class="control-form">
+                    <h3>Set Flight Level</h3>
+                    <p class="helper-line">Flight level is metadata only; it does not change movement physics.</p>
+                    <p class="helper-line" id="set-fl-current">Current FL: -</p>
+                    <div class="grid-2">
+                        <label>Aircraft ID<input id="set-fl-aircraft-id" type="text" required placeholder="AC900" /></label>
+                        <label>Flight Level (FL)<input id="set-flight-level" type="number" min="0" step="1" value="300" required /></label>
+                    </div>
+                    <button type="submit">Queue SET_FL</button>
                 </form>
 
                 <form id="form-set-sim-rate" class="control-form">
@@ -96,7 +120,7 @@
         </aside>
     </main>
 
-    <script type="module" src="../static/js/aircraft_simulation.js?v=20260225"></script>
+    <script type="module" src="../static/js/aircraft_simulation.js?v=20260305"></script>
 </body>
 
 </html>

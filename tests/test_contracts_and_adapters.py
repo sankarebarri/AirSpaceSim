@@ -114,6 +114,90 @@ def test_contract_validators_reject_invalid_payloads():
         pass
 
 
+def test_validate_aircraft_state_accepts_traffic_flow():
+    payload = {
+        "schema": {"name": "airspacesim.aircraft_state", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "aircraft": [
+                {
+                    "id": "A",
+                    "position_dd": [16.25, -0.03],
+                    "status": "active",
+                    "updated_utc": "2026-02-20T00:00:00Z",
+                    "traffic_flow": "outbound",
+                }
+            ]
+        },
+    }
+    validate_aircraft_state(payload)
+
+
+def test_validate_aircraft_state_rejects_invalid_traffic_flow():
+    payload = {
+        "schema": {"name": "airspacesim.aircraft_state", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "aircraft": [
+                {
+                    "id": "A",
+                    "position_dd": [16.25, -0.03],
+                    "status": "active",
+                    "updated_utc": "2026-02-20T00:00:00Z",
+                    "traffic_flow": "bad",
+                }
+            ]
+        },
+    }
+    try:
+        validate_aircraft_state(payload)
+        assert False, "Expected ValidationError for invalid traffic_flow"
+    except ValidationError:
+        pass
+
+
+def test_validate_aircraft_state_accepts_flight_level():
+    payload = {
+        "schema": {"name": "airspacesim.aircraft_state", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "aircraft": [
+                {
+                    "id": "A",
+                    "position_dd": [16.25, -0.03],
+                    "status": "active",
+                    "updated_utc": "2026-02-20T00:00:00Z",
+                    "flight_level": 350,
+                }
+            ]
+        },
+    }
+    validate_aircraft_state(payload)
+
+
+def test_validate_aircraft_state_rejects_invalid_flight_level():
+    payload = {
+        "schema": {"name": "airspacesim.aircraft_state", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "aircraft": [
+                {
+                    "id": "A",
+                    "position_dd": [16.25, -0.03],
+                    "status": "active",
+                    "updated_utc": "2026-02-20T00:00:00Z",
+                    "flight_level": -1,
+                }
+            ]
+        },
+    }
+    try:
+        validate_aircraft_state(payload)
+        assert False, "Expected ValidationError for invalid flight_level"
+    except ValidationError:
+        pass
+
+
 def test_file_event_adapter_is_idempotent_and_ordered(tmp_path):
     payload = {
         "schema": {"name": "airspacesim.inbox_events", "version": "1.0"},
@@ -158,6 +242,7 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
             route="R1",
             speed=400,
             callsign="AC1",
+            flight_level=280,
             altitude_ft=9000,
             vertical_rate_fpm=0,
             position=[10.0, 1.0],
@@ -194,16 +279,23 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
             },
             {
                 "event_id": "e4",
-                "type": "SET_SIMULATION_SPEED",
+                "type": "SET_FL",
                 "created_utc": "2026-02-20T00:00:04Z",
+                "payload": {"aircraft_id": "AC1", "flight_level": 340},
+            },
+            {
+                "event_id": "e5",
+                "type": "SET_SIMULATION_SPEED",
+                "created_utc": "2026-02-20T00:00:05Z",
                 "payload": {"sim_rate": 2.0},
             },
         ]
         result = apply_events_idempotent(manager, events)
-        assert result["applied"] == ["e1", "e2", "e3", "e4"]
+        assert result["applied"] == ["e1", "e2", "e3", "e4", "e5"]
         assert manager.aircraft_list[0].speed == 420
         assert manager.aircraft_list[0].route == "R2"
         assert manager.aircraft_list[0].vertical_rate_fpm == 600
+        assert manager.aircraft_list[0].flight_level == 340
         assert settings.SIMULATION_SPEED == 2.0
     finally:
         settings.AIRCRAFT_FILE = original_aircraft_file
@@ -245,6 +337,7 @@ def test_apply_events_set_speed_with_callsign_hint():
             id="AC800",
             callsign="OPS800",
             speed=420,
+            flight_level=220,
             route="R1",
             altitude_ft=9000,
             vertical_rate_fpm=0,
@@ -287,6 +380,24 @@ def test_validate_inbox_events_accepts_set_simulation_speed():
                     "type": "SET_SIMULATION_SPEED",
                     "created_utc": "2026-02-20T00:00:01Z",
                     "payload": {"sim_rate": 2.5},
+                }
+            ]
+        },
+    }
+    validate_inbox_events(payload)
+
+
+def test_validate_inbox_events_accepts_set_fl():
+    payload = {
+        "schema": {"name": "airspacesim.inbox_events", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "events": [
+                {
+                    "event_id": "evt-set-fl-1",
+                    "type": "SET_FL",
+                    "created_utc": "2026-02-20T00:00:01Z",
+                    "payload": {"aircraft_id": "AC1", "flight_level": 330},
                 }
             ]
         },

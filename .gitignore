@@ -2,6 +2,14 @@
 dist/
 build/
 *.egg-info/
+pip-wheel-metadata/
+*.egg
+
+# Release / publishing local files
+.pypirc
+.testpypirc
+.env.pypi
+release.env
 
 # Python cache files
 __pycache__/
@@ -62,3 +70,8 @@ airspacesim-playground/
 
 # palyground
 airspacesim-palyground/
+
+# ideas
+ideas.md
+
+new_roadmap.md

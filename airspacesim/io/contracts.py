@@ -161,6 +161,12 @@ def validate_trajectory_v01(payload):
                 and item["speed_kt"] >= 0,
                 f"data.tracks[{idx}].speed_kt must be >= 0",
             )
+        if "flight_level" in item:
+            _require(
+                isinstance(item.get("flight_level"), (int, float))
+                and item["flight_level"] >= 0,
+                f"data.tracks[{idx}].flight_level must be >= 0",
+            )
         if "altitude_ft" in item:
             _require(
                 isinstance(item.get("altitude_ft"), (int, float))
@@ -279,6 +285,12 @@ def validate_scenario_aircraft(payload, route_ids=None):
             isinstance(item.get("speed_kt"), (int, float)) and item["speed_kt"] > 0,
             f"data.aircraft[{idx}].speed_kt must be > 0",
         )
+        if "flight_level" in item:
+            _require(
+                isinstance(item.get("flight_level"), (int, float))
+                and item["flight_level"] >= 0,
+                f"data.aircraft[{idx}].flight_level must be >= 0",
+            )
         if "altitude_ft" in item:
             _require(
                 isinstance(item.get("altitude_ft"), (int, float))
@@ -289,6 +301,12 @@ def validate_scenario_aircraft(payload, route_ids=None):
             _require(
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
+            )
+        if "traffic_flow" in item:
+            _require(
+                isinstance(item.get("traffic_flow"), str)
+                and item["traffic_flow"] in {"outbound", "inbound", "transit", "unknown"},
+                f"data.aircraft[{idx}].traffic_flow must be one of outbound|inbound|transit|unknown",
             )
     return payload
 
@@ -302,6 +320,7 @@ def validate_inbox_events(payload):
     allowed_types = {
         "ADD_AIRCRAFT",
         "SET_SPEED",
+        "SET_FL",
         "REMOVE_AIRCRAFT",
         "REROUTE",
         "SET_VERTICAL_RATE",
@@ -353,10 +372,22 @@ def validate_aircraft_state(payload):
                 and item["altitude_ft"] >= 0,
                 f"data.aircraft[{idx}].altitude_ft must be >= 0",
             )
+        if "flight_level" in item:
+            _require(
+                isinstance(item.get("flight_level"), (int, float))
+                and item["flight_level"] >= 0,
+                f"data.aircraft[{idx}].flight_level must be >= 0",
+            )
         if "vertical_rate_fpm" in item:
             _require(
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
+            )
+        if "traffic_flow" in item:
+            _require(
+                isinstance(item.get("traffic_flow"), str)
+                and item["traffic_flow"] in {"outbound", "inbound", "transit", "unknown"},
+                f"data.aircraft[{idx}].traffic_flow must be one of outbound|inbound|transit|unknown",
             )
         _require(
             _is_iso8601_utc(item.get("updated_utc")),
@@ -478,5 +509,11 @@ def validate_aircraft_data(payload):
             _require(
                 isinstance(item.get("speed"), (int, float)) and item["speed"] >= 0,
                 f"{prefix}.aircraft_data[{idx}].speed must be >= 0",
+            )
+        if "flight_level" in item:
+            _require(
+                isinstance(item.get("flight_level"), (int, float))
+                and item["flight_level"] >= 0,
+                f"{prefix}.aircraft_data[{idx}].flight_level must be >= 0",
             )
     return payload
