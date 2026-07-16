@@ -1,6 +1,38 @@
-# Migration Notes (Draft)
+# Migration Notes
 
-## Naming migration
+## 0.2.0 breaking changes (engine cleanup)
+
+Approved removals with no deprecation cycle (see
+`docs/repository-audit/08_OPEN_QUESTIONS.md`, Q1):
+
+- **`airspacesim.hello` / `say_hello`** — removed. Tutorial artefact with no
+  replacement.
+- **`airspacesim.routes.route_manager`** — removed. Import
+  `airspacesim.routes.manager.RouteManager` instead.
+- **`airspacesim.config`, `airspacesim.api`, `airspacesim.web`,
+  `airspacesim.tests` subpackages** — removed. For settings, import
+  `airspacesim.settings.settings` directly; the hosted API/web apps live in
+  `apps/`, not inside the engine package.
+- **`settings.SIMULATION_SPEED` (process-wide time acceleration)** — removed.
+  Use `AircraftManager(sim_rate=...)` or
+  `AircraftManager.set_simulation_speed(...)`; the rate is scoped to one
+  manager. `Aircraft.update_position(time_step)` now interprets `time_step`
+  as **simulated seconds** and no longer applies any global multiplier.
+- **Legacy filename fallbacks** — removed: `gao_airspace.json`,
+  `gao_airspace_config.json` (use `airspace_config.json`), and
+  `new_aircraft.json` (use `aircraft_ingest.json`). The packaged
+  `data/gao_airspace.json` and `data/new_aircraft.json` seed files were
+  deleted.
+
+New in 0.2.0:
+
+- `AircraftManager(enable_file_output=False)` (also exposed through
+  `initialize_manager_from_scenarios(...)`) disables all JSON file writes so
+  embedding applications can drive the engine without filesystem side
+  effects. The hosted API uses this instead of monkeypatching
+  `save_aircraft_data`.
+
+## Naming migration (pre-0.2.0 history)
 - Old: `gao_airspace.json`
 - New: `airspace_config.json`
 
@@ -18,7 +50,7 @@
 
 ## Current behavior
 - Writers use new generic names.
-- Readers accept both new and legacy names during transition.
+- Since 0.2.0, readers accept only the generic names (legacy fallbacks removed).
 
 ## Recommended user action
 - Rename legacy files to generic names.

@@ -314,7 +314,6 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
 
     original_aircraft_file = settings.AIRCRAFT_FILE
     original_aircraft_state_file = settings.AIRCRAFT_STATE_FILE
-    original_sim_speed = settings.SIMULATION_SPEED
     settings.AIRCRAFT_FILE = str((tmp_path / "aircraft_data.json"))
     settings.AIRCRAFT_STATE_FILE = str((tmp_path / "aircraft_state.v1.json"))
     try:
@@ -378,11 +377,11 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
         assert manager.aircraft_list[0].assigned_radial_deg is None
         assert manager.aircraft_list[0].radial_deviation_deg is None
         assert manager.aircraft_list[0].lateral_mode == "route_intercept"
-        assert settings.SIMULATION_SPEED == 2.0
+        # 0.2.0: SET_SIMULATION_SPEED is scoped to the manager, not process-wide.
+        assert manager.sim_rate == 2.0
     finally:
         settings.AIRCRAFT_FILE = original_aircraft_file
         settings.AIRCRAFT_STATE_FILE = original_aircraft_state_file
-        settings.SIMULATION_SPEED = original_sim_speed
 
 
 def test_apply_events_skips_duplicate_add_aircraft_id():

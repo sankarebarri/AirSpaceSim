@@ -9,7 +9,7 @@ from airspacesim.simulation.performance_database import (
     speed_limits_kt,
     turn_rate_deg_per_sec,
 )
-from airspacesim.settings import settings  # To access SIMULATION_SPEED
+from airspacesim.settings import settings  # Speed guardrail configuration defaults
 from airspacesim.utils.calculate_bearing import calculate_bearing
 from airspacesim.utils.logging_config import default_logger as logger
 
@@ -189,17 +189,18 @@ class Aircraft:
 
     def update_position(self, time_step):
         """
-        Update the aircraft's position based on its speed and elapsed time.
-        This version processes only one update step per call, so that any change in the
-        simulation speed is applied on the next tick to all aircraft.
+        Advance the aircraft by `time_step` simulated seconds.
 
-        :param time_step: Time elapsed in seconds since the last update.
+        The caller owns time acceleration: to run faster than real time, pass
+        more simulated seconds per real tick (see AircraftManager.sim_rate).
+        This method performs no IO and reads no global runtime state.
+
+        :param time_step: Simulated seconds to advance.
         """
         if self.current_index >= len(self.waypoints) - 1:
             return
 
-        # `time_step` is real elapsed seconds; simulation speed scales simulated seconds.
-        effective_time_seconds = float(time_step) * float(settings.SIMULATION_SPEED)
+        effective_time_seconds = float(time_step)
         # Vertical profile update is independent from horizontal segment progression.
         self._update_vertical_profile(effective_time_seconds)
         # Horizontal motion in NM:

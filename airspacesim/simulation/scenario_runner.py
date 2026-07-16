@@ -138,10 +138,17 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
 
 
 def initialize_manager_from_scenarios(
-    scenario_airspace, scenario_aircraft, execution_mode="thread_per_aircraft"
+    scenario_airspace,
+    scenario_aircraft,
+    execution_mode="thread_per_aircraft",
+    enable_file_output=True,
 ):
     routes = _build_routes_from_scenario_airspace(scenario_airspace)
-    manager = AircraftManager(routes, execution_mode=execution_mode)
+    manager = AircraftManager(
+        routes,
+        execution_mode=execution_mode,
+        enable_file_output=enable_file_output,
+    )
     for item in scenario_aircraft["data"]["aircraft"]:
         manager.add_aircraft(
             id=item["id"],

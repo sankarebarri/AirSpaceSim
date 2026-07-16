@@ -34,11 +34,13 @@ def test_workspace_files_override_packaged_defaults_and_runtime_aliases(tmp_path
     workspace_data_dir = tmp_path / "data"
     workspace_data_dir.mkdir()
     scenario_path = workspace_data_dir / "scenario_airspace.v1.json"
-    legacy_ingest_path = tmp_path / "new_aircraft.json"
+    root_ingest_path = tmp_path / "aircraft_ingest.json"
     scenario_path.write_text("{}", encoding="utf-8")
-    legacy_ingest_path.write_text("{}", encoding="utf-8")
+    root_ingest_path.write_text("{}", encoding="utf-8")
 
     resolved = Settings(workspace_root=tmp_path)
 
     assert resolved.SCENARIO_AIRSPACE_FILE == str(scenario_path)
-    assert resolved.NEW_AIRCRAFT_FILE == str(legacy_ingest_path)
+    # Workspace-root files still override the data/ default location.
+    # (0.2.0 removed the legacy new_aircraft.json alias.)
+    assert resolved.NEW_AIRCRAFT_FILE == str(root_ingest_path)

@@ -90,10 +90,7 @@ INIT_FILE_ASSETS = (
     (("static/js/aircraft_simulation.js",), "static/js/aircraft_simulation.js"),
     (("static/js/ui_runtime.js",), "static/js/ui_runtime.js"),
     (("static/css/map_styles.css",), "static/css/map_styles.css"),
-    (
-        ("data/airspace_config.json", "data/gao_airspace.json"),
-        "data/airspace_config.json",
-    ),
+    (("data/airspace_config.json",), "data/airspace_config.json"),
     (("data/airspace_data.json",), "data/airspace_data.json"),
     (("data/map_config.v1.json",), "data/map_config.v1.json"),
     (("data/scenario_airspace.v1.json",), "data/scenario_airspace.v1.json"),
@@ -105,10 +102,7 @@ INIT_FILE_ASSETS = (
     (("data/aircraft_state.v1.json",), "data/aircraft_state.v1.json"),
     (("data/trajectory.v0.1.json",), "data/trajectory.v0.1.json"),
     (("data/ui_runtime.v1.json",), "data/ui_runtime.v1.json"),
-    (
-        ("data/aircraft_ingest.json", "data/new_aircraft.json"),
-        "data/aircraft_ingest.json",
-    ),
+    (("data/aircraft_ingest.json",), "data/aircraft_ingest.json"),
     (("examples/example_simulation.py",), "examples/example_simulation.py"),
     (("examples/interoperability_export.py",), "examples/interoperability_export.py"),
     (("dev_server.py",), "dev_server.py"),
@@ -127,20 +121,12 @@ def _find_config_path():
     2) map_config.v1.json
     3) data/airspace_config.json
     4) airspace_config.json
-    5) data/gao_airspace.json (legacy)
-    6) gao_airspace.json (legacy)
-    7) data/gao_airspace_config.json (legacy)
-    8) gao_airspace_config.json (legacy)
     """
     candidates = [
         Path.cwd() / "data" / "map_config.v1.json",
         Path.cwd() / "map_config.v1.json",
         Path.cwd() / "data" / "airspace_config.json",
         Path.cwd() / "airspace_config.json",
-        Path.cwd() / "data" / "gao_airspace.json",
-        Path.cwd() / "gao_airspace.json",
-        Path.cwd() / "data" / "gao_airspace_config.json",
-        Path.cwd() / "gao_airspace_config.json",
     ]
     for candidate in candidates:
         if candidate.exists():

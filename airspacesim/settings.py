@@ -10,7 +10,9 @@ class Settings:
         self.EARTH_RADIUS_NM = 3440.065  # Nautical Miles
         self.NM_TO_METERS = 1852  # 1 NM in meters
         self.SIMULATION_UPDATE_INTERVAL = 1.0  # Seconds (simulation update time step)
-        self.SIMULATION_SPEED = 1.0  # Simulation speed multiplier (1.0 = normal speed, 2.0 = twice as fast, etc.)
+        # NOTE: the process-wide SIMULATION_SPEED multiplier was removed in 0.2.0.
+        # Time acceleration is now per-manager: AircraftManager(sim_rate=...) /
+        # AircraftManager.set_simulation_speed().
         self.DEFAULT_SPEED_KNOTS = 400  # Default aircraft speed in knots
         # Speed guardrails (knots).
         self.REALISTIC_ENROUTE_SPEED_WARNING_KTS = 700.0
@@ -60,7 +62,7 @@ class Settings:
 
         # User-defined overrides (if they exist)
         self.AIRSPACE_FILE = self.get_user_override(
-            ["airspace_config.json", "gao_airspace.json", "gao_airspace_config.json"],
+            "airspace_config.json",
             self.DEFAULT_AIRSPACE_FILE,
         )
         self.AIRSPACE_DATA_FILE = self.get_user_override(
@@ -91,7 +93,7 @@ class Settings:
             "inbox_events.v1.json"
         )
         self.NEW_AIRCRAFT_FILE = self.get_workspace_runtime_path(
-            ["aircraft_ingest.json", "new_aircraft.json"],
+            "aircraft_ingest.json"
         )
 
     def _package_data_path(self, filename):

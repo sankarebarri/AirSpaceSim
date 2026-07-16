@@ -59,11 +59,6 @@ Planning source of truth:
 - Purpose: versioned envelope for map config contract.
 - Preferred by frontend when available; falls back to `airspace_config.json`.
 
-### Legacy map fallback
-- `data/gao_airspace.json`
-- Purpose: legacy fallback map config.
-- Modify when: only if supporting legacy readers.
-
 ### Runtime aircraft (legacy)
 - `data/aircraft_data.json`
 - Purpose: legacy aircraft snapshot consumed by older UI behavior.
@@ -185,8 +180,10 @@ Planning source of truth:
   - `dt_seconds`: seconds
   - route geometry distance: NM (via haversine), not raw lat/lon degree deltas
 - Motion update rule:
-  - `distance_nm = (speed_kt / 3600) * dt_seconds * SIMULATION_SPEED`
-  - `SIMULATION_SPEED` is global time acceleration (default `1.0`)
+  - `distance_nm = (speed_kt / 3600) * simulated_seconds`
+  - Time acceleration is per-manager since 0.2.0: `AircraftManager(sim_rate=...)` /
+    `set_simulation_speed()` scale simulated seconds per tick. The old global
+    `settings.SIMULATION_SPEED` was removed.
 - Guardrails:
   - warn above `REALISTIC_ENROUTE_SPEED_WARNING_KTS` (default `700`)
   - reject/clamp/off behavior controlled by `SPEED_GUARDRAIL_MODE`

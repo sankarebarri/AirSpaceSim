@@ -44,16 +44,30 @@ def _resolve_flight_level_for_output(aircraft):
 
 
 class AircraftManager:
-    def __init__(self, routes, execution_mode="thread_per_aircraft"):
+    def __init__(
+        self,
+        routes,
+        execution_mode="thread_per_aircraft",
+        sim_rate=1.0,
+        enable_file_output=True,
+    ):
         """
         Initialize an Aircraft Manager to handle multiple aircraft simulations.
 
         :param routes: Dictionary of predefined routes with waypoints in DMS format.
         :param execution_mode: "thread_per_aircraft" (legacy) or "batched".
+        :param sim_rate: Time-acceleration multiplier applied by this manager's
+            own loops (simulated seconds per real second). Scoped per manager,
+            not process-wide.
+        :param enable_file_output: When False, save_aircraft_data() is a no-op
+            so embedding applications (for example the hosted API) can drive
+            the manager without JSON file side effects.
         """
         self.aircraft_list = []  # Stores active aircraft
         self.routes = routes  # Available routes
         self.execution_mode = execution_mode
+        self.sim_rate = float(sim_rate)
+        self.enable_file_output = bool(enable_file_output)
         self.threads = []  # List to track active simulation threads
         self.lock = threading.Lock()  # Thread safety
         self.stop_event = threading.Event()
@@ -99,12 +113,13 @@ class AircraftManager:
 
     def set_simulation_speed(self, sim_rate):
         """
-        Set global simulation speed multiplier applied by Aircraft.update_position().
+        Set this manager's simulation speed multiplier (simulated seconds per
+        real second), applied by the manager's own stepping loops.
         """
         value = float(sim_rate)
         if value <= 0:
             raise ValueError("Simulation speed multiplier must be > 0")
-        settings.SIMULATION_SPEED = value
+        self.sim_rate = value
         logger.info("Simulation speed multiplier set to %.3f", value)
         self.save_aircraft_data()
 
@@ -196,7 +211,9 @@ class AircraftManager:
                 if stop_flag and stop_flag.is_set():
                     logger.info("⛔ Simulation for %s interrupted.", aircraft.id)
                     return
-                aircraft.update_position(settings.SIMULATION_UPDATE_INTERVAL)
+                aircraft.update_position(
+                    settings.SIMULATION_UPDATE_INTERVAL * self.sim_rate
+                )
                 self.save_aircraft_data()
                 time.sleep(settings.SIMULATION_UPDATE_INTERVAL)
             # Mark aircraft as finished and record the finish time.
@@ -214,7 +231,11 @@ class AircraftManager:
         """
         Saves the current positions, callsigns, and speeds of all aircraft to JSON.
         Also logs the number and IDs of aircraft being saved.
+
+        No-op when the manager was created with enable_file_output=False.
         """
+        if not self.enable_file_output:
+            return
         with self.lock:
             timestamp = _utc_now_iso()
             legacy_aircraft_rows = [
@@ -474,11 +495,12 @@ class AircraftManager:
             time.sleep(interval)
 
     def _step_all_aircraft(self, interval):
+        simulated_seconds = float(interval) * self.sim_rate
         with self.lock:
             aircraft_list = list(self.aircraft_list)
         for aircraft in aircraft_list:
             if aircraft.current_index < len(aircraft.waypoints) - 1:
-                aircraft.update_position(interval)
+                aircraft.update_position(simulated_seconds)
                 if aircraft.current_index >= len(
                     aircraft.waypoints
                 ) - 1 and not hasattr(aircraft, "finished_time"):

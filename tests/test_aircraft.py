@@ -26,20 +26,16 @@ def test_aircraft_reaches_next_waypoint_on_large_step():
     assert ac.position == [0.05, 0.0]
 
 
-def test_aircraft_respects_simulation_speed_multiplier():
-    original = settings.SIMULATION_SPEED
-    try:
-        settings.SIMULATION_SPEED = 2.0
-        ac_fast = Aircraft("AC3", "R1", [[0.0, 0.0], [1.0, 0.0]], speed=60)
-        ac_fast.update_position(60)
+def test_aircraft_update_position_uses_simulated_seconds_directly():
+    # 0.2.0: Aircraft no longer reads a global speed multiplier; callers pass
+    # simulated seconds (time acceleration is owned by AircraftManager.sim_rate).
+    ac_fast = Aircraft("AC3", "R1", [[0.0, 0.0], [1.0, 0.0]], speed=60)
+    ac_fast.update_position(120)
 
-        settings.SIMULATION_SPEED = 1.0
-        ac_normal = Aircraft("AC4", "R1", [[0.0, 0.0], [1.0, 0.0]], speed=60)
-        ac_normal.update_position(60)
+    ac_normal = Aircraft("AC4", "R1", [[0.0, 0.0], [1.0, 0.0]], speed=60)
+    ac_normal.update_position(60)
 
-        assert ac_fast.position[0] > ac_normal.position[0]
-    finally:
-        settings.SIMULATION_SPEED = original
+    assert ac_fast.position[0] > ac_normal.position[0]
 
 
 def test_aircraft_carries_over_distance_across_multiple_segments():
@@ -265,25 +261,21 @@ def test_aircraft_480kt_moves_about_480nm_in_one_sim_hour():
 
 
 def test_time_acceleration_changes_wall_clock_only_not_physics():
-    original = settings.SIMULATION_SPEED
-    try:
-        # Baseline: 1x simulation, 3600 real seconds.
-        settings.SIMULATION_SPEED = 1.0
-        baseline = Aircraft("AC9", "R6", [[0.0, 0.0], [0.0, 20.0]], speed=480)
-        baseline.update_position(3600)
-        baseline_nm = haversine(0.0, 0.0, baseline.position[0], baseline.position[1])
+    # Same simulated seconds must produce the same physics regardless of how
+    # a caller paces them in real time (e.g. 10x acceleration = 10x simulated
+    # seconds per real tick, delivered here in one call vs ten).
+    baseline = Aircraft("AC9", "R6", [[0.0, 0.0], [0.0, 20.0]], speed=480)
+    baseline.update_position(3600)
+    baseline_nm = haversine(0.0, 0.0, baseline.position[0], baseline.position[1])
 
-        # Accelerated: 10x simulation, 360 real seconds -> same 3600 simulated seconds.
-        settings.SIMULATION_SPEED = 10.0
-        accelerated = Aircraft("AC10", "R6", [[0.0, 0.0], [0.0, 20.0]], speed=480)
+    accelerated = Aircraft("AC10", "R6", [[0.0, 0.0], [0.0, 20.0]], speed=480)
+    for _ in range(10):
         accelerated.update_position(360)
-        accelerated_nm = haversine(
-            0.0, 0.0, accelerated.position[0], accelerated.position[1]
-        )
+    accelerated_nm = haversine(
+        0.0, 0.0, accelerated.position[0], accelerated.position[1]
+    )
 
-        assert accelerated_nm == pytest.approx(baseline_nm, abs=0.1)
-    finally:
-        settings.SIMULATION_SPEED = original
+    assert accelerated_nm == pytest.approx(baseline_nm, abs=0.1)
 
 
 def test_absurd_speed_rejected_by_default_guardrail():

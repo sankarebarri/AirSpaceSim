@@ -1,12 +1,17 @@
 import logging
 
-from airspacesim.routes.manager import RouteManager as CanonicalRouteManager
-from airspacesim.routes.route_manager import RouteManager as ShimRouteManager
 from airspacesim.utils.logging_config import setup_logger
 
 
-def test_route_manager_shim_points_to_canonical_class():
-    assert ShimRouteManager is CanonicalRouteManager
+def test_route_manager_shim_module_is_removed():
+    # 0.2.0 removed the airspacesim.routes.route_manager compatibility shim;
+    # airspacesim.routes.manager.RouteManager is the only implementation.
+    import importlib
+
+    import pytest
+
+    with pytest.raises(ModuleNotFoundError):
+        importlib.import_module("airspacesim.routes.route_manager")
 
 
 def test_setup_logger_without_file_has_no_file_handler():

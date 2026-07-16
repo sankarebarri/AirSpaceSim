@@ -38,10 +38,8 @@ Canonical generic names:
 - `data/ui_runtime.v1.json`
 - `data/aircraft_ingest.json`
 
-Temporary legacy compatibility (read-only fallback):
-- `gao_airspace.json`
-- `gao_airspace_config.json`
-- `new_aircraft.json`
+Legacy filename fallbacks (`gao_airspace.json`, `gao_airspace_config.json`,
+`new_aircraft.json`) were removed in 0.2.0 — see `docs/migration.md`.
 
 ## Compatibility policy
 - Patch/minor versions: backward-compatible additions.

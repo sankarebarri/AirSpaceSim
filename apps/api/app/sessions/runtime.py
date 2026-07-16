@@ -42,13 +42,14 @@ class SimulationRuntimeSession:
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
 
+        # Hosted runtime sessions must not write shared JSON files; the engine
+        # supports this directly via enable_file_output=False.
         self.manager = initialize_manager_from_scenarios(
             scenario_airspace,
             scenario_aircraft,
             execution_mode="batched",
+            enable_file_output=False,
         )
-        # Hosted runtime sessions should not write shared JSON files.
-        self.manager.save_aircraft_data = lambda: None
 
     def start(self) -> None:
         with self._state_lock:
@@ -144,12 +145,7 @@ class SimulationRuntimeSession:
             "payload": self._normalize_command_payload(command_type, payload),
         }
         with self._tick_lock:
-            original_save = self.manager.save_aircraft_data
-            self.manager.save_aircraft_data = lambda: None
-            try:
-                result = apply_events_idempotent(self.manager, [normalized_event])
-            finally:
-                self.manager.save_aircraft_data = original_save
+            result = apply_events_idempotent(self.manager, [normalized_event])
         self.last_updated_utc = _utc_now_iso()
         self._emit_state("command")
         return result

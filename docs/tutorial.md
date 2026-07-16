@@ -164,11 +164,14 @@ Add another event to the same file:
 
 - Per-aircraft speed uses knots (`NM/hour`).
 - Motion each tick uses:
-  - `distance_nm = (speed_kt / 3600) * dt_seconds * SIMULATION_SPEED`
-- `SIMULATION_SPEED=2.0` means all aircraft progress 2x faster in simulated time.
+  - `distance_nm = (speed_kt / 3600) * simulated_seconds`
+- Time acceleration is owned by the manager (0.2.0): `sim_rate=2.0` means the
+  manager feeds each tick twice as many simulated seconds, so all of its
+  aircraft progress 2x faster. The rate is scoped to one `AircraftManager`,
+  not process-wide.
 
 Current state:
-- `SIMULATION_SPEED` exists and is applied globally in motion updates.
+- `AircraftManager(sim_rate=...)` and `set_simulation_speed()` control acceleration.
 - Runtime change is supported via `SET_SIMULATION_SPEED` event:
 
 ```json

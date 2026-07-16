@@ -11,7 +11,7 @@ describe("App", () => {
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Learn/ })).toHaveAttribute("href", "/lessons");
     expect(screen.getByRole("link", { name: /Practice/ })).toHaveAttribute("href", "/scenarios");
-    expect(screen.getByRole("link", { name: /Simulate/ })).toHaveAttribute("href", "/runs");
+    expect(screen.getByRole("link", { name: /Simulate/ })).toHaveAttribute("href", "/simulate");
     expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
   });
 });

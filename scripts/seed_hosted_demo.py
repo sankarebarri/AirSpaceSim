@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from airspacesim.io import normalize_scenario_airspace_payload
+from airspacesim.io import normalize_scenario_airspace_payload  # noqa: E402 (after sys.path setup)
 
 DEFAULT_AIRSPACE_PATH = PROJECT_ROOT / "airspaces" / "gao_demo" / "airspace.v1.json"
 LEGACY_DEFAULT_AIRSPACE_PATH = (

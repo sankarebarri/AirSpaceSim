@@ -173,9 +173,7 @@ describe("AppRoutes", () => {
     expect(await screen.findByText("Training Alpha")).toBeInTheDocument();
     expect(await screen.findByText("Fictional")).toBeInTheDocument();
     expect(
-      await screen.findByText(
-        /--template airspaces\/training_alpha\/scenarios\/beginner_mix\.v1\.json/,
-      ),
+      await screen.findByText("Includes a ready-to-run training scenario"),
     ).toBeInTheDocument();
   });
 

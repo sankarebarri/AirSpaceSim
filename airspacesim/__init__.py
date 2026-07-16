@@ -14,7 +14,6 @@ from airspacesim.core import (
     TrajectoryTrack,
     Waypoint,
 )
-from airspacesim.hello import say_hello
 from airspacesim.io import (
     ValidationError,
     build_envelope,
@@ -60,7 +59,6 @@ __all__ = [
     "load_scenario_bundle",
     "load_scenarios",
     "max_flight_level",
-    "say_hello",
     "serialize_trajectory_payload_to_csv",
     "speed_limits_kt",
     "turn_rate_deg_per_sec",

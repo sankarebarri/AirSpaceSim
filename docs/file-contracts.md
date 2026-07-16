@@ -123,10 +123,12 @@ Minimum structure:
   - `id`, `route_id`, `position_dd`, `status`, `updated_utc`
   - optional: `callsign`, `speed_kt`, `flight_level`, `altitude_ft`, `vertical_rate_fpm`
 
-## Legacy fallback reads (temporary)
-- `gao_airspace.json`
-- `gao_airspace_config.json`
-- `new_aircraft.json`
+## Legacy fallback reads
+
+Removed in 0.2.0: `gao_airspace.json`, `gao_airspace_config.json`, and
+`new_aircraft.json` are no longer read as fallbacks. Rename any remaining
+legacy files to `airspace_config.json` / `aircraft_ingest.json`
+(see `docs/migration.md`).
 
 Writers should use canonical files only.
 
