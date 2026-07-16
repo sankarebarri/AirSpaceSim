@@ -1,0 +1,20 @@
+# Project Timeline and Milestone Tags
+
+Every meaningful milestone gets an annotated git tag and a row here, in the
+same change. Phases refer to `docs/repository-audit/07_PHASED_REFACTOR_PLAN.md`;
+decisions refer to `docs/repository-audit/08_OPEN_QUESTIONS.md`.
+
+| Date | Tag | Commit | Milestone |
+|---|---|---|---|
+| 2026-07-16 | `phase-0-baseline` | `bf2af1b` | Baseline commit: hosted app (`apps/`), airspace packages (`airspaces/`), scripts, and audit documents first tracked in git. Last state containing the pre-audit working tree as-is. |
+| 2026-07-16 | — | `930982a` | Audit decisions Q1–Q10 recorded; `lessons.md` promoted to `docs/content/traffic_relationships_spec.md`; `dashboard.html` removed. |
+| 2026-07-16 | `phase-1-engine-purification` | `3f1b5b0` | Phase 1 complete: pure engine step path (simulated seconds, no global speed multiplier, injectable file output, hosted runtime monkeypatch removed) plus all Q1-approved 0.2.0 removals. Last tag containing `airspacesim.hello`, the `route_manager` shim, and the legacy `gao_*`/`new_aircraft` fallbacks is `phase-0-baseline`. |
+
+## Tagging conventions
+
+- Tag name: `phase-<n>-<short-slug>` for refactor phases; `v<semver>` for PyPI
+  releases; `pre-<event>` for last-state-before tags (e.g. `pre-gao-removal`
+  before deleting `airspaces/gao_demo` in Phase 3, per decision Q3).
+- Tags are annotated (`git tag -a`) and pushed together with the branch.
+- When a phase deletes user-visible content or workflows, the row must name
+  the last tag that still contains them.
