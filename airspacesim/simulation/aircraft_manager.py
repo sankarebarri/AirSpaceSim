@@ -118,6 +118,7 @@ class AircraftManager:
         altitude_ft=0.0,
         vertical_rate_fpm=0.0,
         flight_level=None,
+        aircraft_type="UNKNOWN",
     ):
         """
         Adds a new aircraft and starts its simulation.
@@ -128,7 +129,9 @@ class AircraftManager:
 
         # Convert waypoints to decimal degrees.
         waypoints = []
+        waypoint_ids = []
         for wp in self.routes[route_name]:
+            waypoint_ids.append(str(wp.get("id") or wp.get("name") or len(waypoint_ids)))
             if "dec_coords" in wp:
                 coords = wp["dec_coords"]
             else:
@@ -154,9 +157,12 @@ class AircraftManager:
                 altitude_ft=altitude_ft,
                 vertical_rate_fpm=vertical_rate_fpm,
                 flight_level=flight_level,
+                aircraft_type=aircraft_type,
+                waypoint_ids=waypoint_ids,
             )
             aircraft.traffic_flow = self.classify_traffic_flow_from_waypoints(waypoints)
-            self.aircraft_list.append(aircraft)
+            with self.lock:
+                self.aircraft_list.append(aircraft)
         except Exception:
             logger.exception("Error creating Aircraft instance for ID: %s", id)
             raise
@@ -172,7 +178,8 @@ class AircraftManager:
             target=self.simulate_aircraft, args=(aircraft, active_stop_flag)
         )
         thread.start()
-        self.threads.append(thread)
+        with self.lock:
+            self.threads.append(thread)
         logger.info(
             "Aircraft %s added on route %s with callsign %s.", id, route_name, callsign
         )
@@ -215,10 +222,18 @@ class AircraftManager:
                     "id": ac.id,
                     "position": ac.position,
                     "callsign": ac.callsign,
+                    "aircraft_type": getattr(ac, "aircraft_type", "UNKNOWN"),
                     "speed": ac.speed,
                     "flight_level": _resolve_flight_level_for_output(ac),
+                    "target_flight_level": getattr(ac, "target_flight_level", None),
                     "altitude_ft": ac.altitude_ft,
                     "vertical_rate_fpm": ac.vertical_rate_fpm,
+                    "heading_deg": getattr(ac, "heading_deg", 0.0),
+                    "assigned_heading_deg": getattr(ac, "assigned_heading_deg", None),
+                    "assigned_radial_deg": getattr(ac, "assigned_radial_deg", None),
+                    "radial_deviation_deg": getattr(ac, "radial_deviation_deg", None),
+                    "radial_cross_track_nm": getattr(ac, "radial_cross_track_nm", None),
+                    "lateral_mode": getattr(ac, "lateral_mode", "route"),
                     "traffic_flow": getattr(ac, "traffic_flow", "unknown"),
                 }
                 for ac in self.aircraft_list
@@ -242,10 +257,40 @@ class AircraftManager:
                         {
                             "id": ac.id,
                             "callsign": ac.callsign,
+                            "aircraft_type": getattr(ac, "aircraft_type", "UNKNOWN"),
                             "speed_kt": ac.speed,
                             "flight_level": _resolve_flight_level_for_output(ac),
+                            "target_flight_level": getattr(
+                                ac,
+                                "target_flight_level",
+                                None,
+                            ),
                             "altitude_ft": ac.altitude_ft,
                             "vertical_rate_fpm": ac.vertical_rate_fpm,
+                            "heading_deg": getattr(ac, "heading_deg", 0.0),
+                            "assigned_heading_deg": getattr(
+                                ac,
+                                "assigned_heading_deg",
+                                None,
+                            ),
+                            "assigned_radial_deg": getattr(
+                                ac,
+                                "assigned_radial_deg",
+                                None,
+                            ),
+                            "radial_deviation_deg": getattr(
+                                ac,
+                                "radial_deviation_deg",
+                                None,
+                            ),
+                            "radial_cross_track_nm": getattr(
+                                ac,
+                                "radial_cross_track_nm",
+                                None,
+                            ),
+                            "lateral_mode": getattr(ac, "lateral_mode", "route"),
+                            "direct_to_fix_id": getattr(ac, "direct_to_fix_id", None),
+                            "hold_fix_id": getattr(ac, "hold_fix_id", None),
                             "traffic_flow": getattr(ac, "traffic_flow", "unknown"),
                             "route_id": ac.route,
                             "position_dd": ac.position,
@@ -332,6 +377,7 @@ class AircraftManager:
                             ac.get("altitude_ft", 0.0),
                             ac.get("vertical_rate_fpm", 0.0),
                             ac.get("flight_level"),
+                            ac.get("aircraft_type", "UNKNOWN"),
                         )
                     # Clear the JSON file after processing.
                     with open(settings.NEW_AIRCRAFT_FILE, "w") as f:
@@ -428,7 +474,9 @@ class AircraftManager:
             time.sleep(interval)
 
     def _step_all_aircraft(self, interval):
-        for aircraft in self.aircraft_list:
+        with self.lock:
+            aircraft_list = list(self.aircraft_list)
+        for aircraft in aircraft_list:
             if aircraft.current_index < len(aircraft.waypoints) - 1:
                 aircraft.update_position(interval)
                 if aircraft.current_index >= len(
@@ -461,9 +509,14 @@ class AircraftManager:
         if self.execution_mode == "batched":
             interval = settings.SIMULATION_UPDATE_INTERVAL
             start_time = time.time()
-            while any(
-                ac.current_index < len(ac.waypoints) - 1 for ac in self.aircraft_list
-            ):
+            while True:
+                with self.lock:
+                    has_active_aircraft = any(
+                        ac.current_index < len(ac.waypoints) - 1
+                        for ac in self.aircraft_list
+                    )
+                if not has_active_aircraft:
+                    break
                 if (
                     timeout_seconds is not None
                     and (time.time() - start_time) > timeout_seconds

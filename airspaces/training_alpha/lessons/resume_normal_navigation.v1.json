@@ -1,0 +1,72 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_resume_normal_navigation_intro",
+  "title": "Resume Normal Navigation",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 4,
+  "standards_reference": [
+    "ICAO Doc 4444 PANS-ATM",
+    "ICAO Doc 9432 Manual of Radiotelephony"
+  ],
+  "disclaimer": "Training support only. Confirm phraseology and local route recovery procedures with an instructor.",
+  "learning_objectives": [
+    "Explain what Resume Normal Navigation means after a temporary deviation.",
+    "Use Resume Nav to return an aircraft from heading or radial behavior toward its planned route.",
+    "Confirm that the aircraft returns to the destination route, not the last temporary instruction."
+  ],
+  "key_points": [
+    "Resume Normal Navigation cancels the temporary tactical instruction.",
+    "The aircraft should return toward its planned route from its current position.",
+    "It should not jump back to the old position or resume the last temporary radial."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Cancel The Temporary Instruction",
+      "body": "Resume Normal Navigation tells the aircraft to stop following the temporary heading, radial, direct, or holding behavior and return to its route."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "Current Position Matters",
+      "body": "The aircraft should recover from where it is now. It should not reset to an earlier point."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Recover From Deviation",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Select an aircraft.",
+        "Assign a heading or radial deviation.",
+        "Wait until the aircraft is visibly away from the route.",
+        "Use Resume Nav and monitor route recovery."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_resume_normal_navigation_exercise_01",
+    "title": "Return One Deviated Aircraft To Route",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Recover an aircraft from a temporary deviation without resetting its position.",
+    "student_actions": [
+      "Create a controlled deviation.",
+      "Wait long enough to see displacement.",
+      "Issue Resume Normal Navigation.",
+      "Monitor the aircraft returning toward its route."
+    ],
+    "success_conditions": [
+      "The aircraft cancels the temporary instruction.",
+      "The aircraft recovers from its current position.",
+      "The aircraft resumes the planned route rather than the last temporary radial."
+    ],
+    "debrief_prompts": [
+      "What temporary instruction was cancelled?",
+      "Did the aircraft recover from its current position?",
+      "How far did the aircraft deviate before recovery?"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+# Types
+
+Shared frontend types will live here.
+

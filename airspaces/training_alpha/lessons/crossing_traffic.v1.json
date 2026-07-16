@@ -1,0 +1,62 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_crossing_traffic_intro",
+  "title": "Crossing Traffic",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 5,
+  "standards_reference": [
+    "ICAO Annex 11",
+    "ICAO Doc 4444 PANS-ATM"
+  ],
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "identify converging traffic",
+    "understand the required separation",
+    "issue a resolution",
+    "observe the result"
+  ],
+  "key_points": [
+    "Two aircraft on converging tracks at the same flight level will lose separation if neither track or level changes.",
+    "The required horizontal separation for two aircraft at the same flight level is 10 NM.",
+    "A level change is one valid way to resolve a horizontal conflict before the horizontal minimum is lost.",
+    "Separation is maintained once either the horizontal minimum or the vertical minimum is satisfied."
+  ],
+  "lesson_steps": [
+    {
+      "type": "sim_demo",
+      "title": "Crossing Traffic",
+      "scenario_template": "crossing_traffic.v1.json",
+      "script": [
+        "Watch AFR612 and RAM401 converge at the same flight level.",
+        "Review the required horizontal separation of 10 NM.",
+        "Select AFR612 and descend it to FL310.",
+        "Watch vertical separation establish as the conflict resolves."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_crossing_traffic_practice_01",
+    "title": "Resolve A Similar Crossing Conflict",
+    "scenario_template": "crossing_traffic_practice.v1.json",
+    "objective": "Recognise a developing crossing conflict and resolve it independently, with less guidance than the Learn walkthrough.",
+    "student_actions": [
+      "Identify the two converging aircraft.",
+      "Choose and issue a resolution before the horizontal minimum is lost.",
+      "Monitor the outcome."
+    ],
+    "success_conditions": [
+      "Horizontal separation minimum maintained, or",
+      "Vertical separation minimum established before the horizontal minimum would have been lost."
+    ],
+    "debrief_prompts": [
+      "Which aircraft did you act on, and why?",
+      "Was the resolution issued before the aircraft reached the crossing point?",
+      "What was the closest horizontal separation actually reached?"
+    ]
+  }
+}

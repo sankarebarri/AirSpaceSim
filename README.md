@@ -3,6 +3,11 @@ Aircraft Simulation and Airspace Visualization
 
 AirSpaceSim is a simulation-first Python library for modeling aircraft movement in structured airspace and visualizing trajectories on map-based interfaces.
 
+This repository is also being migrated toward a hosted application split:
+- `airspacesim/` remains the standalone Python package
+- `apps/api/` is the FastAPI service layer
+- `apps/web/` is the React frontend
+
 ## Purpose
 
 AirSpaceSim exists to support:
@@ -60,37 +65,9 @@ python3 scripts/offline_editable_install.py --venv .venv-offline
 Offline install from local wheel:
 
 ```bash
-python3 setup.py sdist bdist_wheel
+python3 -m build
 pip install --no-index --find-links dist airspacesim
 ```
-
-## PyPI Release Checklist
-
-From repository root:
-
-```bash
-# 1) clean old artifacts
-rm -rf dist build *.egg-info
-
-# 2) run quality gate
-pytest -q
-ruff check .
-
-# 3) build distributions
-python3 -m build
-
-# 4) verify package metadata/rendering
-python3 -m twine check dist/*
-
-# 5) upload (requires PYPI_TOKEN in env)
-python3 -m twine upload dist/*
-```
-
-Recommended:
-- publish first to TestPyPI with `--repository testpypi` before main PyPI.
-- tag release in git after upload.
-- if `python3 -m build` is unavailable in your environment, fallback build is:
-  - `python3 setup.py sdist bdist_wheel`
 
 ## Quick Start
 
@@ -119,6 +96,9 @@ The default generated data files are:
 
 ## UI Simulation Test
 
+The static HTML/JS map remains the current compatibility UI path for package users.
+It is not the long-term hosted architecture.
+
 Run these in separate terminals from your initialized project directory:
 
 ```bash
@@ -137,7 +117,7 @@ python3 dev_server.py
 
 Then open one of:
 - `http://127.0.0.1:8080/templates/map.html`
-- `http://127.0.0.1:8080/airspacesim-playground/templates/map.html` (when running simulation from `airspacesim-playground`)
+- `http://127.0.0.1:8080/airspacesim-playground/templates/map.html` (legacy playground compatibility path)
 
 Operator controls notes:
 - Use `dev_server.py` for POST support. Static-only servers (for example Live Server on `:5500`) may return `405` on `/api/events`.
@@ -224,10 +204,13 @@ Production claims:
 
 ## Roadmap
 
-Execution milestones are in `new_roadmap.md`.
+Active execution milestones are in `docs/improvements/new-roadmap.md`.
+
+`docs/improvements/legacy_static_ui_roadmap.md` remains as the legacy static-UI planning document during migration and should not be treated as the primary tracker.
 
 Operational/developer guide is maintained in `documentation.md`.
 Hands-on walkthrough is in `docs/tutorial.md`.
+User startup and simulator-use guides are in `docs/user/`.
 
 ## Ecosystem Compatibility
 

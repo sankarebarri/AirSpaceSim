@@ -65,6 +65,60 @@ def copy_directory_contents(src_dir, dest_dir, overwrite=False):
             copy_file(root_path / filename, target_root / filename, overwrite=overwrite)
 
 
+def copy_first_available(package_path, source_candidates, dest, overwrite=False):
+    """Copy the first available package resource from a candidate list."""
+    source = None
+    for candidate in source_candidates:
+        source = _resolve_resource(package_path, candidate)
+        if source is not None:
+            break
+    copy_file(source, dest, overwrite=overwrite)
+
+
+INIT_DIRECTORIES = (
+    "templates",
+    "static/js",
+    "static/css",
+    "static/icons",
+    "data",
+    "examples",
+)
+
+INIT_FILE_ASSETS = (
+    (("templates/map.html",), "templates/map.html"),
+    (("static/js/map_renderer.js",), "static/js/map_renderer.js"),
+    (("static/js/aircraft_simulation.js",), "static/js/aircraft_simulation.js"),
+    (("static/js/ui_runtime.js",), "static/js/ui_runtime.js"),
+    (("static/css/map_styles.css",), "static/css/map_styles.css"),
+    (
+        ("data/airspace_config.json", "data/gao_airspace.json"),
+        "data/airspace_config.json",
+    ),
+    (("data/airspace_data.json",), "data/airspace_data.json"),
+    (("data/map_config.v1.json",), "data/map_config.v1.json"),
+    (("data/scenario_airspace.v1.json",), "data/scenario_airspace.v1.json"),
+    (("data/scenario.v0.1.json",), "data/scenario.v0.1.json"),
+    (("data/scenario_aircraft.v1.json",), "data/scenario_aircraft.v1.json"),
+    (("data/inbox_events.v1.json",), "data/inbox_events.v1.json"),
+    (("data/render_profile.v1.json",), "data/render_profile.v1.json"),
+    (("data/aircraft_data.json",), "data/aircraft_data.json"),
+    (("data/aircraft_state.v1.json",), "data/aircraft_state.v1.json"),
+    (("data/trajectory.v0.1.json",), "data/trajectory.v0.1.json"),
+    (("data/ui_runtime.v1.json",), "data/ui_runtime.v1.json"),
+    (
+        ("data/aircraft_ingest.json", "data/new_aircraft.json"),
+        "data/aircraft_ingest.json",
+    ),
+    (("examples/example_simulation.py",), "examples/example_simulation.py"),
+    (("examples/interoperability_export.py",), "examples/interoperability_export.py"),
+    (("dev_server.py",), "dev_server.py"),
+)
+
+INIT_DIRECTORY_ASSETS = (
+    ("static/icons", "static/icons"),
+)
+
+
 def _find_config_path():
     """
     Locate the active airspace config file in the working tree.
@@ -100,137 +154,25 @@ def initialize_project(overwrite=False):
 
     _cli_info("\n🚀 Initializing AirSpaceSim project...\n")
 
-    # Define paths inside project folder.
-    templates_dir = project_dir / "templates"
-    static_js_dir = project_dir / "static" / "js"
-    static_css_dir = project_dir / "static" / "css"
-    static_icons_dir = project_dir / "static" / "icons"
-    data_dir = project_dir / "data"
-    examples_dir = project_dir / "examples"
+    for directory in INIT_DIRECTORIES:
+        (project_dir / directory).mkdir(parents=True, exist_ok=True)
 
-    # Create directories.
-    templates_dir.mkdir(parents=True, exist_ok=True)
-    static_js_dir.mkdir(parents=True, exist_ok=True)
-    static_css_dir.mkdir(parents=True, exist_ok=True)
-    static_icons_dir.mkdir(parents=True, exist_ok=True)
-    data_dir.mkdir(parents=True, exist_ok=True)
-    examples_dir.mkdir(parents=True, exist_ok=True)
-
-    # Copy necessary files
     package_path = resources.files("airspacesim")
 
-    copy_file(
-        _resolve_resource(package_path, "templates/map.html"),
-        templates_dir / "map.html",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "static/js/map_renderer.js"),
-        static_js_dir / "map_renderer.js",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "static/js/aircraft_simulation.js"),
-        static_js_dir / "aircraft_simulation.js",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "static/js/ui_runtime.js"),
-        static_js_dir / "ui_runtime.js",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "static/css/map_styles.css"),
-        static_css_dir / "map_styles.css",
-        overwrite=overwrite,
-    )
-    copy_directory_contents(
-        _resolve_resource(package_path, "static/icons"),
-        static_icons_dir,
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/airspace_config.json")
-        or _resolve_resource(package_path, "data/gao_airspace.json"),
-        data_dir / "airspace_config.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/airspace_data.json"),
-        data_dir / "airspace_data.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/map_config.v1.json"),
-        data_dir / "map_config.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/scenario_airspace.v1.json"),
-        data_dir / "scenario_airspace.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/scenario.v0.1.json"),
-        data_dir / "scenario.v0.1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/scenario_aircraft.v1.json"),
-        data_dir / "scenario_aircraft.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/inbox_events.v1.json"),
-        data_dir / "inbox_events.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/render_profile.v1.json"),
-        data_dir / "render_profile.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/aircraft_data.json"),
-        data_dir / "aircraft_data.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/aircraft_state.v1.json"),
-        data_dir / "aircraft_state.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/trajectory.v0.1.json"),
-        data_dir / "trajectory.v0.1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/ui_runtime.v1.json"),
-        data_dir / "ui_runtime.v1.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "data/aircraft_ingest.json")
-        or _resolve_resource(package_path, "data/new_aircraft.json"),
-        data_dir / "aircraft_ingest.json",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "examples/example_simulation.py"),
-        examples_dir / "example_simulation.py",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "examples/interoperability_export.py"),
-        examples_dir / "interoperability_export.py",
-        overwrite=overwrite,
-    )
-    copy_file(
-        _resolve_resource(package_path, "dev_server.py"),
-        project_dir / "dev_server.py",
-        overwrite=overwrite,
-    )
+    for source_candidates, destination in INIT_FILE_ASSETS:
+        copy_first_available(
+            package_path,
+            source_candidates,
+            project_dir / destination,
+            overwrite=overwrite,
+        )
+
+    for source_directory, destination_directory in INIT_DIRECTORY_ASSETS:
+        copy_directory_contents(
+            _resolve_resource(package_path, source_directory),
+            project_dir / destination_directory,
+            overwrite=overwrite,
+        )
 
     _cli_info("\n🎉 AirSpaceSim project initialized successfully!\n")
     _cli_info("📌 Next Steps:")

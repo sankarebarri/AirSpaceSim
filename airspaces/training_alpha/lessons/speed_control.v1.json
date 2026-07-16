@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_speed_control_intro",
+  "title": "Speed Control",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 5,
+  "standards_reference": [
+    "ICAO Doc 4444 PANS-ATM",
+    "ICAO Doc 9432 Manual of Radiotelephony"
+  ],
+  "disclaimer": "Training support only. Confirm local speed control procedures and aircraft performance assumptions with an instructor.",
+  "learning_objectives": [
+    "Use speed assignment as a simple spacing tool.",
+    "Recognize aircraft speed limits from performance data.",
+    "Observe how speed changes alter route progress over time."
+  ],
+  "key_points": [
+    "Speed control changes timing, not route geometry.",
+    "A speed instruction must stay within the aircraft performance envelope.",
+    "Speed is usually useful early; late speed control may have limited effect."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Timing Tool",
+      "body": "Speed control helps adjust when aircraft reach a fix, crossing point, or sequence position."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "Watch The Gap",
+      "body": "Assign different speeds to two aircraft on the same or crossing routes, then watch their relative movement."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Adjust Speed",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Select a faster aircraft.",
+        "Assign a lower valid speed.",
+        "Select another aircraft and keep its speed unchanged.",
+        "Compare route progress after a short period."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_speed_control_exercise_01",
+    "title": "Slow One Aircraft And Observe Spacing",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Use one speed reduction to change traffic timing.",
+    "student_actions": [
+      "Select an aircraft on a route with nearby traffic.",
+      "Assign a valid lower speed.",
+      "Observe whether the timing gap changes."
+    ],
+    "success_conditions": [
+      "A valid speed instruction is accepted.",
+      "The student explains that speed changes timing rather than route."
+    ],
+    "debrief_prompts": [
+      "Was the speed inside the aircraft performance range?",
+      "Did spacing improve quickly or slowly?",
+      "Would heading, radial, or FL have been more effective?"
+    ]
+  }
+}

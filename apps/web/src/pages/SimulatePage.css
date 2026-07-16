@@ -1,0 +1,49 @@
+/* Small additions on top of the shared LearnPage.css design language. */
+
+.learn-page .sim-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 16px;
+}
+.learn-page .sim-card-facts span {
+  font-size: 11px;
+  color: var(--mute);
+  background: var(--bg);
+  border: 1px solid var(--bdr);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.learn-page .sim-card-btn {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--navy);
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.learn-page .sim-brief-facts {
+  display: flex;
+  gap: 28px;
+  margin: 8px 0 28px;
+  text-align: left;
+}
+.learn-page .sim-brief-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.learn-page .sim-brief-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute2);
+}
+.learn-page .sim-brief-facts strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}

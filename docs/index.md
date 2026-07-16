@@ -1,11 +1,25 @@
 # AirSpaceSim Docs Index
 
+- `docs/improvements/new-roadmap.md`: active execution tracker for the FastAPI/React/SQLite migration
+- `docs/improvements/legacy_static_ui_roadmap.md`: legacy static-UI roadmap retained during migration
 - `docs/tutorial.md`: step-by-step run and operations walkthrough
 - `docs/architecture.md`: module boundaries and data flow
+- `docs/architecture/codebase_tidy_and_packaging_plan.md`: cleanup plan for engine/app separation and hosting readiness
+- `docs/architecture/engine_boundary.md`: reusable Python engine boundary and public API
+- `docs/architecture/engine_usage_quickstart.md`: minimal engine-only usage examples
+- `docs/architecture/legacy_static_ui_decision.md`: decision record for old static UI and playground assets
 - `docs/file-contracts.md`: runtime file contracts and compatibility notes
 - `docs/data-contracts.md`: schema envelope and contract domains
 - `docs/ingestion.md`: event model and ingestion adapters
 - `docs/migration.md`: legacy-to-canonical migration notes
+- `docs/backend/README.md`: backend app and service-layer notes
+- `docs/frontend/README.md`: frontend app and UX notes
+- `docs/api/README.md`: API boundary documentation
+- `docs/deployment/README.md`: deployment notes
+- `docs/user/run_simulation.md`: short standard simulation startup guide
+- `docs/user/how_to_start_hosted_app.md`: detailed hosted app startup guide
+- `docs/user/how_to_use_app.md`: end-user simulator guide
+- `docs/user/how_to_test.md`: practical test checklist
 - `docs/failure-modes.md`: expected failures and how to respond
 - `docs/compatibility-matrix.md`: consumer/schema compatibility
 - `docs/interoperability-example.md`: trajectory export example

@@ -1,0 +1,69 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_reading_aircraft_labels_intro",
+  "title": "Reading Aircraft Labels",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 4,
+  "standards_reference": [
+    "ICAO Doc 4444 PANS-ATM",
+    "ICAO Doc 9432 Manual of Radiotelephony"
+  ],
+  "disclaimer": "Training support only. Confirm local label conventions and operating procedures with an instructor.",
+  "learning_objectives": [
+    "Identify callsign and flight level from an aircraft label.",
+    "Use traffic flow color as a quick scan aid.",
+    "Read heading vectors without losing the planned route picture."
+  ],
+  "key_points": [
+    "Callsign and FL are the first items to confirm before issuing an instruction.",
+    "Color helps classify traffic flow, but it should not replace route and altitude checks.",
+    "The heading vector shows where the aircraft is currently pointing."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Label Priority",
+      "body": "Start with callsign and FL. Then confirm route, flow, and heading before deciding whether action is needed."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "Map Scan",
+      "body": "Compare aircraft labels, colors, route lines, and heading vectors. Avoid focusing on one label for too long."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Label Reading Drill",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Open the Training Alpha beginner mix.",
+        "Select three aircraft in different traffic flows.",
+        "Read callsign, FL, route, and heading before issuing any instruction."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_reading_aircraft_labels_exercise_01",
+    "title": "Read And Confirm Three Labels",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Correctly identify callsign, FL, route, traffic flow, and heading for three aircraft.",
+    "student_actions": [
+      "Select an arrival, departure, and overflight.",
+      "Read each label and selected-aircraft metadata.",
+      "Confirm whether each aircraft is established on its planned route."
+    ],
+    "success_conditions": [
+      "Three aircraft are identified by callsign and FL.",
+      "The student correctly separates label information from route information."
+    ],
+    "debrief_prompts": [
+      "Which label item did you check first?",
+      "Did color help or distract from the actual route picture?",
+      "Was any aircraft heading different from its route?"
+    ]
+  }
+}

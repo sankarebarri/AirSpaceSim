@@ -10,6 +10,7 @@ from airspacesim.cli.commands import initialize_project
 def test_docs_quickstart_smoke_init_and_run_example(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     initialize_project()
+    assert (tmp_path / "dev_server.py").exists()
 
     repo_root = Path(__file__).resolve().parents[1]
     env = dict(os.environ)

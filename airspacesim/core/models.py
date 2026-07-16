@@ -15,6 +15,7 @@ class AircraftDefinition:
     route_id: str
     speed_kt: float
     callsign: str | None = None
+    aircraft_type: str = "UNKNOWN"
     flight_level: int | None = None
     altitude_ft: float = 0.0
     vertical_rate_fpm: float = 0.0

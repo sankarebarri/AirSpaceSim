@@ -2,52 +2,12 @@
 dist/
 build/
 *.egg-info/
-pip-wheel-metadata/
 *.egg
+pip-wheel-metadata/
 
-# Release / publishing local files
-.pypirc
-.testpypirc
-.env.pypi
-release.env
-
-# Python cache files
+# Python caches and coverage
 __pycache__/
 *.py[cod]
-
-# Virtual environment
-venv/
-.venv/
-.venv-offline/
-
-# The project how to for me
-how_to
-
-# PyPISettings
-PyPISettings.txt
-# Keep generated root-level examples ignored, but track package defaults.
-examples/
-airspacesim/data/*
-!airspacesim/data/*.json
-!airspacesim/examples/
-!airspacesim/examples/*.py
-
-# TO-DO
-todo
-
-# README.md not ready to be githubed
-# *.md
-
-AirSpaceSim.csv
-*.bat
-
-# Local runtime artifacts from `airspacesim init` runs (root-level only)
-/data/
-/static/
-/templates/
-/logs/
-
-# Local tool/runtime caches
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
@@ -55,23 +15,74 @@ AirSpaceSim.csv
 .coverage.*
 htmlcov/
 
-# Potential local Intent cache/state dirs
-.intent/
-.intent-cache/
+# Virtual environments
+venv/
+.venv/
+.venv-offline/
 
-# Editor/IDE state
+# JavaScript app artifacts
+node_modules/
+apps/web/dist/
+apps/web/.vite/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+.eslintcache
+
+# App environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local SQLite / app runtime databases
+var/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+
+# Local runtime artifacts from `airspacesim init` (repo root only)
+/data/
+/static/
+/templates/
+/logs/
+/examples/
+
+# Local generated workspaces
+airspacesim-playground/
+airspacesim-palyground/
+
+# Local publishing credentials/secrets
+.pypirc
+.testpypirc
+.env.pypi
+release.env
+PyPISettings.txt
+
+# Private local-only notes/checklists
+.codex
+.claude/
+.local/
+how_to
+todo
+ideas.md
+
+# Editor state
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Local manual playgrounds
-airspacesim-playground/
-
-# palyground
-airspacesim-palyground/
-
-# ideas
-ideas.md
-
-new_roadmap.md
+# OS junk
+.DS_Store
+Thumbs.db

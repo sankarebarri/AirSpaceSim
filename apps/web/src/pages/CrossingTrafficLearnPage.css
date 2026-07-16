@@ -1,0 +1,213 @@
+/* Teaching-panel layer for the guided Crossing Traffic Learn experience.
+   Reuses the real console theme (RunDetailPage.css, .console-page/.cq-*)
+   for the map and control widgets so the lesson teaches through the actual
+   simulation surface rather than a separate mock UI. */
+
+.console-page .tp-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.console-page .tp-map {
+  flex: 1;
+  min-width: 0;
+}
+
+.console-page .tp-panel {
+  flex: 0 0 24%;
+  min-width: 340px;
+  background: var(--bg1);
+  border-left: 1px solid var(--bdr);
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.console-page .tp-progress {
+  display: flex;
+  gap: 6px;
+}
+.console-page .tp-dot {
+  width: 20px;
+  height: 3px;
+  background: var(--bdr);
+}
+.console-page .tp-dot.done {
+  background: var(--mute);
+}
+.console-page .tp-dot.active {
+  background: var(--g);
+}
+
+.console-page .tp-title {
+  font-family: var(--ff);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sky);
+  line-height: 1.25;
+}
+
+.console-page .tp-copy {
+  font-size: 14px;
+  color: var(--sky2);
+  line-height: 1.7;
+}
+
+.console-page .tp-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--bdr);
+  padding-top: 16px;
+}
+.console-page .tp-metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+}
+.console-page .tp-metric span {
+  color: var(--mute);
+  letter-spacing: 0.03em;
+}
+.console-page .tp-metric strong {
+  font-size: 16px;
+  color: var(--sky);
+  font-weight: 600;
+}
+.console-page .tp-metric strong.warn {
+  color: var(--am);
+}
+
+.console-page .tp-note {
+  font-size: 11px;
+  color: var(--mute);
+  line-height: 1.6;
+  padding-top: 2px;
+}
+
+.console-page .tp-action-block {
+  border-top: 1px solid var(--bdr);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.console-page .tp-instruction {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--g);
+}
+.console-page .tp-instruction.done {
+  color: var(--sky2);
+}
+
+.console-page .tp-select-row {
+  display: flex;
+  gap: 8px;
+}
+.console-page .tp-chip {
+  flex: 1;
+  font-family: var(--fm);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 8px 10px;
+  border: 1px solid var(--bdr);
+  background: var(--bg3);
+  color: var(--sky2);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+.console-page .tp-chip.active {
+  border-color: var(--g);
+  color: var(--g);
+  background: var(--gf);
+}
+.console-page .tp-chip.pulse {
+  animation: tp-pulse 1.4s ease-in-out infinite;
+}
+
+.console-page .tp-command {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--bdr);
+}
+.console-page .tp-command.pulse {
+  animation: tp-pulse-border 1.4s ease-in-out infinite;
+}
+
+.console-page .tp-actions {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--bdr);
+}
+.console-page .tp-primary-btn {
+  width: 100%;
+  height: 34px;
+  font-family: var(--fm);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--gd);
+  background: var(--gf);
+  color: var(--g);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.console-page .tp-primary-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.console-page .tp-primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.console-page .tp-waiting {
+  font-size: 10px;
+  color: var(--mute);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+@keyframes tp-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 217, 110, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(0, 217, 110, 0);
+  }
+}
+@keyframes tp-pulse-border {
+  0%,
+  100% {
+    border-color: var(--bdr);
+  }
+  50% {
+    border-color: var(--g);
+  }
+}
+
+@media (max-width: 900px) {
+  .console-page .tp-body {
+    flex-direction: column;
+  }
+  .console-page .tp-panel {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    border-left: none;
+    border-top: 1px solid var(--bdr);
+    max-height: 45vh;
+  }
+}

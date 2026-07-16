@@ -24,6 +24,7 @@ EXPECTED_FILES = [
     "data/aircraft_ingest.json",
     "examples/example_simulation.py",
     "examples/interoperability_export.py",
+    "dev_server.py",
 ]
 
 

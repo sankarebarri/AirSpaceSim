@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_flight_level_assignment_intro",
+  "title": "Flight Level Assignment",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 5,
+  "standards_reference": [
+    "ICAO Annex 11",
+    "ICAO Doc 4444 PANS-ATM"
+  ],
+  "disclaimer": "Training support only. Confirm separation minima, transition procedures, and local level allocation rules with current official sources.",
+  "learning_objectives": [
+    "Assign a climb or descent to a target flight level.",
+    "Observe dynamic FL change from aircraft vertical performance.",
+    "Recognize when an aircraft has reached the assigned level."
+  ],
+  "key_points": [
+    "The target FL is an instruction; the displayed FL changes over time.",
+    "Different aircraft types can climb or descend at different rates.",
+    "Do not assume an aircraft is separated vertically until the level change is established and sufficient."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Target Versus Current FL",
+      "body": "The assigned FL is where the aircraft is cleared to go. The current FL is what the student must monitor while it climbs or descends."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "Vertical Trend",
+      "body": "Watch the label and selected-aircraft metadata after assigning a new FL. The value should change according to aircraft performance."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Climb And Descend",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Select one aircraft at FL290.",
+        "Assign climb to FL330.",
+        "Select another aircraft and assign descent to FL240.",
+        "Monitor both until they approach target levels."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_flight_level_assignment_exercise_01",
+    "title": "Assign And Monitor Two Level Changes",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Issue one climb and one descent, then monitor the changing FL values.",
+    "student_actions": [
+      "Select two aircraft on different routes.",
+      "Assign one climb and one descent.",
+      "Monitor current FL, target FL, and vertical rate."
+    ],
+    "success_conditions": [
+      "Both aircraft receive valid target FL instructions.",
+      "The student observes dynamic FL change before assuming the level is reached."
+    ],
+    "debrief_prompts": [
+      "Which aircraft reached its target faster?",
+      "How did the current FL differ from target FL during the climb or descent?",
+      "What would you check before using vertical separation?"
+    ]
+  }
+}

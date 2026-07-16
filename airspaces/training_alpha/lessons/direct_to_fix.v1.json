@@ -1,0 +1,71 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_direct_to_fix_intro",
+  "title": "Direct To A Fix",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 4,
+  "standards_reference": [
+    "ICAO Doc 4444 PANS-ATM",
+    "ICAO Doc 9432 Manual of Radiotelephony"
+  ],
+  "disclaimer": "Training support only. Confirm local direct routing procedures and coordination requirements with an instructor.",
+  "learning_objectives": [
+    "Assign direct routing to a fix on the aircraft route.",
+    "Monitor the aircraft until the direct-to fix is captured.",
+    "Confirm that route sequencing continues after the fix."
+  ],
+  "key_points": [
+    "Direct-to is a route instruction, not just a heading.",
+    "The fix must be known and suitable for the aircraft route.",
+    "After capture, the aircraft should continue through the planned route sequence."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Known Fix",
+      "body": "A direct-to instruction sends the aircraft toward a named fix. The student should confirm that the fix belongs to the intended route context."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "Route Continuation",
+      "body": "After the aircraft reaches the direct-to fix, check that it continues toward the next route point."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Direct-To Drill",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Select an aircraft before a route midpoint.",
+        "Assign direct to the midpoint fix.",
+        "Monitor the turn and fix capture.",
+        "Confirm route continuation."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_direct_to_fix_exercise_01",
+    "title": "Send One Aircraft Direct To A Route Fix",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Assign a direct-to instruction and observe route sequencing after fix capture.",
+    "student_actions": [
+      "Select one aircraft.",
+      "Inspect its route fixes.",
+      "Assign direct to a forward fix.",
+      "Monitor until the aircraft captures the fix."
+    ],
+    "success_conditions": [
+      "The direct-to fix is valid for the aircraft route.",
+      "The aircraft captures the fix and continues route navigation."
+    ],
+    "debrief_prompts": [
+      "Was the selected fix ahead of the aircraft?",
+      "Did the aircraft continue route navigation after capture?",
+      "What coordination might be needed before direct routing?"
+    ]
+  }
+}

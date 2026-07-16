@@ -7,5 +7,14 @@ default:
 test:
     pytest -q
 
+test-api:
+    PYTHONPATH=apps/api pytest -q apps/api/tests
+
+test-web:
+    cd apps/web && npm run test
+
+build-web:
+    cd apps/web && npm run build
+
 lint:
     ruff check .

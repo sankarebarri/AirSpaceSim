@@ -2,6 +2,7 @@
 
 from airspacesim.utils.conversions import dms_to_decimal
 from airspacesim.utils.logging_config import default_logger as logger
+from airspacesim.simulation.performance_database import assigned_level_vertical_rate_fpm
 
 
 def _route_to_decimal_waypoints(route_waypoints):
@@ -28,6 +29,28 @@ def _find_aircraft(manager, aircraft_id):
 
 def _find_callsign_matches(manager, callsign):
     return [aircraft for aircraft in manager.aircraft_list if aircraft.callsign == callsign]
+
+
+def _resolve_aircraft_or_skip(manager, aircraft_id):
+    aircraft = _find_aircraft(manager, aircraft_id)
+    if aircraft:
+        return aircraft, None
+    callsign_matches = (
+        _find_callsign_matches(manager, aircraft_id)
+        if isinstance(aircraft_id, str) and aircraft_id
+        else []
+    )
+    if len(callsign_matches) == 1:
+        return None, (
+            f"aircraft not found by id; payload.aircraft_id matched callsign "
+            f"'{aircraft_id}'. use aircraft id '{callsign_matches[0].id}'"
+        )
+    if len(callsign_matches) > 1:
+        return None, (
+            f"aircraft not found by id; payload.aircraft_id matched multiple callsigns "
+            f"'{aircraft_id}'. use aircraft id"
+        )
+    return None, "aircraft not found (payload.aircraft_id must be aircraft id, not callsign)"
 
 
 def apply_events_idempotent(manager, events):
@@ -75,6 +98,7 @@ def apply_events_idempotent(manager, events):
                     flight_level=payload.get("flight_level"),
                     altitude_ft=payload.get("altitude_ft", 0.0),
                     vertical_rate_fpm=payload.get("vertical_rate_fpm", 0.0),
+                    aircraft_type=payload.get("aircraft_type", "UNKNOWN"),
                 )
                 applied.append(event_id)
                 logger.info(
@@ -174,14 +198,34 @@ def apply_events_idempotent(manager, events):
                         flight_level,
                     )
                     continue
-                aircraft.flight_level = int(round(float(flight_level)))
+                if hasattr(aircraft, "_sanitize_flight_level"):
+                    assigned_flight_level = aircraft._sanitize_flight_level(
+                        flight_level,
+                        getattr(aircraft, "altitude_ft", 0.0),
+                    )
+                else:
+                    assigned_flight_level = int(round(float(flight_level)))
+                aircraft.target_flight_level = assigned_flight_level
+                aircraft.vertical_rate_fpm = assigned_level_vertical_rate_fpm(
+                    getattr(aircraft, "aircraft_type", "B737"),
+                    float(
+                        getattr(
+                            aircraft,
+                            "altitude_ft",
+                            assigned_flight_level * 100.0,
+                        )
+                    ),
+                    assigned_flight_level,
+                )
+                if aircraft.vertical_rate_fpm == 0:
+                    aircraft.flight_level = assigned_flight_level
                 manager.save_aircraft_data()
                 applied.append(event_id)
                 logger.info(
                     "[EVENT] applied id=%s action=SET_FL aircraft_id=%s flight_level=%s",
                     event_id,
                     aircraft_id,
-                    aircraft.flight_level,
+                    assigned_flight_level,
                 )
             elif event_type == "REMOVE_AIRCRAFT":
                 aircraft_id = payload.get("aircraft_id")
@@ -198,6 +242,230 @@ def apply_events_idempotent(manager, events):
                 applied.append(event_id)
                 logger.info(
                     "[EVENT] applied id=%s action=REMOVE_AIRCRAFT aircraft_id=%s",
+                    event_id,
+                    aircraft_id,
+                )
+            elif event_type == "ASSIGN_HEADING":
+                aircraft_id = payload.get("aircraft_id")
+                heading_deg = payload.get("heading_deg")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                if not isinstance(heading_deg, (int, float)):
+                    rejected.append((event_id, "invalid heading_deg"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s heading_deg=%s",
+                        event_id,
+                        "invalid heading_deg",
+                        heading_deg,
+                    )
+                    continue
+                aircraft.assign_heading(heading_deg)
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=ASSIGN_HEADING aircraft_id=%s heading_deg=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.assigned_heading_deg,
+                )
+            elif event_type == "ASSIGN_RADIAL":
+                aircraft_id = payload.get("aircraft_id")
+                radial_deg = payload.get("radial_deg")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                if not isinstance(radial_deg, (int, float)):
+                    rejected.append((event_id, "invalid radial_deg"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s radial_deg=%s",
+                        event_id,
+                        "invalid radial_deg",
+                        radial_deg,
+                    )
+                    continue
+                aircraft.assign_radial(radial_deg)
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=ASSIGN_RADIAL aircraft_id=%s radial_deg=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.assigned_radial_deg,
+                )
+            elif event_type == "ASSIGN_RADIAL_DEVIATION":
+                aircraft_id = payload.get("aircraft_id")
+                deviation_deg = payload.get("deviation_deg")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                if (
+                    not isinstance(deviation_deg, (int, float))
+                    or deviation_deg < -45
+                    or deviation_deg > 45
+                ):
+                    rejected.append((event_id, "invalid deviation_deg"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s deviation_deg=%s",
+                        event_id,
+                        "invalid deviation_deg",
+                        deviation_deg,
+                    )
+                    continue
+                aircraft.assign_radial_deviation(deviation_deg)
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=ASSIGN_RADIAL_DEVIATION aircraft_id=%s deviation_deg=%s radial_deg=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.radial_deviation_deg,
+                    aircraft.assigned_radial_deg,
+                )
+            elif event_type in {"RESUME_ROUTE", "INTERCEPT_ROUTE"}:
+                aircraft_id = payload.get("aircraft_id")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                aircraft.resume_route()
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=%s aircraft_id=%s",
+                    event_id,
+                    event_type,
+                    aircraft_id,
+                )
+            elif event_type == "DIRECT_TO":
+                aircraft_id = payload.get("aircraft_id")
+                fix_id = payload.get("fix_id") or payload.get("waypoint_id")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                if not isinstance(fix_id, str) or not fix_id.strip():
+                    rejected.append((event_id, "missing fix_id"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s fix_id=%s",
+                        event_id,
+                        "missing fix_id",
+                        fix_id,
+                    )
+                    continue
+                try:
+                    aircraft.direct_to(fix_id)
+                except ValueError as exc:
+                    rejected.append((event_id, str(exc)))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s aircraft_id=%s fix_id=%s",
+                        event_id,
+                        str(exc),
+                        aircraft_id,
+                        fix_id,
+                    )
+                    continue
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=DIRECT_TO aircraft_id=%s fix_id=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.direct_to_fix_id,
+                )
+            elif event_type == "HOLD_AT_FIX":
+                aircraft_id = payload.get("aircraft_id")
+                fix_id = payload.get("fix_id") or payload.get("waypoint_id")
+                turn_direction = payload.get("turn_direction", "right")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                if not isinstance(fix_id, str) or not fix_id.strip():
+                    rejected.append((event_id, "missing fix_id"))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s fix_id=%s",
+                        event_id,
+                        "missing fix_id",
+                        fix_id,
+                    )
+                    continue
+                try:
+                    aircraft.hold_at_fix(fix_id, turn_direction=turn_direction)
+                except ValueError as exc:
+                    rejected.append((event_id, str(exc)))
+                    logger.warning(
+                        "[EVENT] rejected id=%s reason=%s aircraft_id=%s fix_id=%s",
+                        event_id,
+                        str(exc),
+                        aircraft_id,
+                        fix_id,
+                    )
+                    continue
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=HOLD_AT_FIX aircraft_id=%s fix_id=%s",
+                    event_id,
+                    aircraft_id,
+                    aircraft.hold_fix_id,
+                )
+            elif event_type == "EXIT_HOLD":
+                aircraft_id = payload.get("aircraft_id")
+                aircraft, skip_reason = _resolve_aircraft_or_skip(manager, aircraft_id)
+                if not aircraft:
+                    skipped.append((event_id, skip_reason))
+                    logger.warning(
+                        "[EVENT] skipped id=%s reason=%s aircraft_id=%s",
+                        event_id,
+                        skip_reason,
+                        aircraft_id,
+                    )
+                    continue
+                aircraft.exit_hold()
+                manager.save_aircraft_data()
+                applied.append(event_id)
+                logger.info(
+                    "[EVENT] applied id=%s action=EXIT_HOLD aircraft_id=%s",
                     event_id,
                     aircraft_id,
                 )

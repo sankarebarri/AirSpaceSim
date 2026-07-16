@@ -12,6 +12,7 @@
       {
         "id": "AC_UA612_01",
         "callsign": "UA612SIM",
+        "aircraft_type": "B737",
         "route_id": "UA612",
         "speed_kt": 460
       }

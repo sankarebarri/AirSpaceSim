@@ -1,0 +1,105 @@
+{
+  "schema": {
+    "name": "airspacesim.aircraft_performance",
+    "version": "1.0"
+  },
+  "metadata": {
+    "source": "airspacesim.seed",
+    "generated_utc": "2026-05-24T00:00:00Z",
+    "description": "Initial project-owned performance database. Values are training approximations until replaced by validated performance sources."
+  },
+  "data": {
+    "aircraft_types": {
+      "B737": {
+        "display_name": "Boeing 737-700",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 430, "min_clean_kt": 210, "max_operating_kt": 340 },
+        "vertical": { "default_climb_fpm": 1800, "default_descent_fpm": 1800, "max_climb_fpm": 3000, "max_descent_fpm": 3500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 2.8 },
+        "holding": { "hold_speed_kt": 220, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 410 }
+      },
+      "B738": {
+        "display_name": "Boeing 737-800",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 440, "min_clean_kt": 215, "max_operating_kt": 340 },
+        "vertical": { "default_climb_fpm": 1700, "default_descent_fpm": 1800, "max_climb_fpm": 2800, "max_descent_fpm": 3500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 3.0 },
+        "holding": { "hold_speed_kt": 220, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 410 }
+      },
+      "A320": {
+        "display_name": "Airbus A320",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 430, "min_clean_kt": 210, "max_operating_kt": 350 },
+        "vertical": { "default_climb_fpm": 1800, "default_descent_fpm": 1800, "max_climb_fpm": 3000, "max_descent_fpm": 3500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 2.8 },
+        "holding": { "hold_speed_kt": 220, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 390 }
+      },
+      "A332": {
+        "display_name": "Airbus A330-200",
+        "wake_category": "heavy",
+        "speed": { "default_cruise_kt": 470, "min_clean_kt": 240, "max_operating_kt": 330 },
+        "vertical": { "default_climb_fpm": 1300, "default_descent_fpm": 1600, "max_climb_fpm": 2400, "max_descent_fpm": 3000 },
+        "turning": { "standard_rate_deg_per_sec": 2.5, "default_bank_deg": 25, "min_turn_radius_nm": 4.2 },
+        "holding": { "hold_speed_kt": 240, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 410 }
+      },
+      "B772": {
+        "display_name": "Boeing 777-200",
+        "wake_category": "heavy",
+        "speed": { "default_cruise_kt": 480, "min_clean_kt": 250, "max_operating_kt": 330 },
+        "vertical": { "default_climb_fpm": 1200, "default_descent_fpm": 1600, "max_climb_fpm": 2300, "max_descent_fpm": 3000 },
+        "turning": { "standard_rate_deg_per_sec": 2.5, "default_bank_deg": 25, "min_turn_radius_nm": 4.5 },
+        "holding": { "hold_speed_kt": 250, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 430 }
+      },
+      "E190": {
+        "display_name": "Embraer 190",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 420, "min_clean_kt": 190, "max_operating_kt": 320 },
+        "vertical": { "default_climb_fpm": 1900, "default_descent_fpm": 1800, "max_climb_fpm": 3200, "max_descent_fpm": 3500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 2.5 },
+        "holding": { "hold_speed_kt": 210, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 410 }
+      },
+      "CRJ9": {
+        "display_name": "Bombardier CRJ900",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 410, "min_clean_kt": 185, "max_operating_kt": 320 },
+        "vertical": { "default_climb_fpm": 1900, "default_descent_fpm": 1800, "max_climb_fpm": 3200, "max_descent_fpm": 3500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 2.4 },
+        "holding": { "hold_speed_kt": 200, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 410 }
+      },
+      "AT72": {
+        "display_name": "ATR 72",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 250, "min_clean_kt": 150, "max_operating_kt": 250 },
+        "vertical": { "default_climb_fpm": 1000, "default_descent_fpm": 1200, "max_climb_fpm": 1800, "max_descent_fpm": 2500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 1.5 },
+        "holding": { "hold_speed_kt": 170, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 250 }
+      },
+      "DH8D": {
+        "display_name": "Dash 8 Q400",
+        "wake_category": "medium",
+        "speed": { "default_cruise_kt": 300, "min_clean_kt": 160, "max_operating_kt": 285 },
+        "vertical": { "default_climb_fpm": 1300, "default_descent_fpm": 1400, "max_climb_fpm": 2200, "max_descent_fpm": 2800 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 25, "min_turn_radius_nm": 1.8 },
+        "holding": { "hold_speed_kt": 180, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 270 }
+      },
+      "C208": {
+        "display_name": "Cessna 208 Caravan",
+        "wake_category": "light",
+        "speed": { "default_cruise_kt": 165, "min_clean_kt": 95, "max_operating_kt": 175 },
+        "vertical": { "default_climb_fpm": 700, "default_descent_fpm": 800, "max_climb_fpm": 1100, "max_descent_fpm": 1500 },
+        "turning": { "standard_rate_deg_per_sec": 3.0, "default_bank_deg": 20, "min_turn_radius_nm": 0.8 },
+        "holding": { "hold_speed_kt": 110, "inbound_leg_minutes_below_fl140": 1.0, "inbound_leg_minutes_above_fl140": 1.5 },
+        "limits": { "max_fl": 250 }
+      }
+    }
+  }
+}

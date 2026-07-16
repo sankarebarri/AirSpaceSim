@@ -1,0 +1,82 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "1.0"
+  },
+  "id": "enroute_heading_vs_radial_intro",
+  "title": "Heading Versus Radial",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 5,
+  "standards_reference": [
+    "ICAO Annex 11",
+    "ICAO Doc 4444 PANS-ATM",
+    "ICAO Doc 9432 Manual of Radiotelephony"
+  ],
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "Explain the difference between an assigned heading and an assigned radial.",
+    "Use a radial instruction to return an aircraft to a defined navigation line.",
+    "Resume normal navigation after a radial deviation."
+  ],
+  "key_points": [
+    "Heading is where the aircraft nose is pointed.",
+    "A radial is a navigation line referenced from a fix or navaid.",
+    "An aircraft assigned a heading may keep drifting from its route until another instruction is issued.",
+    "An aircraft assigned a radial should intercept the radial line and then track that line.",
+    "Resume normal navigation sends the aircraft back toward its planned route, not the last temporary radial."
+  ],
+  "lesson_steps": [
+    {
+      "type": "concept",
+      "title": "Heading",
+      "body": "A heading instruction tells the aircraft which direction to fly. It is useful for tactical vectoring, but it can take the aircraft away from its planned route if left unchanged."
+    },
+    {
+      "type": "concept",
+      "title": "Radial",
+      "body": "A radial instruction references a navigation line. The aircraft turns to intercept the assigned radial and then follows it until another instruction changes the lateral mode."
+    },
+    {
+      "type": "visual_prompt",
+      "title": "What To Watch On The Map",
+      "body": "Watch the heading vector, the route line, the assigned radial state, and the radial cross-track value. Use the route/fix inspection and ruler tools if needed."
+    },
+    {
+      "type": "sim_demo",
+      "title": "Demonstration",
+      "scenario_template": "beginner_mix.v1.json",
+      "script": [
+        "Select an en-route or overflight aircraft.",
+        "Assign radial R265.",
+        "Watch the aircraft intercept the radial before tracking it.",
+        "Use Resume Nav to return the aircraft to its route."
+      ]
+    }
+  ],
+  "exercise": {
+    "id": "enroute_heading_vs_radial_exercise_01",
+    "title": "Intercept A Radial And Resume Route",
+    "scenario_template": "beginner_mix.v1.json",
+    "objective": "Assign a radial to create a controlled route deviation, monitor capture, then resume normal navigation.",
+    "student_actions": [
+      "Select one aircraft.",
+      "Inspect its route and nearby fixes.",
+      "Assign a radial different from its current route bearing.",
+      "Monitor heading, radial state, and cross-track.",
+      "Resume normal navigation after the aircraft is established."
+    ],
+    "success_conditions": [
+      "Aircraft receives a valid radial instruction.",
+      "Aircraft enters radial tracking after intercept.",
+      "Aircraft is returned to route using Resume Nav."
+    ],
+    "debrief_prompts": [
+      "Was the instruction a heading or radial instruction?",
+      "Did the aircraft intercept before tracking the radial?",
+      "When was Resume Nav issued?",
+      "How far did the aircraft deviate from its route?"
+    ]
+  }
+}

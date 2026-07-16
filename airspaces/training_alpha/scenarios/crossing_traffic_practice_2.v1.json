@@ -1,0 +1,54 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "metadata": {
+    "name": "Crossing Traffic — Practice 2",
+    "description": "SIA328 and ETH504 converge near Charlie Fix on different routes, timing, and geometry than Practice 1, with JBU550 as an additional non-conflicting track. No conflict information is provided — the trainee must identify and resolve the encounter independently.",
+    "practice": {
+      "title": "Crossing Traffic · Practice 2",
+      "objective": "Maintain the required separation between all aircraft.",
+      "assistance": "",
+      "conflict_pair": ["SIA328", "ETH504"],
+      "required_horizontal_separation_nm": 10,
+      "required_vertical_separation_ft": 1000,
+      "crossing_point": [16.85, -0.95],
+      "visible_route_ids": ["CX1", "CX2", "A2"],
+      "active_commands": ["SET_FL", "ASSIGN_HEADING"]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "aircraft": [
+    {
+      "id": "SIA328",
+      "callsign": "SIA328",
+      "aircraft_type": "A332",
+      "route_id": "CX1",
+      "speed_kt": 420,
+      "flight_level": 350,
+      "appear_after_seconds": 0,
+      "metadata": { "role": "crossing-a" }
+    },
+    {
+      "id": "ETH504",
+      "callsign": "ETH504",
+      "aircraft_type": "B772",
+      "route_id": "CX2",
+      "speed_kt": 480,
+      "flight_level": 350,
+      "appear_after_seconds": 0,
+      "metadata": { "role": "crossing-b" }
+    },
+    {
+      "id": "JBU550",
+      "callsign": "JBU550",
+      "aircraft_type": "A320",
+      "route_id": "A2",
+      "speed_kt": 400,
+      "flight_level": 220,
+      "appear_after_seconds": 20,
+      "metadata": { "role": "background" }
+    }
+  ]
+}

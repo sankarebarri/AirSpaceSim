@@ -1,6 +1,7 @@
 """Export helpers for downstream interoperability workflows."""
 
 import csv
+import io
 import json
 
 from airspacesim.io.contracts import validate_trajectory_v01
@@ -38,15 +39,22 @@ def _track_to_row(track):
     }
 
 
-def export_trajectory_payload_to_csv(payload, output_path):
-    """Export validated airspacesim.trajectory.v0.1 payload to CSV."""
+def serialize_trajectory_payload_to_csv(payload):
+    """Serialize a validated airspacesim.trajectory.v0.1 payload to CSV text."""
+
     validate_trajectory_v01(payload)
     rows = [_track_to_row(track) for track in payload["data"]["tracks"]]
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=CSV_FIELDS)
+    writer.writeheader()
+    writer.writerows(rows)
+    return buffer.getvalue()
 
+
+def export_trajectory_payload_to_csv(payload, output_path):
+    """Export validated airspacesim.trajectory.v0.1 payload to CSV."""
     with open(output_path, "w", newline="", encoding="utf-8") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=CSV_FIELDS)
-        writer.writeheader()
-        writer.writerows(rows)
+        csv_file.write(serialize_trajectory_payload_to_csv(payload))
     return output_path
 
 

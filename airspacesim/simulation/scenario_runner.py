@@ -25,7 +25,13 @@ def _build_routes_from_scenario_airspace(scenario_airspace):
         route_points = []
         for point_id in route["waypoint_ids"]:
             point = points[point_id]
-            route_points.append({"dec_coords": point["coord"]["dd"]})
+            route_points.append(
+                {
+                    "id": point_id,
+                    "name": point.get("name", point_id),
+                    "dec_coords": point["coord"]["dd"],
+                }
+            )
         routes[route_id] = route_points
     return routes
 
@@ -113,6 +119,7 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
             route_id=item["route_id"],
             speed_kt=float(item["speed_kt"]),
             callsign=item.get("callsign"),
+            aircraft_type=item.get("aircraft_type", "UNKNOWN"),
             flight_level=(
                 int(round(float(item["flight_level"])))
                 if item.get("flight_level") is not None
@@ -144,6 +151,7 @@ def initialize_manager_from_scenarios(
             flight_level=item.get("flight_level"),
             altitude_ft=item.get("altitude_ft", 0.0),
             vertical_rate_fpm=item.get("vertical_rate_fpm", 0.0),
+            aircraft_type=item.get("aircraft_type", "UNKNOWN"),
         )
     return manager
 

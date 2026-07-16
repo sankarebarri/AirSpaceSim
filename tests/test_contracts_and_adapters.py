@@ -21,7 +21,9 @@ from airspacesim.io.contracts import (
     validate_scenario_airspace,
     validate_trajectory_v01,
 )
+from airspacesim.io.airspaces import normalize_scenario_airspace_payload
 from airspacesim.settings import settings
+from airspacesim.simulation.aircraft import Aircraft
 from airspacesim.simulation.aircraft_manager import AircraftManager
 from airspacesim.simulation.events import apply_events_idempotent
 from airspacesim.simulation.scenario_runner import load_scenarios
@@ -63,6 +65,68 @@ def test_scenario_contracts_validate_and_load(tmp_path):
     )
     assert loaded_airspace["data"]["routes"][0]["id"] == "R1"
     assert loaded_aircraft["data"]["aircraft"][0]["id"] == "AC1"
+
+
+def test_scenario_airspace_contract_accepts_polygon_airspace():
+    scenario_airspace = {
+        "schema": {"name": "airspacesim.scenario_airspace", "version": "1.0"},
+        "metadata": {"source": "test", "generated_utc": "2026-02-20T00:00:00Z"},
+        "data": {
+            "points": {
+                "P1": {"type": "fix", "name": "P1", "coord": {"dd": [10.0, 1.0]}},
+                "P2": {"type": "fix", "name": "P2", "coord": {"dd": [11.0, 1.5]}},
+            },
+            "airspaces": [
+                {
+                    "id": "POLY1",
+                    "type": "polygon",
+                    "points": [[9.5, 0.5], [11.5, 0.8], [11.0, 2.0], [9.6, 1.8]],
+                }
+            ],
+            "routes": [{"id": "R1", "name": "R1", "waypoint_ids": ["P1", "P2"]}],
+        },
+    }
+
+    validate_scenario_airspace(scenario_airspace)
+
+
+def test_normalize_scenario_airspace_payload_accepts_package_style_airspace():
+    payload = normalize_scenario_airspace_payload(
+        {
+            "metadata": {"id": "training_alpha", "name": "Training Alpha"},
+            "points": [
+                {
+                    "id": "ALP",
+                    "name": "Alpha VOR",
+                    "type": "navaid",
+                    "position": [16.25, -0.03],
+                },
+                {
+                    "id": "NORTH",
+                    "name": "North Fix",
+                    "type": "fix",
+                    "position": [16.9, 0.2],
+                },
+            ],
+            "routes": [
+                {"id": "A1", "name": "Alpha One", "waypoint_ids": ["ALP", "NORTH"]}
+            ],
+            "airspaces": [
+                {
+                    "id": "TMA",
+                    "type": "polygon",
+                    "points": [[16, -1], [17, 0], [16, 1]],
+                }
+            ],
+        },
+        generated_utc="2026-02-20T00:00:00Z",
+    )
+
+    validate_scenario_airspace(payload)
+    assert payload["metadata"]["id"] == "training_alpha"
+    assert payload["metadata"]["source"] == "training_alpha"
+    assert payload["data"]["points"]["ALP"]["coord"]["dd"] == [16.25, -0.03]
+    assert payload["data"]["routes"][0]["id"] == "A1"
 
 
 def test_combined_scenario_v01_contract_validates_and_loads(tmp_path):
@@ -237,18 +301,14 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
     }
     manager = AircraftManager(routes)
     manager.aircraft_list = [
-        SimpleNamespace(
-            id="AC1",
-            route="R1",
+        Aircraft(
+            "AC1",
+            "R1",
+            [[10.0, 1.0], [11.0, 1.5]],
             speed=400,
             callsign="AC1",
             flight_level=280,
-            altitude_ft=9000,
             vertical_rate_fpm=0,
-            position=[10.0, 1.0],
-            waypoints=[[10.0, 1.0], [11.0, 1.5]],
-            current_index=0,
-            segment_progress=0,
         )
     ]
 
@@ -285,17 +345,39 @@ def test_apply_events_idempotent_mutates_manager_state(tmp_path):
             },
             {
                 "event_id": "e5",
-                "type": "SET_SIMULATION_SPEED",
+                "type": "ASSIGN_HEADING",
                 "created_utc": "2026-02-20T00:00:05Z",
+                "payload": {"aircraft_id": "AC1", "heading_deg": 270},
+            },
+            {
+                "event_id": "e6",
+                "type": "ASSIGN_RADIAL",
+                "created_utc": "2026-02-20T00:00:06Z",
+                "payload": {"aircraft_id": "AC1", "radial_deg": 270},
+            },
+            {
+                "event_id": "e7",
+                "type": "RESUME_ROUTE",
+                "created_utc": "2026-02-20T00:00:07Z",
+                "payload": {"aircraft_id": "AC1"},
+            },
+            {
+                "event_id": "e8",
+                "type": "SET_SIMULATION_SPEED",
+                "created_utc": "2026-02-20T00:00:08Z",
                 "payload": {"sim_rate": 2.0},
             },
         ]
         result = apply_events_idempotent(manager, events)
-        assert result["applied"] == ["e1", "e2", "e3", "e4", "e5"]
+        assert result["applied"] == ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]
         assert manager.aircraft_list[0].speed == 420
         assert manager.aircraft_list[0].route == "R2"
-        assert manager.aircraft_list[0].vertical_rate_fpm == 600
-        assert manager.aircraft_list[0].flight_level == 340
+        assert manager.aircraft_list[0].vertical_rate_fpm == 1800
+        assert manager.aircraft_list[0].target_flight_level == 340
+        assert manager.aircraft_list[0].flight_level == 280
+        assert manager.aircraft_list[0].assigned_radial_deg is None
+        assert manager.aircraft_list[0].radial_deviation_deg is None
+        assert manager.aircraft_list[0].lateral_mode == "route_intercept"
         assert settings.SIMULATION_SPEED == 2.0
     finally:
         settings.AIRCRAFT_FILE = original_aircraft_file
@@ -328,6 +410,113 @@ def test_apply_events_skips_duplicate_add_aircraft_id():
     assert result["rejected"] == []
     assert result["skipped"] == [("evt-add-dup", "aircraft_id already exists")]
     assert len(manager.aircraft_list) == 1
+
+
+def test_apply_events_direct_to_named_route_fix():
+    manager = AircraftManager(
+        {
+            "R1": [
+                {"id": "A", "dec_coords": [0.0, 0.0]},
+                {"id": "B", "dec_coords": [0.0, 0.02]},
+                {"id": "C", "dec_coords": [0.0, 0.04]},
+            ]
+        },
+        execution_mode="batched",
+    )
+    manager.add_aircraft(id="AC1", route_name="R1", callsign="OPS1", speed=420)
+
+    result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-direct-to",
+                "type": "DIRECT_TO",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"aircraft_id": "AC1", "fix_id": "B"},
+            }
+        ],
+    )
+
+    aircraft = manager.aircraft_list[0]
+    assert result["applied"] == ["evt-direct-to"]
+    assert aircraft.lateral_mode == "direct_to"
+    assert aircraft.direct_to_fix_id == "B"
+    assert aircraft.direct_to_target_index == 1
+
+
+def test_apply_events_hold_at_fix_and_exit_hold():
+    manager = AircraftManager(
+        {
+            "R1": [
+                {"id": "A", "dec_coords": [0.0, 0.0]},
+                {"id": "B", "dec_coords": [0.0, 0.02]},
+            ]
+        },
+        execution_mode="batched",
+    )
+    manager.add_aircraft(id="AC1", route_name="R1", callsign="OPS1", speed=430)
+
+    hold_result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-hold",
+                "type": "HOLD_AT_FIX",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"aircraft_id": "AC1", "fix_id": "A"},
+            }
+        ],
+    )
+    aircraft = manager.aircraft_list[0]
+    assert hold_result["applied"] == ["evt-hold"]
+    assert aircraft.lateral_mode == "hold_entry"
+    assert aircraft.hold_fix_id == "A"
+    assert aircraft.speed == 220
+
+    exit_result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-exit-hold",
+                "type": "EXIT_HOLD",
+                "created_utc": "2026-02-20T00:00:02Z",
+                "payload": {"aircraft_id": "AC1"},
+            }
+        ],
+    )
+    assert exit_result["applied"] == ["evt-exit-hold"]
+    assert aircraft.hold_fix_id is None
+    assert aircraft.speed == 430
+    assert aircraft.lateral_mode == "route_intercept"
+
+
+def test_apply_events_intercept_route_aliases_resume_route():
+    manager = AircraftManager(
+        {
+            "R1": [
+                {"id": "A", "dec_coords": [0.0, 0.0]},
+                {"id": "B", "dec_coords": [0.0, 0.02]},
+            ]
+        },
+        execution_mode="batched",
+    )
+    manager.add_aircraft(id="AC1", route_name="R1", callsign="OPS1", speed=420)
+    manager.aircraft_list[0].assign_heading(270)
+
+    result = apply_events_idempotent(
+        manager,
+        [
+            {
+                "event_id": "evt-intercept-route",
+                "type": "INTERCEPT_ROUTE",
+                "created_utc": "2026-02-20T00:00:01Z",
+                "payload": {"aircraft_id": "AC1"},
+            }
+        ],
+    )
+
+    assert result["applied"] == ["evt-intercept-route"]
+    assert manager.aircraft_list[0].lateral_mode == "route_intercept"
 
 
 def test_apply_events_set_speed_with_callsign_hint():

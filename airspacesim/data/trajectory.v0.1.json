@@ -5,7 +5,7 @@
     },
     "metadata": {
         "source": "airspacesim.simulation.aircraft_manager",
-        "generated_utc": "2026-02-23T14:16:26.502458Z"
+        "generated_utc": "2026-05-11T14:59:59.350880Z"
     },
     "data": {
         "tracks": [
@@ -17,7 +17,7 @@
                     -0.03
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-23T14:16:26.502458Z",
+                "updated_utc": "2026-05-11T14:59:59.350880Z",
                 "callsign": "B0000",
                 "speed_kt": 420.0,
                 "flight_level": 100,
@@ -32,7 +32,7 @@
                     -0.0299
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-23T14:16:26.502458Z",
+                "updated_utc": "2026-05-11T14:59:59.350880Z",
                 "callsign": "B0001",
                 "speed_kt": 420.0,
                 "flight_level": 100,
@@ -47,7 +47,7 @@
                     -0.0298
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-23T14:16:26.502458Z",
+                "updated_utc": "2026-05-11T14:59:59.350880Z",
                 "callsign": "B0002",
                 "speed_kt": 420.0,
                 "flight_level": 100,
@@ -62,7 +62,7 @@
                     -0.029699999999999997
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-23T14:16:26.502458Z",
+                "updated_utc": "2026-05-11T14:59:59.350880Z",
                 "callsign": "B0003",
                 "speed_kt": 420.0,
                 "flight_level": 100,
@@ -77,7 +77,7 @@
                     -0.029599999999999998
                 ],
                 "status": "active",
-                "updated_utc": "2026-02-23T14:16:26.502458Z",
+                "updated_utc": "2026-05-11T14:59:59.350880Z",
                 "callsign": "B0004",
                 "speed_kt": 420.0,
                 "flight_level": 100,

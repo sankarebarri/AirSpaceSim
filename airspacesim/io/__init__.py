@@ -21,9 +21,11 @@ from airspacesim.io.adapters import (
     FileSnapshotAdapter,
     StdinEventAdapter,
 )
+from airspacesim.io.airspaces import normalize_scenario_airspace_payload
 from airspacesim.io.exporters import (
     export_trajectory_json_to_csv,
     export_trajectory_payload_to_csv,
+    serialize_trajectory_payload_to_csv,
 )
 
 __all__ = [
@@ -44,6 +46,8 @@ __all__ = [
     "FileEventAdapter",
     "FileSnapshotAdapter",
     "StdinEventAdapter",
+    "normalize_scenario_airspace_payload",
     "export_trajectory_json_to_csv",
     "export_trajectory_payload_to_csv",
+    "serialize_trajectory_payload_to_csv",
 ]

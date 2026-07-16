@@ -1,0 +1,129 @@
+{
+  "schema": {
+    "name": "airspacesim.airspace_package_manifest",
+    "version": "1.0"
+  },
+  "id": "training_alpha",
+  "name": "Training Alpha",
+  "description": "Fictional beginner airspace with crossing routes for classroom-style en-route practice.",
+  "package_type": "fictional",
+  "service_types": ["enroute"],
+  "difficulty": "beginner",
+  "training_modes": ["solo_guided", "solo_free_practice"],
+  "airspace_file": "airspace.v1.json",
+  "default_scenario": "beginner_mix",
+  "map": {
+    "default_center": [16.25, -0.03],
+    "default_zoom_nm": 85
+  },
+  "scenarios": [
+    {
+      "id": "beginner_mix",
+      "title": "Beginner Mixed Traffic",
+      "path": "scenarios/beginner_mix.v1.json",
+      "description": "Eight aircraft on four crossing routes for introductory en-route control practice.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "crossing_traffic",
+      "title": "Crossing Traffic — Learn",
+      "path": "scenarios/crossing_traffic.v1.json",
+      "description": "AFR612 and RAM401 converge at the same flight level near the Alpha VOR.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "crossing_traffic_practice",
+      "title": "Crossing Traffic — Practice",
+      "path": "scenarios/crossing_traffic_practice.v1.json",
+      "description": "A similar crossing conflict with less guidance.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "crossing_traffic_practice_2",
+      "title": "Crossing Traffic — Practice 2",
+      "path": "scenarios/crossing_traffic_practice_2.v1.json",
+      "description": "A crossing conflict with different geometry and no conflict announcement.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "enroute_heading_vs_radial_intro",
+      "title": "Heading Versus Radial",
+      "path": "lessons/heading_vs_radial.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 5
+    },
+    {
+      "id": "enroute_reading_aircraft_labels_intro",
+      "title": "Reading Aircraft Labels",
+      "path": "lessons/reading_aircraft_labels.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 4
+    },
+    {
+      "id": "enroute_flight_level_assignment_intro",
+      "title": "Flight Level Assignment",
+      "path": "lessons/flight_level_assignment.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 5
+    },
+    {
+      "id": "enroute_speed_control_intro",
+      "title": "Speed Control",
+      "path": "lessons/speed_control.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 5
+    },
+    {
+      "id": "enroute_direct_to_fix_intro",
+      "title": "Direct To A Fix",
+      "path": "lessons/direct_to_fix.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 4
+    },
+    {
+      "id": "enroute_resume_normal_navigation_intro",
+      "title": "Resume Normal Navigation",
+      "path": "lessons/resume_normal_navigation.v1.json",
+      "scenario_id": "beginner_mix",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 4
+    },
+    {
+      "id": "enroute_crossing_traffic_intro",
+      "title": "Crossing Traffic",
+      "path": "lessons/crossing_traffic.v1.json",
+      "scenario_id": "crossing_traffic",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 5
+    }
+  ]
+}

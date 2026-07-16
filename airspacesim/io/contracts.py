@@ -1,6 +1,6 @@
 """Strict validators for AirSpaceSim v1 JSON contracts."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 CANONICAL_DATA_DOMAINS = {
     "scenario": {
@@ -55,7 +55,12 @@ def _is_iso8601_utc(value):
 def build_envelope(schema_name, source, data, generated_utc=None, schema_version="1.0"):
     """Build a standard v1 envelope used by canonical runtime contracts."""
     if generated_utc is None:
-        generated_utc = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+        generated_utc = (
+            datetime.now(timezone.utc)
+            .replace(microsecond=0)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
     return {
         "schema": {
             "name": schema_name,
@@ -242,15 +247,35 @@ def validate_scenario_airspace(payload):
             isinstance(airspace.get("id"), str),
             f"data.airspaces[{idx}].id must be a string",
         )
-        center_point_id = airspace.get("center_point_id")
+        airspace_type = airspace.get("type", "circle")
         _require(
-            isinstance(center_point_id, str) and center_point_id in points,
-            f"data.airspaces[{idx}].center_point_id must reference an existing point",
+            isinstance(airspace_type, str),
+            f"data.airspaces[{idx}].type must be a string",
         )
-        _require(
-            isinstance(airspace.get("radius_nm"), (int, float)),
-            f"data.airspaces[{idx}].radius_nm must be numeric",
-        )
+        if airspace_type == "polygon":
+            polygon_points = airspace.get("points")
+            _require_list(polygon_points, f"data.airspaces[{idx}].points")
+            _require(
+                len(polygon_points) >= 3,
+                f"data.airspaces[{idx}].points must contain at least 3 positions",
+            )
+            for point_idx, position in enumerate(polygon_points):
+                _require_lat_lon(
+                    position,
+                    f"data.airspaces[{idx}].points[{point_idx}]",
+                )
+        elif airspace_type == "circle":
+            center_point_id = airspace.get("center_point_id")
+            _require(
+                isinstance(center_point_id, str) and center_point_id in points,
+                f"data.airspaces[{idx}].center_point_id must reference an existing point",
+            )
+            _require(
+                isinstance(airspace.get("radius_nm"), (int, float)),
+                f"data.airspaces[{idx}].radius_nm must be numeric",
+            )
+        else:
+            _fail(f"data.airspaces[{idx}].type must be circle or polygon")
 
     return payload
 
@@ -281,6 +306,11 @@ def validate_scenario_aircraft(payload, route_ids=None):
                 route_id in route_ids,
                 f"aircraft {ac_id} references unknown route_id: {route_id}",
             )
+        if "aircraft_type" in item:
+            _require(
+                isinstance(item.get("aircraft_type"), str) and item["aircraft_type"],
+                f"data.aircraft[{idx}].aircraft_type must be non-empty string",
+            )
         _require(
             isinstance(item.get("speed_kt"), (int, float)) and item["speed_kt"] > 0,
             f"data.aircraft[{idx}].speed_kt must be > 0",
@@ -290,6 +320,12 @@ def validate_scenario_aircraft(payload, route_ids=None):
                 isinstance(item.get("flight_level"), (int, float))
                 and item["flight_level"] >= 0,
                 f"data.aircraft[{idx}].flight_level must be >= 0",
+            )
+        if "target_flight_level" in item and item.get("target_flight_level") is not None:
+            _require(
+                isinstance(item.get("target_flight_level"), (int, float))
+                and item["target_flight_level"] >= 0,
+                f"data.aircraft[{idx}].target_flight_level must be >= 0",
             )
         if "altitude_ft" in item:
             _require(
@@ -301,6 +337,33 @@ def validate_scenario_aircraft(payload, route_ids=None):
             _require(
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
+            )
+        if "heading_deg" in item:
+            _require(
+                isinstance(item.get("heading_deg"), (int, float)),
+                f"data.aircraft[{idx}].heading_deg must be numeric",
+            )
+        if "assigned_heading_deg" in item and item.get("assigned_heading_deg") is not None:
+            _require(
+                isinstance(item.get("assigned_heading_deg"), (int, float)),
+                f"data.aircraft[{idx}].assigned_heading_deg must be numeric",
+            )
+        if "assigned_radial_deg" in item and item.get("assigned_radial_deg") is not None:
+            _require(
+                isinstance(item.get("assigned_radial_deg"), (int, float)),
+                f"data.aircraft[{idx}].assigned_radial_deg must be numeric",
+            )
+        if "radial_deviation_deg" in item and item.get("radial_deviation_deg") is not None:
+            _require(
+                isinstance(item.get("radial_deviation_deg"), (int, float)),
+                f"data.aircraft[{idx}].radial_deviation_deg must be numeric",
+            )
+        if "lateral_mode" in item:
+            _require(
+                isinstance(item.get("lateral_mode"), str)
+                and item["lateral_mode"]
+                in {"route", "heading", "radial_intercept", "radial", "route_intercept", "direct_to", "hold_entry", "hold"},
+                f"data.aircraft[{idx}].lateral_mode must be route|heading|radial_intercept|radial|route_intercept|direct_to|hold_entry|hold",
             )
         if "traffic_flow" in item:
             _require(
@@ -321,8 +384,16 @@ def validate_inbox_events(payload):
         "ADD_AIRCRAFT",
         "SET_SPEED",
         "SET_FL",
+        "ASSIGN_HEADING",
+        "ASSIGN_RADIAL",
+        "ASSIGN_RADIAL_DEVIATION",
         "REMOVE_AIRCRAFT",
         "REROUTE",
+        "DIRECT_TO",
+        "INTERCEPT_ROUTE",
+        "RESUME_ROUTE",
+        "HOLD_AT_FIX",
+        "EXIT_HOLD",
         "SET_VERTICAL_RATE",
         "SET_SIMULATION_SPEED",
     }
@@ -372,16 +443,71 @@ def validate_aircraft_state(payload):
                 and item["altitude_ft"] >= 0,
                 f"data.aircraft[{idx}].altitude_ft must be >= 0",
             )
+        if "aircraft_type" in item:
+            _require(
+                isinstance(item.get("aircraft_type"), str) and item["aircraft_type"],
+                f"data.aircraft[{idx}].aircraft_type must be non-empty string",
+            )
         if "flight_level" in item:
             _require(
                 isinstance(item.get("flight_level"), (int, float))
                 and item["flight_level"] >= 0,
                 f"data.aircraft[{idx}].flight_level must be >= 0",
             )
+        if "target_flight_level" in item and item.get("target_flight_level") is not None:
+            _require(
+                isinstance(item.get("target_flight_level"), (int, float))
+                and item["target_flight_level"] >= 0,
+                f"data.aircraft[{idx}].target_flight_level must be >= 0",
+            )
         if "vertical_rate_fpm" in item:
             _require(
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
+            )
+        if "heading_deg" in item:
+            _require(
+                isinstance(item.get("heading_deg"), (int, float)),
+                f"data.aircraft[{idx}].heading_deg must be numeric",
+            )
+        if "assigned_heading_deg" in item and item.get("assigned_heading_deg") is not None:
+            _require(
+                isinstance(item.get("assigned_heading_deg"), (int, float)),
+                f"data.aircraft[{idx}].assigned_heading_deg must be numeric",
+            )
+        if "assigned_radial_deg" in item and item.get("assigned_radial_deg") is not None:
+            _require(
+                isinstance(item.get("assigned_radial_deg"), (int, float)),
+                f"data.aircraft[{idx}].assigned_radial_deg must be numeric",
+            )
+        if "radial_deviation_deg" in item and item.get("radial_deviation_deg") is not None:
+            _require(
+                isinstance(item.get("radial_deviation_deg"), (int, float)),
+                f"data.aircraft[{idx}].radial_deviation_deg must be numeric",
+            )
+        if "radial_cross_track_nm" in item and item.get("radial_cross_track_nm") is not None:
+            _require(
+                isinstance(item.get("radial_cross_track_nm"), (int, float)),
+                f"data.aircraft[{idx}].radial_cross_track_nm must be numeric",
+            )
+        if "lateral_mode" in item:
+            _require(
+                isinstance(item.get("lateral_mode"), str)
+                and item["lateral_mode"]
+                in {"route", "heading", "radial_intercept", "radial", "route_intercept", "direct_to", "hold_entry", "hold"},
+                f"data.aircraft[{idx}].lateral_mode must be route|heading|radial_intercept|radial|route_intercept|direct_to|hold_entry|hold",
+            )
+        if "direct_to_fix_id" in item and item.get("direct_to_fix_id") is not None:
+            _require(
+                isinstance(item.get("direct_to_fix_id"), str)
+                and item["direct_to_fix_id"],
+                f"data.aircraft[{idx}].direct_to_fix_id must be non-empty string",
+            )
+        if "hold_fix_id" in item and item.get("hold_fix_id") is not None:
+            _require(
+                isinstance(item.get("hold_fix_id"), str)
+                and item["hold_fix_id"],
+                f"data.aircraft[{idx}].hold_fix_id must be non-empty string",
             )
         if "traffic_flow" in item:
             _require(

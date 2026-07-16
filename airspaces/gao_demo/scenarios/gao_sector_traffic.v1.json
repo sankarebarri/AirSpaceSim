@@ -1,0 +1,59 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "metadata": {
+    "name": "Gao Sector Traffic",
+    "description": "A small en-route traffic simulation with four aircraft entering, crossing, and leaving the sector.",
+    "simulate": {
+      "title": "Gao Sector Traffic",
+      "brief": "Control the traffic through the sector using the available clearances.",
+      "mode": "Solo",
+      "visible_route_ids": ["UA612", "UM629", "UG859"]
+    }
+  },
+  "airspace_id": "gao_demo",
+  "aircraft": [
+    {
+      "id": "DEP31",
+      "callsign": "DEP31",
+      "aircraft_type": "B738",
+      "route_id": "UA612",
+      "speed_kt": 420,
+      "flight_level": 290,
+      "appear_after_seconds": 0,
+      "metadata": { "role": "departure" }
+    },
+    {
+      "id": "DEP32",
+      "callsign": "DEP32",
+      "aircraft_type": "A320",
+      "route_id": "UM629",
+      "speed_kt": 400,
+      "flight_level": 300,
+      "appear_after_seconds": 0,
+      "metadata": { "role": "departure" }
+    },
+    {
+      "id": "ARR33",
+      "callsign": "ARR33",
+      "aircraft_type": "E190",
+      "route_id": "UG859",
+      "speed_kt": 430,
+      "flight_level": 310,
+      "appear_after_seconds": 10,
+      "metadata": { "role": "arrival" }
+    },
+    {
+      "id": "DEP34",
+      "callsign": "DEP34",
+      "aircraft_type": "CRJ9",
+      "route_id": "UA612",
+      "speed_kt": 440,
+      "flight_level": 350,
+      "appear_after_seconds": 25,
+      "metadata": { "role": "departure" }
+    }
+  ]
+}

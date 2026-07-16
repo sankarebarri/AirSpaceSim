@@ -1,6 +1,6 @@
 # AirSpaceSim Documentation (Living Guide)
 
-Last updated: 2026-02-23
+Last updated: 2026-05-11
 
 ## 1) What This Project Is
 
@@ -10,11 +10,13 @@ AirSpaceSim is a simulation-first Python project for:
 - publishing aircraft state to JSON contracts consumed by the UI
 
 Primary design rule:
-- backend simulation and frontend UI stay independent and communicate through files/contracts only.
+- the core simulation package stays independent from hosted app concerns
+- the current compatibility path between backend and UI is files/contracts
+- the target hosted path is `FastAPI + React + SQLite` with API/WebSocket transport
 
 Planning source of truth:
-- `new_roadmap.md` is the only active roadmap/status tracker.
-- `roadmap.md` is archived for historical reference.
+- `docs/improvements/new-roadmap.md` is the active roadmap/status tracker.
+- `docs/improvements/legacy_static_ui_roadmap.md` is the legacy static-UI planning tracker during migration.
 
 ## 2) Current Architecture (Practical View)
 
@@ -30,11 +32,15 @@ Planning source of truth:
   - `airspacesim/static/js/map_renderer.js`
   - `airspacesim/static/js/aircraft_simulation.js`
   - `airspacesim/templates/map.html`
+  - `airspacesim-playground/` remains a legacy compatibility surface
 - Data/config contracts:
   - `airspacesim/data/*.json` (package defaults)
   - `data/*.json` (workspace runtime/project overrides)
 - CLI bootstrap:
   - `airspacesim/cli/commands.py` (`airspacesim init`, `airspacesim list-routes`)
+- Hosted app scaffold:
+  - `apps/api/` (FastAPI service)
+  - `apps/web/` (React frontend)
 
 ## 3) File Responsibilities
 
@@ -96,7 +102,7 @@ Planning source of truth:
    - `python3 dev_server.py`
 4. Open:
    - `http://127.0.0.1:8080/templates/map.html`
-   - if simulation runs in `airspacesim-playground/`: `http://127.0.0.1:8080/airspacesim-playground/templates/map.html`
+   - if simulation runs in `airspacesim-playground/`: `http://127.0.0.1:8080/airspacesim-playground/templates/map.html` (legacy compatibility path)
 5. For live Operator Controls, do not open map from static-only dev servers (for example `:5500`) unless they support `POST /api/events`.
 
 ## 5) What To Modify (and When)
@@ -231,10 +237,13 @@ Planning source of truth:
 - Backend output is a contract file, not a UI structure.
 - UI may change styles/layout/rendering freely if contract shape is honored.
 - Backend may evolve simulation internals if contract outputs remain compatible.
+- Hosted migration rule:
+  - browser-facing hosted runtime should move to API/WebSocket transport rather than shared filesystem polling
 
 ## 9) Planning and Status Tracking
 
-- For all feature status, priorities, and execution tracking, use `new_roadmap.md`.
+- For all active feature status, priorities, and execution tracking, use `docs/improvements/new-roadmap.md`.
+- Treat `docs/improvements/legacy_static_ui_roadmap.md` as legacy planning context until it is archived or merged.
 - Do not maintain progress/checklist state in this document.
 - Keep this file focused on architecture, contracts, runtime behavior, and safe change workflow.
 
@@ -266,27 +275,3 @@ This file is a living guide. On each meaningful change, update:
 - For malformed input or invalid contracts, fail fast with explicit validator errors.
 - For runtime file output, keep atomic writes enabled to avoid partial reads.
 - Keep `docs/failure-modes.md` updated whenever behavior changes.
-
-## 13) PyPI Release Process
-
-Run this from repository root:
-
-1. Verify release version:
-   - update `pyproject.toml` `project.version`
-   - ensure version is not already published on PyPI
-2. Run quality gate:
-   - `pytest -q`
-   - `ruff check .`
-3. Build distributions:
-   - `python3 -m build`
-   - fallback if `build` module is not available: `python3 setup.py sdist bdist_wheel`
-4. Validate package metadata:
-   - `python3 -m twine check dist/*`
-5. Publish:
-   - TestPyPI first (recommended): `python3 -m twine upload --repository testpypi dist/*`
-   - PyPI: `python3 -m twine upload dist/*`
-
-Operational notes:
-- Keep publish credentials outside git (for example, environment variables or local `~/.pypirc`).
-- Do not publish from a dirty working tree.
-- Tag the release after successful upload and update `CHANGELOG.md`.

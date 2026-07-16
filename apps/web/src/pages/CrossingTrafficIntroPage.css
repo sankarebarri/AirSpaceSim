@@ -1,0 +1,124 @@
+.learn-page .intro-main {
+  flex: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.learn-page .intro-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.learn-page .intro-title {
+  font-family: var(--ff);
+  font-size: clamp(28px, 5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+.learn-page .intro-desc {
+  font-size: 15px;
+  color: var(--mute);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.learn-page .intro-objectives {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 40px;
+  text-align: left;
+}
+.learn-page .intro-objectives li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 13px;
+  color: var(--navy);
+  line-height: 1.5;
+}
+.learn-page .intro-objectives li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.learn-page .intro-start-btn {
+  font-family: var(--fi);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 32px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    transform 0.12s;
+}
+.learn-page .intro-start-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.ct-progression {
+  width: 100%;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid #e4e7ec;
+  text-align: left;
+}
+.ct-progression-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 12px;
+}
+.ct-progression-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  color: var(--navy);
+  font-size: 13px;
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.ct-progression-row:hover {
+  border-color: var(--accent);
+  background: #f7f9fc;
+}
+.ct-progression-status {
+  font-size: 11px;
+  color: var(--mute);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .learn-page .intro-main {
+    padding: 40px 20px 56px;
+  }
+}
