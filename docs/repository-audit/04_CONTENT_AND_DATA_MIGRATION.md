@@ -41,11 +41,11 @@ Evidence of real-world derivation:
 
 The brief's rule: fictional, coherent, realistic naming; do not present real operational data publicly, and do not present fictional data as real. A half-rename ("Sahel Control" over real fixes) satisfies neither.
 
-## 3. Proposed fictional environment migration
+## 3. Fictional environment migration (DECIDED — 08 Q3)
 
-1. **Design one canonical fictional FIR** (brief suggests e.g. "Nerava FIR": fixes NARVO, LUMEK, SAVEN, TIRGO, MOKRA, DEVAN, RIKOS; routes A1/B12/T45/UL602/UM731). Geometry may keep a Sahel-like *scale* but must not reuse published fix names, airway designators, or the exact VOR position/ident.
-2. **Replace `airspaces/gao_demo`** with the new pack (new id); port `mixed_traffic_demo` and `gao_sector_traffic` scenarios onto fictional routes with fictional callsigns (existing callsigns `AFR612`, `RAM401`, `UA612SIM` are real-airline styled — replace per brief examples like `NVR231`, `SKL842`).
-3. **Keep `training_alpha`** as the beginner classroom pack (already fictional names); optionally re-centre away from Gao coordinates for coherence — low priority.
+1. **Design one canonical fictional FIR** (brief suggests e.g. "Nerava FIR": fixes NARVO, LUMEK, SAVEN, TIRGO, MOKRA, DEVAN, RIKOS; routes A1/B12/T45/UL602/UM731) at **neutral fictional coordinates** — a similar geographic *scale* is acceptable, but the environment must not reconstruct the Gao operational environment or reuse its geometry, fix names, airway designators, VOR identifiers, or frequencies.
+2. **Delete `airspaces/gao_demo`** after all references are migrated (no slug/seed/link compatibility required — decided). Port the *roles* of `mixed_traffic_demo` and `gao_sector_traffic` onto new fictional scenarios with fictional callsigns (existing callsigns `AFR612`, `RAM401`, `UA612SIM` are real-airline styled — replace per brief examples like `NVR231`, `SKL842`). Tag the repo before deletion so the old pack survives in history.
+3. **Keep `training_alpha`** as the beginner classroom pack (already fictional names); re-centre it to neutral coordinates in the same phase for coherence with the Q3 decision (it currently sits on the Gao centre).
 4. **Replace `airspacesim/data/*.json` seed content** with a small fictional sample so `airspacesim init` and the PyPI package ship no Gao-derived data; retire `gao_airspace.json` and the `gao_*` fallbacks in `settings.py`/`cli/commands.py` (deprecation note in CHANGELOG).
 5. **Update in the same change**: `scripts/seed_hosted_demo.py`, `start_hosted_dev.py`, `simulateScenarios.ts`, user docs, tests that assert on route/fix names, and `settings.AIRSPACE_CENTER` (becomes per-environment data).
 6. Add the disclaimer line ("fictional training environment — not for operational use") to pack metadata and the site footer.
@@ -68,7 +68,7 @@ Gaps to close vs the brief:
 - **No `version` field** on packs or scenarios today → add `version` (semver) and record `scenario_template_id`+version on runs (the DB already stores a `metadata_payload`; extend it).
 - Scenario templates use `schema.name: airspacesim.demo_template` → promote to a named, versioned `airspacesim.scenario` schema with a validator in `io/contracts.py` (validators exist for airspace/aircraft payloads but not for the template shape; `scripts/validate_airspace_package.py` covers part of this and should move to shared code).
 - Frequencies, aerodromes, runways, navaid metadata: manifest supports only points/routes/airspaces → extend incrementally when a lesson needs them (do not build speculatively).
-- YAML vs JSON: brief illustrates YAML; existing pipeline is JSON with validators and zero new dependencies. **Recommend staying JSON** (open question 08-Q4).
+- YAML vs JSON: **DECIDED (08 Q4) — JSON stays canonical.** The brief's YAML examples were illustrative; evolve the existing JSON manifests, validators, schemas, and tests. A future user-friendly template may generate canonical JSON.
 
 ## 5. Scenario schema migration
 
@@ -81,6 +81,8 @@ Gaps to close vs the brief:
 ## 6. Translation migration
 
 Current state: **no i18n anywhere** (verified: no i18n library, no locale files; all strings inline in TSX).
+
+**DECIDED (08 Q9)**: the implementer drafts the French translations; the owner reviews and validates aviation and lesson terminology. Ordinary navigation/account/button/product translations are drafted normally. Operational simulation commands remain English-only.
 
 Path:
 1. Introduce an i18n library (react-i18next or equivalent — one library, decided once) with `locales/en/`, `locales/fr/` resource files and stable keys (`home.learn.title`, `concepts.crossing_traffic.title`, `lessons.same_track.observe.text`).

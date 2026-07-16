@@ -12,7 +12,7 @@
 - `docs/improvements/` (9 planning docs): `new-roadmap.md` (active tracker), `legacy_static_ui_roadmap.md`, `long_term_training_roadmap.md`, `post_performance_phase_plan.md`, `public_launch_hardening_plan.md`, `training_modes_lessons_design.md`, `multi_airspace_custom_airspace_design.md`, `collaboration_progress_and_deployment_design.md`, `aircraft_performance_plan.md`.
 
 ### Root-level strays
-`airspacesim_architecture_and_product_direction.md` (near-duplicate of the brief's REFERENCE copy), `lessons.md` (Traffic Relationships prompt), `ideas.md` (ignored notes), `airspacesim_fable5_brief/` containing a byte-identical nested copy of itself and `CLAUDE(1).md` (identical to root `CLAUDE.md`).
+`airspacesim_architecture_and_product_direction.md` (near-duplicate of the brief's REFERENCE copy), `ideas.md` (ignored notes), `airspacesim_fable5_brief/` containing a byte-identical nested copy of itself and `CLAUDE(1).md` (identical to root `CLAUDE.md`). Resolved 2026-07-16: root `lessons.md` moved to `docs/content/traffic_relationships_spec.md` and designated an **authoritative content specification** for the curriculum phase (08 §Additional authoritative content source); root `dashboard.html` deleted by the owner.
 
 ## 2. Duplicates and contradictions
 
@@ -42,6 +42,7 @@ docs/
 ├── user/                      # real end-user guides (6 files above)
 ├── architecture/              # engine_boundary, ADRs (move docs/adr/ here or keep)
 ├── contracts/                 # data-contracts, file-contracts, compatibility, schemas
+├── content/                   # authoritative content specs (traffic_relationships_spec.md)
 ├── deployment/                # existing + env examples
 ├── repository-audit/          # this audit
 └── improvements/archive/      # superseded roadmaps/plans

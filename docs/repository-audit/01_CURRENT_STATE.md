@@ -2,6 +2,8 @@
 
 Audit date: 2026-07-16. Audited against the implementation brief in `airspacesim_fable5_brief/` and root `CLAUDE.md`. No code was modified during this audit.
 
+> **Addendum (same day):** this document is a point-in-time snapshot of the *pre-baseline* state. Phase 0 has since been completed by the owner (baseline commit `bf2af1b` pushed — `apps/`, `airspaces/`, scripts, and docs are now tracked), the owner deleted `dashboard.html`, root `lessons.md` was moved to `docs/content/traffic_relationships_spec.md`, and all open questions were decided — see `08_OPEN_QUESTIONS.md` for the decision record and `07_PHASED_REFACTOR_PLAN.md` for updated scope. "UNTRACKED" annotations below describe the audited state, not the current one.
+
 ## 1. What the repository actually is
 
 The brief describes a target (React + FastAPI + PostgreSQL platform over a reusable engine). The repository is **already most of the way to that shape structurally**, but in mid-migration and largely uncommitted:

@@ -1,81 +1,81 @@
 # 07 — Phased Refactor Plan
 
+**Updated 2026-07-16 to incorporate the owner's decisions in `08_OPEN_QUESTIONS.md`** (breaking changes allowed in 0.2.0; legacy static UI scheduled for retirement; `gao_demo` fully replaced; JSON packs; squashed PostgreSQL baseline; static-frontend + PaaS + managed-PG hosting with Docker for local dev; email+password session auth; 14-day anonymous-run retention).
+
 Ordering principle: commit first, purify the engine second, replace public data third, then build content/i18n, then persistence/auth, then deployment. Every phase leaves the app runnable (`scripts/start_hosted_dev.py`) and all three test suites green (`pytest -q`, `just test-api`, `just test-web`).
 
 ---
 
-## Phase 0 — Baseline commit and hygiene (no behaviour change)
+## Phase 0 — Baseline commit and hygiene ✅ COMPLETED
 
-**Goal**: a reviewable, revertable baseline.
-**Files affected**: git state only, plus `.gitignore` micro-edits (06 §5) and removal of the duplicate nested brief copy / `CLAUDE(1).md` (requires approval).
-**Steps**: commit pending modifications and deletions; commit `apps/`, `airspaces/`, `scripts/`, new `docs/`, `CLAUDE.md`, brief folder; tag the baseline.
-**Behaviour preserved**: everything (no code changes).
-**Tests required**: full suite green before and after.
-**Rollback**: `git revert`/tag — trivial once committed; impossible before.
-**Done when**: `git status` is clean; CI green on the pushed baseline.
+Baseline commit `bf2af1b` pushed by the owner; `apps/`, `airspaces/`, scripts, and new docs are tracked. Remaining micro-items to fold into the next commit: `dashboard.html` deletion (owner's), `lessons.md` → `docs/content/traffic_relationships_spec.md` move, audit-document updates, `.gitignore` micro-fixes (06 §5), removal of the duplicate nested brief copy and `CLAUDE(1).md`.
 
-## Phase 1 — Engine boundary, part A: pure stepping (03 E1–E2)
+## Phase 1 — Engine boundary, part A: pure stepping + approved removals (03 E1–E2, Q1)
 
-**Goal**: engine step path free of file IO, sleeps, threads, and global settings; hosted runtime drops its monkeypatch.
-**Files**: `airspacesim/simulation/{aircraft_manager,aircraft}.py`, `airspacesim/core/*`, `airspacesim/settings.py`, `apps/api/app/sessions/runtime.py`; new core tests.
-**Behaviour preserved**: legacy `AircraftManager` API and JSON outputs (golden-file characterisation before starting); hosted API responses unchanged.
-**Tests**: golden contract files; determinism test (identical step sequences ⇒ identical snapshots); all existing suites.
-**Rollback**: wrapper delegation means each extraction is a small commit; revert individually.
-**Done when**: `runtime.py` contains no `save_aircraft_data = lambda: None`; engine modules import no `time.sleep` in the step path; root tests green.
+**Goal**: engine step path free of file IO, sleeps, threads, and global settings; hosted runtime drops its monkeypatch. Because breaking changes are approved for 0.2.0, the confirmed-obsolete removals happen here rather than in a later deprecation phase.
+**Files**: `airspacesim/simulation/{aircraft_manager,aircraft}.py`, `airspacesim/core/*`, `airspacesim/settings.py`, `apps/api/app/sessions/runtime.py`; removals: `airspacesim/hello.py` (+ export + `test_integration.py` usage), `airspacesim/routes/route_manager.py` (+ shim assertions in `test_structure_cleanup.py`), empty `airspacesim/{api,web,tests}` subpackages, `gao_*` fallbacks in `settings.py`/`cli/commands.py`, `new_aircraft.json` seed alias; new core tests; `CHANGELOG.md` + `docs/migration.md` entries for every removal.
+**Behaviour preserved**: legacy `AircraftManager` public API and JSON contract outputs (golden-file characterisation before starting); hosted API responses unchanged.
+**Tests**: golden contract files; determinism test (identical step sequences ⇒ identical snapshots); all suites updated for removals.
+**Rollback**: small commits per extraction/removal; revert individually.
+**Done when**: `runtime.py` contains no `save_aircraft_data = lambda: None`; no `time.sleep` in the engine step path; removals documented in CHANGELOG; root tests green.
 
 ## Phase 2 — Engine boundary, part B: Simulation façade, clock, events, separation monitor (03 E3–E5)
 
 **Goal**: `Simulation`, `SimulationClock`, engine events, `SeparationMonitor` (one event per continuous violation), scheduled aircraft entry; run summaries derived server-side.
-**Files**: new `airspacesim/core/` modules; `apps/api/app/sessions/runtime.py`, `services/runs.py`, schemas; `apps/web/src/lib/{conflict,practiceOutcome,simulateSummary}.ts` thinned to consumers; run summary persisted (`summary_json` column → small migration).
+**Files**: new `airspacesim/core/` modules; `apps/api/app/sessions/runtime.py`, `services/runs.py`, schemas; `apps/web/src/lib/{conflict,practiceOutcome,simulateSummary}.ts` thinned to consumers; run summary persisted (`summary_json` — lands in the squashed baseline if Phase 6 hasn't shipped it yet, otherwise a migration).
 **Behaviour preserved**: Practice/Simulate UX outcomes identical (port TS semantics with mirrored test tables); Practice criteria remain scenario-specific, outside the general monitor.
 **Tests**: monitor state-transition unit tests; parity tests between old TS-computed and new server-computed outcomes on the crossing-traffic scenarios; WS payload contract tests.
 **Rollback**: feature-flag the server-computed summary (client keeps computing until parity confirmed), then remove the client computation.
 **Done when**: separation state and LoS events come from the API; a stopped run has a persisted factual summary; frontend performs no separation math except display formatting.
 
-## Phase 3 — Fictional environment replaces Gao data (04 §2–3)
+## Phase 3 — New fictional FIR replaces gao_demo (04 §2–3, Q3)
 
-**Goal**: no Gao-derived identifiers, fixes, airways, or names anywhere public.
-**Files**: `airspaces/<new-pack>/**` (new), `airspaces/gao_demo/**` (removed after approval), `airspacesim/data/*.json` (content swap), `airspacesim/settings.py` (`AIRSPACE_CENTER` from environment), `cli/commands.py` (drop `gao_*` fallbacks), `scripts/*`, `apps/web/src/lib/simulateScenarios.ts`, affected tests and docs, CHANGELOG (breaking-data note for package users).
-**Behaviour preserved**: same demo/lesson flows on new geometry; deterministic scenarios; contract shapes unchanged.
+**Goal**: a completely new fictional environment at **neutral fictional coordinates**; `airspaces/gao_demo` deleted; no Gao names, fixes, VOR/airway identifiers, frequencies, or exact geometry anywhere. No slug/seed/link compatibility required.
+**Files**: `airspaces/<new-pack>/**` (new); `airspaces/gao_demo/**` (deleted after reference migration); `airspacesim/data/*.json` (content swap to fictional sample, `gao_airspace.json` deleted); `airspacesim/settings.py` (`AIRSPACE_CENTER` becomes environment-supplied); `scripts/seed_hosted_demo.py`, `start_hosted_dev.py`; `apps/web/src/lib/simulateScenarios.ts`; affected tests, docs, and defaults — all in the same migration; CHANGELOG breaking-data note.
+**Behaviour preserved**: same demo/lesson *flows* on new geometry; deterministic scenarios; contract shapes unchanged.
 **Tests**: pack validation via `scripts/validate_airspace_package.py` (promoted into shared code + pytest); update fixtures asserting on names; browser smoke.
-**Rollback**: pack swap is data-only — keep the old pack on a branch, not in main.
-**Done when**: `grep -ri gao` over tracked files returns only historical CHANGELOG/audit references.
+**Rollback**: data-only swap; old pack remains in git history (tag before deletion), not in main.
+**Done when**: `grep -ri gao` over tracked files returns only historical CHANGELOG/audit references; `airspaces/gao_demo` no longer exists.
 
-## Phase 4 — Scenario/environment schema versioning + validation (04 §4–5)
+## Phase 4 — Scenario/environment schema versioning + validation (04 §4–5, Q4)
 
-**Goal**: versioned, validated packs and scenario templates with plain-language errors; engine honours entry times.
+**Goal**: versioned, validated **JSON** packs and scenario templates with plain-language errors; engine honours entry times. (JSON confirmed canonical; any future friendly template generates JSON.)
 **Files**: `airspacesim/io/contracts.py` (+ template validator), pack manifests (`version` fields), `apps/api/app/services/{practice_runs,scenarios}.py` (validate on load, stamp versions into run metadata), `scripts/validate_airspace_package.py` (delegates to shared validator).
 **Behaviour preserved**: existing packs validate cleanly; invalid content produces readable 400s.
 **Tests**: validator unit tests (missing route, duplicate callsign, bad level/speed, unknown command); API tests for invalid templates.
 **Rollback**: validation initially warn-only behind a setting, then enforced.
 **Done when**: every run record stores scenario + environment version identifiers.
 
-## Phase 5 — Data-driven runners + Traffic Relationships + i18n
+## Phase 5 — Data-driven runners + Traffic Relationships + i18n (Q9 + content spec)
 
-**Goal**: generic `ConceptPage`/`LearnRunner`/`PracticeRunner`/`SimulationRunner` + step components; lesson JSON served by the API and rendered, not duplicated in TSX; the five Traffic Relationships lessons; Vertical/Horizontal Separation visible as planned; EN/FR via central keys, operational commands English-only.
-**Files**: `apps/api` (lesson/concept content endpoints), `apps/web/src` (runners, i18n setup, locales, catalogue from API), `airspaces/*/lessons/**` (Traffic Relationships content), existing CrossingTraffic pages converted last.
-**Behaviour preserved**: Crossing Traffic Learn/Practice flows keep working throughout — convert them to the runners only after the runners prove out on Traffic Relationships (brief priority #6).
-**Tests**: runner component tests; lesson-content contract tests; i18n key-coverage test (no hardcoded strings in translated areas); browser flow for the new journey; no prediction metrics displayed (explicit assertion per brief non-negotiable #10).
+**Prerequisite reading**: `docs/content/traffic_relationships_spec.md` (authoritative content specification, moved from root `lessons.md`) alongside brief docs 04/07. Where it gives more detailed Traffic Relationships instructions, follow it unless it conflicts with `CLAUDE.md` or the non-negotiables.
+**Goal**: generic `ConceptPage`/`LearnRunner`/`PracticeRunner`/`SimulationRunner` + step components; lesson JSON served by the API and rendered, not duplicated in TSX; the five Traffic Relationships lessons; Vertical/Horizontal Separation visible as planned; EN/FR via central keys, operational commands English-only. **French translations drafted by the implementer** for owner review of aviation/lesson terminology (Q9).
+**Files**: `apps/api` (lesson/concept content endpoints), `apps/web/src` (runners, i18n setup, `locales/en` + `locales/fr`, catalogue from API), `airspaces/*/lessons/**` (Traffic Relationships content), existing CrossingTraffic pages converted last.
+**Behaviour preserved**: Crossing Traffic Learn/Practice flows keep working throughout — converted to the runners only after the runners prove out on Traffic Relationships (brief priority #6).
+**Tests**: runner component tests; lesson-content contract tests; i18n key-coverage test; browser flow for the new journey; assertion that no prediction metrics are displayed (brief non-negotiable #10).
 **Rollback**: bespoke pages remain routable until parity; route-level cutover per lesson.
-**Done when**: adding a lesson requires JSON + locale keys only (prove with the fifth Traffic Relationships lesson); all five lessons complete in EN and FR.
+**Done when**: adding a lesson requires JSON + locale keys only (prove with the fifth Traffic Relationships lesson); all five lessons complete in EN and FR (FR pending owner terminology review).
 
-## Phase 6 — PostgreSQL + minimal auth + persistence (05)
+## Phase 6 — PostgreSQL + email/password auth + persistence + retention (05, Q5/Q7/Q10)
 
-**Goal**: PG-verified migrations; `users`; sign-in/out/current-user; guest→user data migration; server-side `learning_progress` and run history; preferred language on profile.
-**Files**: `apps/api/app/db/**` (models, migrations), auth module, `config.py` (SECRET_KEY, LOG_LEVEL), `apps/web` (auth UI — wire the existing Sign in button, account page), docs (`AUTHENTICATION.md`, `DATABASE.md`).
-**Behaviour preserved**: guests keep full Learn/Practice/solo-Simulate access with immediate debriefs; existing anonymous sessions keep working.
-**Tests**: migrations against PostgreSQL in CI; auth flow tests; protected-route rejection tests; guest-flow regression.
-**Rollback**: auth routes additive; PG adoption via `DATABASE_URL` (SQLite path remains for local dev).
-**Done when**: brief Phase-4 acceptance criteria pass (progress + summaries persist for signed-in users; guests unaffected).
+**Goal**: **squashed single PostgreSQL-verified Alembic baseline** (Q5); `users`; email+password auth with secure server-side sessions and HTTP-only secure cookies (Q7); guest→user data migration; server-side `learning_progress` and run history for signed-in users; preferred language on the profile; **anonymous completed-run retention job, configurable, default 14 days** (Q10).
+**Files**: `apps/api/app/db/**` (models; migrations squashed to one baseline covering the current schema + `users` + `summary_json` + retention-relevant indexes); auth module (registration, sign in/out, current-user, password hashing, session cookies); dev-only test-account seed; `config.py` (`SECRET_KEY`, `SESSION_*`, `RETENTION_*`, `LOG_LEVEL`); `apps/web` (wire the Sign in button, registration/account page, preferred-language setting); docs (`AUTHENTICATION.md`, `DATABASE.md`).
+**Behaviour preserved**: guests keep full Learn/Practice/solo-Simulate access with immediate debriefs and local-storage progress/summaries; existing anonymous sessions keep working within retention.
+**Tests**: migration tests upgrading from an **empty PostgreSQL database** (PG in CI); auth flow tests (register/login/logout/cookie security); protected-route rejection tests; retention job tests; guest-flow regression.
+**Rollback**: auth routes additive; PG adoption via `DATABASE_URL` (SQLite path remains for quick local dev until compose lands).
+**Done when**: brief Phase-4 acceptance criteria pass; baseline migration is the preserved start of future history; anonymous runs older than the retention window are pruned automatically.
 
-## Phase 7 — Deployment readiness (05 §4–5)
+## Phase 7 — Deployment readiness (05 §4–5, Q6)
 
-**Goal**: deployable frontend + backend + PostgreSQL per brief acceptance criteria.
-**Files**: structured logging config, `.env.example` completion, SPA-fallback serving config, Docker/compose (if chosen — 08-Q6), CI deploy checks, `docs/developer/DEPLOYMENT.md`, site disclaimer footer.
-**Tests**: production build in CI; `/health` check in smoke script against a built deployment; route-refresh browser test.
-**Done when**: brief §Deployment acceptance list is verifiably green in a staging environment.
+**Goal**: deployable per the decided architecture — **static-hosted React frontend, PaaS-hosted FastAPI backend, managed PostgreSQL** — plus **Dockerfiles and local docker-compose** for portable development. Provider-specific configuration kept minimal and documented for PaaS portability.
+**Files**: `Dockerfile` (api), `Dockerfile`/static-build docs (web), `docker-compose.yml` (api + web + postgres for local dev), structured logging config, `.env.example` completion, SPA-fallback config for the static host, CI production-build checks, `docs/developer/DEPLOYMENT.md`, site disclaimer footer.
+**Tests**: production build in CI; `/health` check in the smoke script against a built deployment; route-refresh browser test; compose-up smoke locally.
+**Done when**: brief §Deployment acceptance list is verifiably green in a staging environment reachable from the static frontend.
 
-## Phase 8 — Engine packaging decision (03 E6) — deliberately last
+## Phase 8 — Legacy static UI retirement + engine packaging finalisation (03 E6, Q1/Q2)
 
-**Goal**: resolve what ships in the open-source engine wheel (static UI, dev server, CLI init assets, `hello.py`, shims, empty subpackages) via deprecation policy or a 1.0 boundary.
-**Blocked on**: open questions 08-Q1/Q2; not urgent for the hosted product.
+**Goal**: retire the legacy static Leaflet UI, file-based dev server, generated-workspace flow, and related wheel assets from the core package (decided — no compatibility package, no permanent shims). Tag the last release containing the legacy surface so its final state is preserved in git history. Optionally repurpose `airspacesim init` into an environment/scenario scaffolding command.
+**Files**: `airspacesim/{static,templates,map,dev_server.py}`, root `dev_server.py`, `cli/commands.py` (init asset list → scaffolding or removal), `pyproject.toml` package-data, legacy tests (`test_browser_console_clean`, `test_phase1_clean_run`, `test_cli_init`, `test_docs_quickstart` — retired or rewritten against the new surface), README/docs updates, CHANGELOG.
+**Behaviour preserved**: hosted app unaffected (it never used the static UI); PyPI users get a documented breaking release.
+**Rollback**: tag before removal (`legacy-static-ui-final` or the 0.2.x release tag).
+**Done when**: the wheel contains only engine code + schemas + data needed by the engine; no static UI assets; docs describe the retirement and the git tag where the old workflow lives.

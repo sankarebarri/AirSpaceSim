@@ -77,7 +77,7 @@ Key rules:
 4. **E3 — `Simulation` façade + clock + engine events.** Wrap fleet + commands + scheduled entries; add `drain_events()`. API runtime session becomes a driver of `Simulation`.
 5. **E4 — `SeparationMonitor` in core.** Port `conflict.ts`/`simulateSummary.ts` semantics with unit tests mirroring the TS behaviour; API includes separation state in snapshots and persists LoS events; frontend consumes instead of computing (TS math kept only for display until parity confirmed, then thinned).
 6. **E5 — Run summaries server-side.** Factual Simulate summary and Practice outcome derivation move to API services (Practice criteria stay scenario-specific, outside the monitor); persist `summary_json` on the run.
-7. **E6 — Package boundary decision.** Decide 0.2.x deprecations vs 1.0 break for: static UI/templates/dev server/CLI-init assets in the wheel, `hello.py`, `routes/route_manager.py` shim, empty subpackages. (Open question 08-Q2.)
+7. **E6 — Package boundary finalisation (DECIDED — see 08 Q1/Q2).** Breaking changes are approved for 0.2.0. Confirmed-obsolete removals (`hello.py`, `routes/route_manager.py` shim, empty subpackages, `gao_*` fallbacks, obsolete seed aliases) happen early, in Phase 1 of 07. The legacy static UI, templates, dev server, and CLI-init workspace assets are **scheduled for retirement** from the wheel (07 Phase 8), preserved via git history/release tag — no compatibility package, no permanent shims. `airspacesim init` may be repurposed into an environment/scenario scaffolding command.
 
 ## 7. Test strategy
 
@@ -88,7 +88,7 @@ Key rules:
 
 ## 8. Open-source readiness concerns
 
-- The wheel currently ships a demo UI, dev server, Gao-derived seed data, and `hello.py` — not the image of a focused engine. Resolve via E6 + content migration (04).
+- The wheel currently ships a demo UI, dev server, Gao-derived seed data, and `hello.py` — not the image of a focused engine. Resolution is now decided: obsolete items removed in 0.2.0 (07 Phase 1), Gao data replaced (07 Phase 3), static UI retired from the wheel (07 Phase 8).
 - Engine docstrings/logs use emoji and operational-sounding phrasing; fine for now, review before promotion.
 - `README.md` mixes library and hosted-app identities; the engine needs its own README section or subpackage README before open-sourcing (see 06).
 - License is MIT and consistent (`LICENSE`, classifiers) — no blocker.

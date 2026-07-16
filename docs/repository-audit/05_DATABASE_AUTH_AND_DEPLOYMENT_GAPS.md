@@ -45,17 +45,21 @@ run_events            id, run_id, event_type, payload_json, occurred_at   -- mea
 ```
 
 Steps:
-1. Verify the existing 3 migrations against PostgreSQL (spin up PG in CI; fix JSON/JSONB and server-default dialect issues; consider a consolidated baseline since the app is unreleased — open question 08-Q5).
+1. **DECIDED (08 Q5)**: squash the existing 3 SQLite-oriented migrations into one clean PostgreSQL-verified initial baseline. It must create the intended first production schema, upgrade successfully from an empty PostgreSQL database (verified in CI), be covered by migration tests, and become the preserved starting point for all future migration history.
 2. Move file-based airspace packages toward `environments`/`environment_versions` **only when needed** (packages-on-disk are fine for built-in content; DB versions matter for user-created scenarios and run reproducibility).
 3. `run_events` receives engine events (separation_loss_started/ended, aircraft_entered/exited, command_applied) once the core monitor exists (03 E4/E5).
 
-## 3. Authentication plan (minimal, per brief)
+## 3. Authentication plan (DECIDED — 08 Q7)
 
-1. Add `users` + a single auth mechanism (recommend cookie session or short-lived JWT — decide once; no orgs/roles/billing).
-2. Sign in / sign out / current-user endpoints; optional display name; preferred language.
-3. Keep the anonymous session id as the guest identity; on sign-in, associate/migrate the session's runs & progress to the user (cheap because everything is already `session_id`-scoped).
-4. Protected persistence routes: writes to progress/saved scenarios require auth; run creation stays guest-allowed (brief: guests run solo Simulate/Practice).
-5. Document local test accounts per brief 09 §7 (seed-based, no hardcoded reusable passwords).
+Email-and-password authentication with **secure server-side sessions**:
+
+1. Add `users` (email unique, password hash, display_name?, preferred_language) — no orgs/roles/billing.
+2. Registration, sign in, sign out, current-user endpoints; secure password hashing (e.g. argon2/bcrypt); **HTTP-only secure cookies** for the session.
+3. Keep the anonymous session id as the guest identity; on sign-in, associate/migrate the session's runs & progress to the user (cheap because everything is already `session_id`-scoped). Intended first-time experience: guest → use Learn/Practice/solo Simulate → receive value → optionally create an account.
+4. Protected persistence routes: writes to progress/saved scenarios require auth; run creation stays guest-allowed.
+5. Development-only test-account seed/setup, documented per brief 09 §7 (no hardcoded reusable passwords).
+6. Google OAuth is **not** mandatory; may be added later as an optional provider.
+7. **Anonymous run retention (08 Q10)**: guest progress and recent summaries live in browser local storage; anonymous server-side completed runs are pruned by an automatic, configurable retention job (default **14 days**). Authenticated users get persistent run history; no permanent cross-device history for anonymous users.
 
 ## 4. Hosting blockers (ordered)
 
@@ -65,10 +69,10 @@ Steps:
 4. Gao-derived public content (policy blocker for a public site, per brief).
 5. No SPA fallback/serving story for the production frontend build.
 6. No structured logging → undebuggable in production.
-7. No deployment automation (Docker or platform config) and no documented migration-run step for deploys.
+7. No deployment automation and no documented migration-run step for deploys. **DECIDED (08 Q6)**: target architecture is static-hosted React frontend + PaaS-hosted FastAPI backend + managed PostgreSQL, plus Dockerfiles and a local docker-compose for portability; provider-specific configuration kept limited and documented; do not optimise for unmanaged single-server self-hosting.
 
 ## 5. Environment-variable requirements (target)
 
-API (existing prefix `AIRSPACESIM_API_`): `ENVIRONMENT`, `DATABASE_URL` (PostgreSQL in prod), `CORS_ALLOWED_ORIGINS`, `DEBUG`, `LOG_LEVEL` (new), `SECRET_KEY` (new, with auth), `AUTO_CREATE_SCHEMA=false` in prod, rate/limit knobs (existing).
+API (existing prefix `AIRSPACESIM_API_`): `ENVIRONMENT`, `DATABASE_URL` (PostgreSQL in prod), `CORS_ALLOWED_ORIGINS`, `DEBUG`, `LOG_LEVEL` (new), `SECRET_KEY` (new, required for session auth), session-cookie settings (new), `ANONYMOUS_RUN_RETENTION_DAYS` (new, default 14), `AUTO_CREATE_SCHEMA=false` in prod, rate/limit knobs (existing).
 Web: `VITE_API_BASE_URL` (required for prod build; fail the build or warn loudly when unset rather than silently defaulting to 127.0.0.1).
 Root: add `.env.example` or a documented pointer to `apps/api/.env.example` + `apps/web/.env.local.example` + `docs/deployment/env/*` (which already exist and are a good start — extend rather than replace).
