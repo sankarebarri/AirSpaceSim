@@ -140,7 +140,10 @@ def _build_checkpoint_state(run, checkpoint) -> RunStateResponse:
         updated_utc=_checkpoint_updated_utc(checkpoint),
         source="checkpoint",
         last_error=snapshot.get("last_error"),
+        time_seconds=snapshot.get("time_seconds"),
         aircraft=snapshot.get("aircraft", []),
+        separation=snapshot.get("separation"),
+        summary=snapshot.get("summary"),
         metrics=_checkpoint_metrics(snapshot),
     )
 
@@ -216,7 +219,10 @@ def _build_run_state(
             updated_utc=snapshot["updated_utc"],
             source="runtime_session",
             last_error=snapshot["last_error"],
+            time_seconds=snapshot.get("time_seconds"),
             aircraft=snapshot["aircraft"],
+            separation=snapshot.get("separation"),
+            summary=snapshot.get("summary"),
             metrics=snapshot["metrics"],
         )
 

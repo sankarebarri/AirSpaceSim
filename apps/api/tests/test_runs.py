@@ -143,7 +143,11 @@ def test_create_practice_run_from_lesson_starts_runtime(db_session, session_regi
     assert created_run.scenario_id is not None
     state_response = get_run_state(created_run.id, db_session, session_registry, SESSION_ID)
     assert state_response.runtime_status == "running"
-    assert state_response.metrics.aircraft_count == 8
+    # beginner_mix schedules 4 aircraft at t=0 and 4 with appear_after_seconds
+    # of 10-40s; scheduled entries are engine-owned since Phase 2, so the run
+    # starts with 4 live aircraft and 4 pending instead of all 8 at once.
+    assert state_response.metrics.aircraft_count == 4
+    assert state_response.metrics.pending_aircraft_count == 4
     assert state_response.aircraft[0].callsign.startswith("ALP")
 
 

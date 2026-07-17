@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 
 class RunCreateRequest(BaseModel):
@@ -33,6 +33,10 @@ class RunResponse(BaseModel):
     updated_at: datetime
     started_at: datetime | None
     ended_at: datetime | None
+    summary: dict | None = Field(
+        default=None,
+        validation_alias=AliasChoices("summary_json", "summary"),
+    )
 
     model_config = {"from_attributes": True}
 
@@ -75,6 +79,26 @@ class RunMetricsResponse(BaseModel):
     aircraft_count: int
     active_aircraft_count: int
     finished_aircraft_count: int
+    pending_aircraft_count: int = 0
+
+
+class RunSeparationViolationResponse(BaseModel):
+    """One currently violating aircraft pair from the engine monitor."""
+
+    pair: list[str]
+    horizontal_nm: float
+    vertical_ft: float
+    started_at_seconds: float
+
+
+class RunSeparationResponse(BaseModel):
+    """Engine separation-monitor state for a run."""
+
+    standard: dict
+    active_violations: list[RunSeparationViolationResponse] = Field(
+        default_factory=list
+    )
+    loss_of_separation_count: int = 0
 
 
 class RunStateResponse(BaseModel):
@@ -86,7 +110,10 @@ class RunStateResponse(BaseModel):
     updated_utc: str | None = None
     source: str
     last_error: str | None = None
+    time_seconds: float | None = None
     aircraft: list[RunAircraftStateResponse] = Field(default_factory=list)
+    separation: RunSeparationResponse | None = None
+    summary: dict | None = None
     metrics: RunMetricsResponse
 
 

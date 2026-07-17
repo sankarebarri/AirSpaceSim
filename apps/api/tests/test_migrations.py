@@ -58,7 +58,7 @@ def test_alembic_upgrade_creates_expected_schema(tmp_path, monkeypatch):
         "runs",
         "scenarios",
     }.issubset(table_names)
-    assert current_revision == "20260708_0003"
+    assert current_revision == "20260716_0004"
 
     _reset_api_caches()
 
@@ -117,7 +117,7 @@ def test_alembic_upgrade_path_supports_incremental_revisions(tmp_path, monkeypat
 
     table_names, current_revision = _inspect_database(database_url)
     assert "run_checkpoints" in table_names
-    assert current_revision == "20260708_0003"
+    assert current_revision == "20260716_0004"
 
     _reset_api_caches()
 

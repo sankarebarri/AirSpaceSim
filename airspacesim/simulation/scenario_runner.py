@@ -127,6 +127,9 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
             ),
             altitude_ft=float(item.get("altitude_ft", 0.0)),
             vertical_rate_fpm=float(item.get("vertical_rate_fpm", 0.0)),
+            entry_time_seconds=float(
+                item.get("entry_time_seconds", item.get("appear_after_seconds", 0)) or 0
+            ),
         )
         for item in scenario_aircraft["data"]["aircraft"]
     )

@@ -19,7 +19,9 @@ Baseline commit `bf2af1b` pushed by the owner; `apps/`, `airspaces/`, scripts, a
 **Rollback**: small commits per extraction/removal; revert individually.
 **Done when**: `runtime.py` contains no `save_aircraft_data = lambda: None`; no `time.sleep` in the engine step path; removals documented in CHANGELOG; root tests green.
 
-## Phase 2 — Engine boundary, part B: Simulation façade, clock, events, separation monitor (03 E3–E5)
+## Phase 2 — Engine boundary, part B: Simulation façade, clock, events, separation monitor (03 E3–E5) ✅ CORE + SERVER COMPLETE
+
+Delivered 2026-07-17 (tag `phase-2-simulation-core`): `Simulation`, `SimulationClock`, `EngineEvent` stream, `SeparationMonitor` (one event per continuous violation, TS-parity semantics), engine-scheduled aircraft entry (`appear_after_seconds` honoured end-to-end), separation state + live summary in API/WS snapshots, `runs.summary_json` persistence (Alembic `20260716_0004`), and server-side Practice outcome tracking outside the general monitor. **Remaining for full "done when"**: cutting the frontend debrief/summary UI over to the server-computed values and thinning `conflict.ts`/`practiceOutcome.ts`/`simulateSummary.ts` to display-only — deliberately deferred to Phase 5, where the debrief UI is rebuilt inside the generic runners anyway (per this phase's rollback note: client keeps computing until parity cutover).
 
 **Goal**: `Simulation`, `SimulationClock`, engine events, `SeparationMonitor` (one event per continuous violation), scheduled aircraft entry; run summaries derived server-side.
 **Files**: new `airspacesim/core/` modules; `apps/api/app/sessions/runtime.py`, `services/runs.py`, schemas; `apps/web/src/lib/{conflict,practiceOutcome,simulateSummary}.ts` thinned to consumers; run summary persisted (`summary_json` — lands in the squashed baseline if Phase 6 hasn't shipped it yet, otherwise a migration).

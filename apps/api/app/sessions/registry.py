@@ -70,6 +70,9 @@ class SessionRegistry:
                     sim_rate=run.sim_rate,
                     update_interval_seconds=self.update_interval_seconds,
                     state_publisher=self._publish_state,
+                    metadata_payload=(
+                        scenario.metadata_payload if scenario is not None else None
+                    ),
                 )
                 self._sessions[run.id] = session
         session.start()
@@ -109,6 +112,14 @@ class SessionRegistry:
     ) -> None:
         if self.broadcast_hub is not None:
             self.broadcast_hub.publish_state(run_id, snapshot)
+        if checkpoint_type in {"stopped", "completed", "error"}:
+            try:
+                self._persist_run_summary(run_id, snapshot)
+            except Exception:
+                logger.exception(
+                    "Failed to persist run summary",
+                    extra={"run_id": run_id, "checkpoint_type": checkpoint_type},
+                )
         if not self._should_persist_checkpoint(run_id, checkpoint_type):
             if checkpoint_type in {"completed", "error"}:
                 self._discard_session(run_id)
@@ -172,6 +183,22 @@ class SessionRegistry:
                 run_id,
                 keep_latest=self.checkpoint_retention_per_run,
             )
+        finally:
+            session.close()
+
+    def _persist_run_summary(self, run_id: str, snapshot: dict) -> None:
+        """Store the factual run summary on the durable run at terminal states."""
+        summary = snapshot.get("summary")
+        if not isinstance(summary, dict):
+            return
+        session = self.session_factory()
+        try:
+            run = session.get(RunRecord, run_id)
+            if run is None:
+                return
+            run.summary_json = summary
+            session.add(run)
+            session.commit()
         finally:
             session.close()
 

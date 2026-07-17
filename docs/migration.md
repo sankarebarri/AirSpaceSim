@@ -31,6 +31,14 @@ New in 0.2.0:
   embedding applications can drive the engine without filesystem side
   effects. The hosted API uses this instead of monkeypatching
   `save_aircraft_data`.
+- The `Simulation` façade (`airspacesim.Simulation`) is the preferred engine
+  entry point: deterministic clock, scheduled aircraft entry, commands,
+  general separation monitoring, snapshots, engine events, and factual
+  summaries. See `docs/architecture/engine_usage_quickstart.md`.
+- Behaviour change: `appear_after_seconds` / `entry_time_seconds` in scenario
+  aircraft contracts is now honoured by the engine clock. Scenarios that
+  relied on the field being silently ignored will see aircraft enter later
+  (as authored) instead of all at t=0.
 
 ## Naming migration (pre-0.2.0 history)
 - Old: `gao_airspace.json`

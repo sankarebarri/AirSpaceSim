@@ -16,12 +16,32 @@ External projects should prefer these imports:
 from airspacesim import (
     Aircraft,
     AircraftManager,
+    EngineEvent,
     ManagerStepper,
     ScenarioBundle,
+    SeparationMonitor,
+    SeparationStandard,
+    Simulation,
+    SimulationClock,
     TrajectoryTrack,
     apply_events_idempotent,
     load_scenario_bundle,
 )
+```
+
+`Simulation` is the preferred entry point since 0.2.0: it owns the simulated
+clock, scheduled aircraft entry, command application, general separation
+monitoring (one event per continuous loss of separation), serialisable
+snapshots, and the emitted engine-event stream:
+
+```python
+simulation = Simulation.from_contracts(scenario_airspace, scenario_aircraft)
+simulation.issue_command({"event_id": "c1", "type": "SET_FL",
+                          "payload": {"aircraft_id": "NVR231", "flight_level": 310}})
+simulation.step(seconds=1.0)   # simulated seconds; caller owns pacing
+snapshot = simulation.snapshot()
+events = simulation.drain_events()
+summary = simulation.summary()
 ```
 
 Lower-level imports are still available when needed:

@@ -20,6 +20,12 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - `SET_SIMULATION_SPEED` events scale only the receiving manager, not the whole process.
 
 ### Added
+- Core `Simulation` façade (`airspacesim.Simulation`) owning the deterministic `SimulationClock`, scheduled aircraft entry, command application, serialisable snapshots, factual summaries, and an emitted `EngineEvent` stream (`aircraft_entered/exited`, `separation_loss_started/ended`, `command_applied`, `simulation_completed`).
+- General `SeparationMonitor` + `SeparationStandard` in the engine: a pair is separated when either the horizontal or the vertical minimum is satisfied; one continuous loss of separation counts as one event until separation is restored (ported from the frontend monitor so behaviour is preserved).
+- Scenario aircraft `appear_after_seconds` / `entry_time_seconds` are now engine-scheduled: hosted practice runs honour staggered entries instead of spawning all aircraft at t=0 (validated by the contract validator; e.g. `beginner_mix` now starts with 4 live + 4 pending aircraft).
+- Hosted API: run state and WebSocket snapshots now include `time_seconds`, `separation` (standard, active violations, LoS count), and a live `summary`; factual run summaries (Simulate counters, server-derived Practice outcomes) are persisted to `runs.summary_json` at stop/completion (Alembic `20260716_0004`).
+- Server-side Practice outcome tracking (`apps/api/app/sessions/practice.py`), scenario-metadata-driven and kept outside the general engine monitor.
+- `AircraftManager.step_aircraft(simulated_seconds)` public pure stepping API.
 - `AircraftManager(enable_file_output=False)` and `initialize_manager_from_scenarios(..., enable_file_output=...)` to run the engine without JSON file side effects; the hosted API runtime no longer monkeypatches `save_aircraft_data`.
 - Engine stepping guarantees test suite (`tests/test_engine_stepping.py`): deterministic identical-step-sequence states, per-manager sim rate scoping, and no-file-output verification.
 - Hosted FastAPI service and React web app for local training workflows.

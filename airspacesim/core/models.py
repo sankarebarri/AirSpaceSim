@@ -19,6 +19,7 @@ class AircraftDefinition:
     flight_level: int | None = None
     altitude_ft: float = 0.0
     vertical_rate_fpm: float = 0.0
+    entry_time_seconds: float = 0.0
 
 
 @dataclass(frozen=True)

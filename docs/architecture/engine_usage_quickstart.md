@@ -42,7 +42,11 @@ routes = {
     ]
 }
 
-manager = AircraftManager(routes=routes, execution_mode="batched")
+manager = AircraftManager(
+    routes=routes,
+    execution_mode="batched",
+    enable_file_output=False,  # pure in-memory stepping
+)
 manager.add_aircraft(
     id="AC001",
     route_name="ROUTE_ALPHA",
@@ -52,9 +56,39 @@ manager.add_aircraft(
     aircraft_type="B737",
 )
 
-manager.step_all(1.0)
-track = manager.get_trajectory_payload()
+manager.step_aircraft(1.0)  # advance by exactly 1 simulated second
+positions = [(ac.id, ac.position) for ac in manager.aircraft_list]
 ```
+
+## Full Simulation Façade (preferred since 0.2.0)
+
+`Simulation` adds the deterministic clock, scheduled aircraft entry,
+separation monitoring, engine events, and factual summaries on top of the
+fleet:
+
+```python
+from airspacesim import Simulation, SeparationStandard
+
+simulation = Simulation.from_contracts(
+    scenario_airspace,   # airspacesim.scenario_airspace payload
+    scenario_aircraft,   # airspacesim.scenario_aircraft payload
+    standard=SeparationStandard(horizontal_nm=10, vertical_ft=1000),
+)
+
+simulation.issue_command({
+    "event_id": "c1",
+    "type": "SET_FL",
+    "payload": {"aircraft_id": "AC001", "flight_level": 310},
+})
+simulation.step(seconds=1.0)          # simulated seconds; caller owns pacing
+snapshot = simulation.snapshot()      # aircraft + separation + clock
+events = simulation.drain_events()    # aircraft_entered/exited, LoS start/end, ...
+summary = simulation.summary()        # factual counters, incl. LoS event count
+```
+
+Aircraft with `appear_after_seconds` (alias `entry_time_seconds`) in the
+scenario contract are scheduled by the simulation clock instead of entering
+at t=0.
 
 ## Apply Commands
 
@@ -66,13 +100,17 @@ from airspacesim import apply_events_idempotent
 events = [
     {
         "event_id": "evt-001",
-        "type": "SET_HEADING",
+        "type": "ASSIGN_HEADING",
         "payload": {"aircraft_id": "AC001", "heading_deg": 265},
     }
 ]
 
 result = apply_events_idempotent(manager, events)
 ```
+
+With the façade, prefer `simulation.issue_command(event)` — it applies the
+same canonical events and additionally emits `command_applied` engine events
+and counts instructions for the run summary.
 
 ## What The Engine Should Not Need
 

@@ -1,4 +1,9 @@
-"""In-memory runtime session orchestration for simulation runs."""
+"""In-memory runtime session orchestration for simulation runs.
+
+The session owns pacing (wall-clock ticks, sim_rate) and run lifecycle; the
+engine's `Simulation` façade owns simulated time, movement, commands,
+scheduled aircraft entry, separation monitoring, and engine events.
+"""
 
 from __future__ import annotations
 
@@ -7,13 +12,42 @@ import time
 from datetime import datetime, timezone
 from typing import Any
 
+from airspacesim.core import Simulation, SeparationStandard
 from airspacesim.core.models import TrajectoryTrack
-from airspacesim.simulation.events import apply_events_idempotent
-from airspacesim.simulation.scenario_runner import initialize_manager_from_scenarios
+
+from .practice import PracticeTracker
 
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _standard_from_metadata(
+    metadata_payload: dict[str, Any] | None,
+) -> SeparationStandard:
+    """Resolve applicable minima from scenario metadata (practice or simulate)."""
+    metadata = metadata_payload or {}
+    for section_name in ("practice", "simulate"):
+        section = metadata.get(section_name)
+        if isinstance(section, dict):
+            horizontal = section.get("required_horizontal_separation_nm")
+            vertical = section.get("required_vertical_separation_ft")
+            if isinstance(horizontal, (int, float)) or isinstance(
+                vertical, (int, float)
+            ):
+                return SeparationStandard(
+                    horizontal_nm=(
+                        float(horizontal)
+                        if isinstance(horizontal, (int, float))
+                        else SeparationStandard.horizontal_nm
+                    ),
+                    vertical_ft=(
+                        float(vertical)
+                        if isinstance(vertical, (int, float))
+                        else SeparationStandard.vertical_ft
+                    ),
+                )
+    return SeparationStandard()
 
 
 class SimulationRuntimeSession:
@@ -28,6 +62,7 @@ class SimulationRuntimeSession:
         sim_rate: float,
         update_interval_seconds: float = 0.25,
         state_publisher=None,
+        metadata_payload: dict[str, Any] | None = None,
     ) -> None:
         self.run_id = run_id
         self.sim_rate = float(sim_rate)
@@ -42,13 +77,16 @@ class SimulationRuntimeSession:
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
 
-        # Hosted runtime sessions must not write shared JSON files; the engine
-        # supports this directly via enable_file_output=False.
-        self.manager = initialize_manager_from_scenarios(
+        self.simulation = Simulation.from_contracts(
             scenario_airspace,
             scenario_aircraft,
-            execution_mode="batched",
-            enable_file_output=False,
+            standard=_standard_from_metadata(metadata_payload),
+        )
+        # Kept for embedding compatibility; the manager is engine-internal.
+        self.manager = self.simulation.manager
+        self.practice_tracker = PracticeTracker.from_metadata(metadata_payload)
+        self._summary_kind = (
+            "practice" if self.practice_tracker is not None else "simulate"
         )
 
     def start(self) -> None:
@@ -99,6 +137,7 @@ class SimulationRuntimeSession:
             self._thread.join(timeout=2.0)
         self.manager.request_shutdown()
         self.manager.terminate_simulations(timeout_seconds=1.0)
+        self._observe_practice(stopping=True)
         self._emit_state("stopped")
 
     def apply_command(
@@ -108,7 +147,7 @@ class SimulationRuntimeSession:
         command_type: str,
         payload: dict[str, Any],
     ) -> dict[str, list[Any]]:
-        """Apply a command directly to the live manager without file IO."""
+        """Apply a command to the live simulation."""
 
         with self._state_lock:
             runtime_status = self.runtime_status
@@ -145,7 +184,7 @@ class SimulationRuntimeSession:
             "payload": self._normalize_command_payload(command_type, payload),
         }
         with self._tick_lock:
-            result = apply_events_idempotent(self.manager, [normalized_event])
+            result = self.simulation.issue_command(normalized_event)
         self.last_updated_utc = _utc_now_iso()
         self._emit_state("command")
         return result
@@ -159,82 +198,40 @@ class SimulationRuntimeSession:
             updated_utc = self.last_updated_utc
             last_error = self.last_error
 
-        with self.manager.lock:
-            aircraft_list = list(self.manager.aircraft_list)
-
-        aircraft_items = []
-        active_count = 0
-        finished_count = 0
-        for aircraft in aircraft_list:
-            status = "finished" if hasattr(aircraft, "finished_time") else "active"
-            if status == "active":
-                active_count += 1
-            else:
-                finished_count += 1
-            raw_flight_level = getattr(aircraft, "flight_level", None)
-            flight_level = (
-                int(round(float(raw_flight_level)))
-                if raw_flight_level is not None
-                else int(round(float(aircraft.altitude_ft) / 100.0))
-            )
-            aircraft_items.append(
-                {
-                    "id": aircraft.id,
-                    "callsign": aircraft.callsign,
-                    "aircraft_type": getattr(aircraft, "aircraft_type", "UNKNOWN"),
-                    "route_id": aircraft.route,
-                    "position_dd": [float(aircraft.position[0]), float(aircraft.position[1])],
-                    "speed_kt": float(aircraft.speed),
-                    "flight_level": flight_level,
-                    "target_flight_level": getattr(
-                        aircraft,
-                        "target_flight_level",
-                        flight_level,
-                    ),
-                    "altitude_ft": float(aircraft.altitude_ft),
-                    "vertical_rate_fpm": float(aircraft.vertical_rate_fpm),
-                    "heading_deg": float(getattr(aircraft, "heading_deg", 0.0)),
-                    "assigned_heading_deg": getattr(
-                        aircraft,
-                        "assigned_heading_deg",
-                        None,
-                    ),
-                    "assigned_radial_deg": getattr(
-                        aircraft,
-                        "assigned_radial_deg",
-                        None,
-                    ),
-                    "radial_deviation_deg": getattr(
-                        aircraft,
-                        "radial_deviation_deg",
-                        None,
-                    ),
-                    "radial_cross_track_nm": getattr(
-                        aircraft,
-                        "radial_cross_track_nm",
-                        None,
-                    ),
-                    "lateral_mode": getattr(aircraft, "lateral_mode", "route"),
-                    "direct_to_fix_id": getattr(aircraft, "direct_to_fix_id", None),
-                    "hold_fix_id": getattr(aircraft, "hold_fix_id", None),
-                    "traffic_flow": getattr(aircraft, "traffic_flow", "unknown"),
-                    "status": status,
-                    "updated_utc": updated_utc,
-                }
-            )
+        simulation_snapshot = self.simulation.snapshot(updated_utc=updated_utc)
+        aircraft_items = simulation_snapshot["aircraft"]
+        active_count = sum(
+            1 for item in aircraft_items if item["status"] == "active"
+        )
+        finished_count = len(aircraft_items) - active_count
 
         return {
             "runtime_status": runtime_status,
             "sim_rate": sim_rate,
             "updated_utc": updated_utc,
             "last_error": last_error,
+            "time_seconds": simulation_snapshot["time_seconds"],
             "aircraft": aircraft_items,
+            "separation": simulation_snapshot["separation"],
+            "summary": self.run_summary(),
             "metrics": {
                 "aircraft_count": len(aircraft_items),
                 "active_aircraft_count": active_count,
                 "finished_aircraft_count": finished_count,
+                "pending_aircraft_count": simulation_snapshot[
+                    "pending_aircraft_count"
+                ],
             },
         }
+
+    def run_summary(self) -> dict[str, Any]:
+        """Factual run summary (persisted at terminal checkpoints)."""
+
+        summary = self.simulation.summary()
+        summary["kind"] = self._summary_kind
+        if self.practice_tracker is not None:
+            summary["practice_outcome"] = self.practice_tracker.outcome
+        return summary
 
     def trajectory_snapshot(self) -> dict[str, Any]:
         """Return trajectory-style live track records for the API."""
@@ -261,6 +258,16 @@ class SimulationRuntimeSession:
             "tracks": tracks,
         }
 
+    def _observe_practice(self, *, stopping: bool = False) -> None:
+        if self.practice_tracker is None:
+            return
+        states = self.simulation.snapshot()["aircraft"]
+        self.practice_tracker.observe(
+            states,
+            stopping=stopping,
+            commands_issued=self.simulation.commands_applied,
+        )
+
     def _run_loop(self) -> None:
         while not self._stop_event.is_set():
             with self._state_lock:
@@ -272,10 +279,12 @@ class SimulationRuntimeSession:
                 continue
 
             try:
-                self._step_all_aircraft(self.update_interval_seconds, sim_rate)
+                with self._tick_lock:
+                    self.simulation.step(self.update_interval_seconds * sim_rate)
+                self._observe_practice()
                 self.last_updated_utc = _utc_now_iso()
                 self._emit_state("tick")
-                if self._all_aircraft_finished():
+                if self.simulation.status == Simulation.STATUS_COMPLETED:
                     with self._state_lock:
                         if self.runtime_status == "running":
                             self.runtime_status = "completed"
@@ -288,25 +297,6 @@ class SimulationRuntimeSession:
                 self._emit_state("error")
                 break
             time.sleep(self.update_interval_seconds)
-
-    def _step_all_aircraft(self, interval_seconds: float, sim_rate: float) -> None:
-        with self._tick_lock, self.manager.lock:
-            aircraft_list = list(self.manager.aircraft_list)
-            for aircraft in aircraft_list:
-                if aircraft.current_index < len(aircraft.waypoints) - 1:
-                    aircraft.update_position(interval_seconds * sim_rate)
-                    if aircraft.current_index >= len(aircraft.waypoints) - 1 and not hasattr(
-                        aircraft,
-                        "finished_time",
-                    ):
-                        aircraft.finished_time = time.time()
-
-    def _all_aircraft_finished(self) -> bool:
-        with self.manager.lock:
-            return all(
-                aircraft.current_index >= len(aircraft.waypoints) - 1
-                for aircraft in self.manager.aircraft_list
-            )
 
     def _normalize_command_payload(
         self, command_type: str, payload: dict[str, Any]

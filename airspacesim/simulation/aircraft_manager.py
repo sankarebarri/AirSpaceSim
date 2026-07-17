@@ -494,8 +494,13 @@ class AircraftManager:
             self.save_aircraft_data()
             time.sleep(interval)
 
-    def _step_all_aircraft(self, interval):
-        simulated_seconds = float(interval) * self.sim_rate
+    def step_aircraft(self, simulated_seconds):
+        """Advance every active aircraft by exactly `simulated_seconds`.
+
+        Pure stepping: no IO, no sleeping, no time-acceleration scaling —
+        callers that want acceleration pass more simulated seconds.
+        """
+        simulated_seconds = float(simulated_seconds)
         with self.lock:
             aircraft_list = list(self.aircraft_list)
         for aircraft in aircraft_list:
@@ -505,6 +510,9 @@ class AircraftManager:
                     aircraft.waypoints
                 ) - 1 and not hasattr(aircraft, "finished_time"):
                     aircraft.finished_time = time.time()
+
+    def _step_all_aircraft(self, interval):
+        self.step_aircraft(float(interval) * self.sim_rate)
 
     def terminate_simulations(self, timeout_seconds=None):
         """

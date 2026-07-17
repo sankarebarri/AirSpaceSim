@@ -338,6 +338,13 @@ def validate_scenario_aircraft(payload, route_ids=None):
                 isinstance(item.get("vertical_rate_fpm"), (int, float)),
                 f"data.aircraft[{idx}].vertical_rate_fpm must be numeric",
             )
+        for entry_key in ("entry_time_seconds", "appear_after_seconds"):
+            if entry_key in item and item.get(entry_key) is not None:
+                _require(
+                    isinstance(item.get(entry_key), (int, float))
+                    and item[entry_key] >= 0,
+                    f"data.aircraft[{idx}].{entry_key} must be >= 0",
+                )
         if "heading_deg" in item:
             _require(
                 isinstance(item.get("heading_deg"), (int, float)),

@@ -76,6 +76,7 @@ export interface RunResponse {
   updated_at: string;
   started_at: string | null;
   ended_at: string | null;
+  summary?: Record<string, unknown> | null;
 }
 
 export interface RunListResponse {
@@ -110,6 +111,20 @@ export interface RunMetricsResponse {
   aircraft_count: number;
   active_aircraft_count: number;
   finished_aircraft_count: number;
+  pending_aircraft_count?: number;
+}
+
+export interface RunSeparationViolationResponse {
+  pair: string[];
+  horizontal_nm: number;
+  vertical_ft: number;
+  started_at_seconds: number;
+}
+
+export interface RunSeparationResponse {
+  standard: { horizontal_nm: number; vertical_ft: number };
+  active_violations: RunSeparationViolationResponse[];
+  loss_of_separation_count: number;
 }
 
 export interface RunStateResponse {
@@ -119,7 +134,10 @@ export interface RunStateResponse {
   updated_utc: string | null;
   source: string;
   last_error: string | null;
+  time_seconds?: number | null;
   aircraft: RunAircraftStateResponse[];
+  separation?: RunSeparationResponse | null;
+  summary?: Record<string, unknown> | null;
   metrics: RunMetricsResponse;
 }
 

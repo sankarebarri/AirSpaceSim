@@ -60,7 +60,7 @@ def test_manager_stepper_returns_tracks():
             vertical_rate_fpm=0,
         )
     ]
-    manager._step_all_aircraft = lambda dt: None
+    manager.step_aircraft = lambda dt: None
     stepper = ManagerStepper(manager)
     tracks = stepper.step(1.0)
     assert len(tracks) == 1

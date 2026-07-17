@@ -165,6 +165,9 @@ def _build_aircraft_payload(template: dict[str, Any]) -> dict[str, Any]:
         aircraft_id = item.get("aircraft_id") or item.get("id")
         if not isinstance(aircraft_id, str) or not aircraft_id.strip():
             continue
+        entry_seconds = item.get(
+            "entry_time_seconds", item.get("appear_after_seconds", 0)
+        )
         aircraft.append(
             {
                 "id": aircraft_id.strip(),
@@ -173,6 +176,11 @@ def _build_aircraft_payload(template: dict[str, Any]) -> dict[str, Any]:
                 "route_id": str(item.get("route_id") or "").strip(),
                 "speed_kt": float(item.get("speed_kt", 420)),
                 "flight_level": int(round(float(item.get("flight_level", 350)))),
+                "appear_after_seconds": (
+                    float(entry_seconds)
+                    if isinstance(entry_seconds, (int, float)) and entry_seconds > 0
+                    else 0
+                ),
             }
         )
     return build_envelope(

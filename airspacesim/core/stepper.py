@@ -12,7 +12,7 @@ class ManagerStepper:
         self.manager = manager
 
     def step(self, time_step_seconds: float):
-        self.manager._step_all_aircraft(time_step_seconds)
+        self.manager.step_aircraft(time_step_seconds)
         now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         tracks = []
         for ac in self.manager.aircraft_list:

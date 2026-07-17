@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from sqlalchemy import DateTime, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import JSON
 
 from ..base import Base
 from .scenario import utcnow
@@ -36,6 +37,7 @@ class RunRecord(Base):
     )
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    summary_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     scenario = relationship("ScenarioRecord", back_populates="runs")
     commands = relationship(
