@@ -9,6 +9,7 @@ decisions refer to `docs/repository-audit/08_OPEN_QUESTIONS.md`.
 | 2026-07-16 | `phase-0-baseline` | `bf2af1b` | Baseline commit: hosted app (`apps/`), airspace packages (`airspaces/`), scripts, and audit documents first tracked in git. Last state containing the pre-audit working tree as-is. |
 | 2026-07-16 | — | `930982a` | Audit decisions Q1–Q10 recorded; `lessons.md` promoted to `docs/content/traffic_relationships_spec.md`; `dashboard.html` removed. |
 | 2026-07-16 | `phase-1-engine-purification` | `3f1b5b0` | Phase 1 complete: pure engine step path (simulated seconds, no global speed multiplier, injectable file output, hosted runtime monkeypatch removed) plus all Q1-approved 0.2.0 removals. Last tag containing `airspacesim.hello`, the `route_manager` shim, and the legacy `gao_*`/`new_aircraft` fallbacks is `phase-0-baseline`. |
+| 2026-07-17 | `phase-2-simulation-core` | `95cf2c1` | Phase 2 core + server complete: `Simulation` façade with deterministic clock, engine events, general `SeparationMonitor` (one event per continuous LoS), engine-scheduled aircraft entry, separation state in API/WS snapshots, persisted run summaries (`runs.summary_json`, Alembic `20260716_0004`), server-side Practice outcomes. Frontend cutover to server summaries deferred to Phase 5. |
 
 ## Tagging conventions
 
