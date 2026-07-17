@@ -7,13 +7,21 @@
   "name": "Training Alpha",
   "description": "Fictional beginner airspace with crossing routes for classroom-style en-route practice.",
   "package_type": "fictional",
-  "service_types": ["enroute"],
+  "service_types": [
+    "enroute"
+  ],
   "difficulty": "beginner",
-  "training_modes": ["solo_guided", "solo_free_practice"],
+  "training_modes": [
+    "solo_guided",
+    "solo_free_practice"
+  ],
   "airspace_file": "airspace.v1.json",
   "default_scenario": "beginner_mix",
   "map": {
-    "default_center": [16.25, -0.03],
+    "default_center": [
+      16.25,
+      -40.0
+    ],
     "default_zoom_nm": 85
   },
   "scenarios": [
@@ -28,16 +36,16 @@
     },
     {
       "id": "crossing_traffic",
-      "title": "Crossing Traffic — Learn",
+      "title": "Crossing Traffic \u2014 Learn",
       "path": "scenarios/crossing_traffic.v1.json",
-      "description": "AFR612 and RAM401 converge at the same flight level near the Alpha VOR.",
+      "description": "NVR231 and SKL842 converge at the same flight level near the Alpha VOR.",
       "service_type": "enroute",
       "training_mode": "solo_guided",
       "difficulty": "beginner"
     },
     {
       "id": "crossing_traffic_practice",
-      "title": "Crossing Traffic — Practice",
+      "title": "Crossing Traffic \u2014 Practice",
       "path": "scenarios/crossing_traffic_practice.v1.json",
       "description": "A similar crossing conflict with less guidance.",
       "service_type": "enroute",
@@ -46,7 +54,7 @@
     },
     {
       "id": "crossing_traffic_practice_2",
-      "title": "Crossing Traffic — Practice 2",
+      "title": "Crossing Traffic \u2014 Practice 2",
       "path": "scenarios/crossing_traffic_practice_2.v1.json",
       "description": "A crossing conflict with different geometry and no conflict announcement.",
       "service_type": "enroute",

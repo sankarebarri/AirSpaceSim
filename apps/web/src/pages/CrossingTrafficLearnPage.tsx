@@ -23,8 +23,8 @@ import { filterOverlayByRouteIds, parseScenarioMapOverlay } from "../lib/scenari
 import "./RunDetailPage.css";
 import "./CrossingTrafficLearnPage.css";
 
-const AFR_ID = "AFR612";
-const RAM_ID = "RAM401";
+const NVR_ID = "NVR231";
+const SKL_ID = "SKL842";
 const TARGET_FLIGHT_LEVEL = 310;
 const RESOLVED_FLIGHT_LEVEL_GAP = 10; // 10 FL units = 1,000 ft
 const CONCEPT_ID = "crossing_traffic";
@@ -38,8 +38,8 @@ const TOTAL_STAGES = 5;
 const VISIBLE_ROUTE_IDS = ["X1", "X2", "A2"];
 
 const LABEL_DIRECTIONS: Record<string, AircraftLabelDirection> = {
-  [AFR_ID]: "left",
-  [RAM_ID]: "right",
+  [NVR_ID]: "left",
+  [SKL_ID]: "right",
 };
 
 type Stage = 1 | 2 | 3 | 4 | 5;
@@ -47,7 +47,7 @@ type Stage = 1 | 2 | 3 | 4 | 5;
 const stageCopy: Record<Stage, { title: string; body: string }> = {
   1: {
     title: "Watch the traffic",
-    body: "AFR612 and RAM401 are maintaining the same flight level and their tracks are converging.",
+    body: "NVR231 and SKL842 are maintaining the same flight level and their tracks are converging.",
   },
   2: {
     title: "Developing conflict",
@@ -55,15 +55,15 @@ const stageCopy: Record<Stage, { title: string; body: string }> = {
   },
   3: {
     title: "Resolve the conflict",
-    body: "One possible solution is to change the level of AFR612 before the required separation is lost.",
+    body: "One possible solution is to change the level of NVR231 before the required separation is lost.",
   },
   4: {
     title: "Watch the result",
-    body: "AFR612 is leaving FL330 and vertical separation is being established.",
+    body: "NVR231 is leaving FL330 and vertical separation is being established.",
   },
   5: {
     title: "Conflict resolved",
-    body: "The aircraft were originally converging at the same level. Descending AFR612 established vertical separation before the required separation was lost.",
+    body: "The aircraft were originally converging at the same level. Descending NVR231 established vertical separation before the required separation was lost.",
   },
 };
 
@@ -152,7 +152,7 @@ export function CrossingTrafficLearnPage() {
       const commandPayload = response.command.payload as Record<string, unknown>;
       if (
         response.command.command_type === "SET_FL" &&
-        commandPayload.aircraft_id === AFR_ID &&
+        commandPayload.aircraft_id === NVR_ID &&
         response.result.state !== "rejected" &&
         stage === 3
       ) {
@@ -185,8 +185,8 @@ export function CrossingTrafficLearnPage() {
 
   const state = stateQuery.data;
   const aircraft = state?.aircraft ?? [];
-  const afr = aircraft.find((item) => item.id === AFR_ID) ?? null;
-  const ram = aircraft.find((item) => item.id === RAM_ID) ?? null;
+  const afr = aircraft.find((item) => item.id === NVR_ID) ?? null;
+  const ram = aircraft.find((item) => item.id === SKL_ID) ?? null;
   const overlay = filterOverlayByRouteIds(
     parseScenarioMapOverlay(scenarioQuery.data),
     VISIBLE_ROUTE_IDS,
@@ -266,7 +266,7 @@ export function CrossingTrafficLearnPage() {
     commandMutation.mutate({
       command_type: "SET_FL",
       payload: {
-        aircraft_id: AFR_ID,
+        aircraft_id: NVR_ID,
         flight_level: TARGET_FLIGHT_LEVEL,
       },
     });
@@ -297,8 +297,8 @@ export function CrossingTrafficLearnPage() {
 
   const required = REQUIRED_HORIZONTAL_SEPARATION_NM;
   const copy = stageCopy[stage];
-  const isAfrSelected = selectedAircraftId === AFR_ID;
-  const showDescendPrompt = stage === 3 && isAfrSelected;
+  const isNvrSelected = selectedAircraftId === NVR_ID;
+  const showDescendPrompt = stage === 3 && isNvrSelected;
   const horizontalMaintained = encounterMin ? encounterMin.horizontalNm >= required : true;
   const verticalEstablished = encounterMin
     ? encounterMin.verticalFt >= REQUIRED_VERTICAL_SEPARATION_FT
@@ -361,18 +361,18 @@ export function CrossingTrafficLearnPage() {
 
           {stage === 3 ? (
             <div className="tp-action-block">
-              <p className={isAfrSelected ? "tp-instruction done" : "tp-instruction"}>
-                {isAfrSelected ? "AFR612 selected." : "Select AFR612."}
+              <p className={isNvrSelected ? "tp-instruction done" : "tp-instruction"}>
+                {isNvrSelected ? "NVR231 selected." : "Select NVR231."}
               </p>
               <div className="tp-select-row">
-                {[AFR_ID, RAM_ID].map((id) => (
+                {[NVR_ID, SKL_ID].map((id) => (
                   <button
                     key={id}
                     type="button"
                     className={
                       selectedAircraftId === id
                         ? "tp-chip active"
-                        : id === AFR_ID && !isAfrSelected
+                        : id === NVR_ID && !isNvrSelected
                           ? "tp-chip pulse"
                           : "tp-chip"
                     }
@@ -385,7 +385,7 @@ export function CrossingTrafficLearnPage() {
 
               {showDescendPrompt ? (
                 <div className="tp-command pulse">
-                  <p className="tp-instruction">Descend AFR612 to FL{TARGET_FLIGHT_LEVEL}.</p>
+                  <p className="tp-instruction">Descend NVR231 to FL{TARGET_FLIGHT_LEVEL}.</p>
                   <div className="cq-clr-row">
                     <input
                       className="cq-clr-input"

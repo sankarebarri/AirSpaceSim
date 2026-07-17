@@ -128,7 +128,7 @@ Planning source of truth:
 - Do not couple backend to Leaflet/UI code.
 - Do not make UI import Python internals directly.
 - Do not remove atomic write behavior in runtime state output.
-- Do not hardcode Gao-specific assumptions into simulation core.
+- Do not hardcode environment-specific assumptions into the simulation core (public data uses the fictional Nerava environment).
 - Do not break legacy fallback reads unless migration is complete and intentional.
 
 ## 7) Data Contract Notes
@@ -203,8 +203,8 @@ Planning source of truth:
   - if no intersection: raise `RouteResolutionError`
   - if multiple intersections: choose deterministic shortest/ordered candidate and log selection
 - Example:
-  - `departure=NIAMEY`, `destination=BAMAKO`, `routes=[UR981, UA612]`
-  - resolved path includes turn at `GAO_VOR`
+  - `departure=VESTA`, `destination=TARUM`, `routes=[UT88, UL602]`
+  - resolved path includes turn at `NRV_VOR`
 - Current integration status:
   - registry + tests implemented in `airspacesim/routes/registry.py` and `tests/test_route_registry.py`
   - not yet wired as the default path resolver inside runtime scenario/event pipelines

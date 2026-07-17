@@ -1,0 +1,344 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "metadata": {
+    "name": "Mixed Traffic Session",
+    "description": "Twenty-five-track training session with departures, arrivals, and overflights."
+  },
+  "airspace_id": "nerava_fir",
+  "airspace": {
+    "extra_routes": [
+      {
+        "id": "UN866",
+        "name": "Overflight NW-SE",
+        "waypoint_ids": [
+          "ORNAK",
+          "NRV_VOR",
+          "TIRGO"
+        ]
+      },
+      {
+        "id": "UT204",
+        "name": "Overflight NE-SW",
+        "waypoint_ids": [
+          "LUMEK",
+          "NRV_VOR",
+          "KOLVA"
+        ]
+      },
+      {
+        "id": "UM551",
+        "name": "Overflight N-S",
+        "waypoint_ids": [
+          "NARVO",
+          "NRV_VOR",
+          "TULBA"
+        ]
+      }
+    ]
+  },
+  "aircraft": [
+    {
+      "id": "AC901",
+      "callsign": "DEP01",
+      "aircraft_type": "B737",
+      "route_id": "UL602",
+      "speed_kt": 410,
+      "flight_level": 290,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC902",
+      "callsign": "ARR02",
+      "aircraft_type": "A320",
+      "route_id": "UM731",
+      "speed_kt": 420,
+      "flight_level": 310,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "arrival"
+      }
+    },
+    {
+      "id": "AC903",
+      "callsign": "OVF03",
+      "aircraft_type": "B738",
+      "route_id": "UN866",
+      "speed_kt": 430,
+      "flight_level": 330,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC904",
+      "callsign": "DEP04",
+      "aircraft_type": "E190",
+      "route_id": "T45",
+      "speed_kt": 440,
+      "flight_level": 350,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC905",
+      "callsign": "DEP05",
+      "aircraft_type": "CRJ9",
+      "route_id": "B12",
+      "speed_kt": 450,
+      "flight_level": 370,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC906",
+      "callsign": "OVF06",
+      "aircraft_type": "A332",
+      "route_id": "UT204",
+      "speed_kt": 410,
+      "flight_level": 390,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC907",
+      "callsign": "DEP07",
+      "aircraft_type": "B772",
+      "route_id": "UM214",
+      "speed_kt": 420,
+      "flight_level": 290,
+      "appear_after_seconds": 0,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC908",
+      "callsign": "DEP08",
+      "aircraft_type": "AT72",
+      "route_id": "A1",
+      "speed_kt": 250,
+      "flight_level": 230,
+      "appear_after_seconds": 8,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC909",
+      "callsign": "DEP09",
+      "aircraft_type": "DH8D",
+      "route_id": "UN480",
+      "speed_kt": 300,
+      "flight_level": 250,
+      "appear_after_seconds": 8,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC910",
+      "callsign": "OVF10",
+      "aircraft_type": "C208",
+      "route_id": "UM551",
+      "speed_kt": 165,
+      "flight_level": 150,
+      "appear_after_seconds": 8,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC911",
+      "callsign": "DEP11",
+      "aircraft_type": "B737",
+      "route_id": "UT88",
+      "speed_kt": 410,
+      "flight_level": 370,
+      "appear_after_seconds": 16,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC912",
+      "callsign": "DEP12",
+      "aircraft_type": "A320",
+      "route_id": "UL335",
+      "speed_kt": 420,
+      "flight_level": 390,
+      "appear_after_seconds": 16,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC913",
+      "callsign": "ARR13",
+      "aircraft_type": "B738",
+      "route_id": "UM731",
+      "speed_kt": 430,
+      "flight_level": 290,
+      "appear_after_seconds": 16,
+      "metadata": {
+        "role": "arrival"
+      }
+    },
+    {
+      "id": "AC914",
+      "callsign": "DEP14",
+      "aircraft_type": "E190",
+      "route_id": "UL602",
+      "speed_kt": 440,
+      "flight_level": 310,
+      "appear_after_seconds": 24,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC915",
+      "callsign": "OVF15",
+      "aircraft_type": "CRJ9",
+      "route_id": "UN866",
+      "speed_kt": 450,
+      "flight_level": 330,
+      "appear_after_seconds": 24,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC916",
+      "callsign": "DEP16",
+      "aircraft_type": "A332",
+      "route_id": "T45",
+      "speed_kt": 410,
+      "flight_level": 350,
+      "appear_after_seconds": 24,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC917",
+      "callsign": "DEP17",
+      "aircraft_type": "B772",
+      "route_id": "B12",
+      "speed_kt": 420,
+      "flight_level": 370,
+      "appear_after_seconds": 32,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC918",
+      "callsign": "OVF18",
+      "aircraft_type": "AT72",
+      "route_id": "UT204",
+      "speed_kt": 250,
+      "flight_level": 240,
+      "appear_after_seconds": 32,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC919",
+      "callsign": "DEP19",
+      "aircraft_type": "DH8D",
+      "route_id": "UM214",
+      "speed_kt": 300,
+      "flight_level": 260,
+      "appear_after_seconds": 32,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC920",
+      "callsign": "DEP20",
+      "aircraft_type": "C208",
+      "route_id": "A1",
+      "speed_kt": 165,
+      "flight_level": 160,
+      "appear_after_seconds": 40,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC921",
+      "callsign": "DEP21",
+      "aircraft_type": "B737",
+      "route_id": "UN480",
+      "speed_kt": 410,
+      "flight_level": 330,
+      "appear_after_seconds": 40,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC922",
+      "callsign": "OVF22",
+      "aircraft_type": "A320",
+      "route_id": "UM551",
+      "speed_kt": 420,
+      "flight_level": 350,
+      "appear_after_seconds": 40,
+      "metadata": {
+        "role": "overflight"
+      }
+    },
+    {
+      "id": "AC923",
+      "callsign": "DEP23",
+      "aircraft_type": "B738",
+      "route_id": "UT88",
+      "speed_kt": 430,
+      "flight_level": 370,
+      "appear_after_seconds": 48,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC924",
+      "callsign": "DEP24",
+      "aircraft_type": "E190",
+      "route_id": "UL335",
+      "speed_kt": 440,
+      "flight_level": 390,
+      "appear_after_seconds": 48,
+      "metadata": {
+        "role": "departure"
+      }
+    },
+    {
+      "id": "AC925",
+      "callsign": "ARR25",
+      "aircraft_type": "CRJ9",
+      "route_id": "UM731",
+      "speed_kt": 450,
+      "flight_level": 290,
+      "appear_after_seconds": 48,
+      "metadata": {
+        "role": "arrival"
+      }
+    }
+  ]
+}

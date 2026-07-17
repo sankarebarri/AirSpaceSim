@@ -30,7 +30,7 @@ def test_save_aircraft_data_writes_canonical_aircraft_state(tmp_path):
                 flight_level=210,
                 altitude_ft=9000,
                 vertical_rate_fpm=0,
-                route="UA612",
+                route="UL602",
             )
         ]
         manager.save_aircraft_data()
@@ -51,7 +51,7 @@ def test_save_aircraft_data_writes_canonical_aircraft_state(tmp_path):
         assert item["altitude_ft"] == 9000
         assert item["vertical_rate_fpm"] == 0
         assert item["traffic_flow"] == "unknown"
-        assert item["route_id"] == "UA612"
+        assert item["route_id"] == "UL602"
 
         trajectory_payload = json.loads(trajectory_file.read_text(encoding="utf-8"))
         assert trajectory_payload["schema"]["name"] == "airspacesim.trajectory"

@@ -20,7 +20,7 @@ Fast path:
 python3 scripts/start_hosted_dev.py --seed
 ```
 
-That starts the API, starts the web app, and creates a Gao demo run.
+That starts the API, starts the web app, and creates a Nerava demo run.
 
 Manual path:
 
@@ -304,7 +304,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/runs/<run-id>/commands \
     "payload":{
       "aircraft_id":"AC901",
       "callsign":"OPS901",
-      "route_id":"UA612",
+      "route_id":"UL602",
       "speed_kt":420,
       "flight_level":350
     }
@@ -321,7 +321,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/runs/<run-id>/commands \
     "payload":{
       "aircraft_id":"AC902",
       "callsign":"OPS902",
-      "route_id":"UG859",
+      "route_id":"UM731",
       "speed_kt":410,
       "flight_level":330
     }

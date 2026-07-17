@@ -5,29 +5,33 @@
   },
   "metadata": {
     "name": "Crossing Traffic — Learn",
-    "description": "AFR612 and RAM401 converge at the same flight level near the Alpha VOR. Deterministic two-aircraft scenario used by the Crossing Traffic Learn experience."
+    "description": "NVR231 and SKL842 converge at the same flight level near the Alpha VOR. Deterministic two-aircraft scenario used by the Crossing Traffic Learn experience."
   },
   "airspace_id": "training_alpha",
   "aircraft": [
     {
-      "id": "AFR612",
-      "callsign": "AFR612",
+      "id": "NVR231",
+      "callsign": "NVR231",
       "aircraft_type": "A320",
       "route_id": "X1",
       "speed_kt": 460,
       "flight_level": 330,
       "appear_after_seconds": 0,
-      "metadata": { "role": "crossing-a" }
+      "metadata": {
+        "role": "crossing-a"
+      }
     },
     {
-      "id": "RAM401",
-      "callsign": "RAM401",
+      "id": "SKL842",
+      "callsign": "SKL842",
       "aircraft_type": "B738",
       "route_id": "X2",
       "speed_kt": 430,
       "flight_level": 330,
       "appear_after_seconds": 0,
-      "metadata": { "role": "crossing-b" }
+      "metadata": {
+        "role": "crossing-b"
+      }
     }
   ]
 }

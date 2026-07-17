@@ -9,8 +9,6 @@ import {
 const DEFAULT_CONFIG_CANDIDATES = [
   new URL("map_config.v1.json", DATA_BASE_URL).toString(),
   new URL("airspace_config.json", DATA_BASE_URL).toString(),
-  new URL("gao_airspace.json", DATA_BASE_URL).toString(),
-  new URL("gao_airspace_config.json", DATA_BASE_URL).toString(),
 ];
 
 export let map;

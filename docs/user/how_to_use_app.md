@@ -67,10 +67,10 @@ Fix inspection shows:
 
 - fix name
 - fix type
-- radial from GAO VOR
+- radial from the Nerava VOR (NRV)
 - route membership
 - position
-- distance from GAO VOR
+- distance from the Nerava VOR (NRV)
 
 Route inspection shows:
 
@@ -114,7 +114,7 @@ The selected aircraft panel shows:
 - speed
 - heading
 - lateral mode
-- GAO DME
+- NRV DME
 - position
 
 ## Moving Labels
@@ -194,7 +194,7 @@ Important: resume navigation returns to the aircraft route, not to the last assi
 Use `Direct To`.
 
 1. Select an aircraft.
-2. Enter a fix ID on its route, for example `GAO_VOR`.
+2. Enter a fix ID on its route, for example `NRV_VOR`.
 3. Click `Direct To`.
 
 The aircraft proceeds directly to that fix and then continues the route sequence from there.
@@ -291,7 +291,7 @@ During a session, watch:
 - aircraft labels and FL changes
 - heading vectors
 - lateral mode
-- GAO DME
+- NRV DME
 - radial cross-track value
 - Command History
 - connection status

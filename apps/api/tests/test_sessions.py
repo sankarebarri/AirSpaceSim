@@ -35,7 +35,7 @@ def test_runtime_session_add_aircraft_command_normalizes_route_payload():
         command_type="ADD_AIRCRAFT",
         payload={
             "id": "AC990",
-            "route": "UA612",
+            "route": "UL602",
             "callsign": "OPS990",
         },
     )
@@ -49,7 +49,7 @@ def test_runtime_session_add_aircraft_command_normalizes_route_payload():
         item for item in after_snapshot["aircraft"] if item["id"] == "AC990"
     )
     assert added_aircraft["callsign"] == "OPS990"
-    assert added_aircraft["route_id"] == "UA612"
+    assert added_aircraft["route_id"] == "UL602"
     assert published_events[-1][0] == "command"
 
 
@@ -104,7 +104,7 @@ def test_runtime_session_simulation_speed_validation_and_terminal_rejection():
     stopped_result = runtime_session.apply_command(
         command_id="cmd-after-stop",
         command_type="ADD_AIRCRAFT",
-        payload={"aircraft_id": "AC999", "route_id": "UA612"},
+        payload={"aircraft_id": "AC999", "route_id": "UL602"},
     )
 
     assert rejected_result["rejected"] == [("cmd-invalid-rate", "invalid sim_rate")]

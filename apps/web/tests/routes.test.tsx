@@ -47,7 +47,7 @@ describe("AppRoutes", () => {
                 description: "Baseline route inventory",
                 airspace_payload: {
                   data: {
-                    routes: [{ id: "UA612" }],
+                    routes: [{ id: "UL602" }],
                     points: [{ id: "PT1" }, { id: "PT2" }],
                   },
                 },

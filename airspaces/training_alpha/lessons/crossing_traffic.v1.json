@@ -32,9 +32,9 @@
       "title": "Crossing Traffic",
       "scenario_template": "crossing_traffic.v1.json",
       "script": [
-        "Watch AFR612 and RAM401 converge at the same flight level.",
+        "Watch NVR231 and SKL842 converge at the same flight level.",
         "Review the required horizontal separation of 10 NM.",
-        "Select AFR612 and descend it to FL310.",
+        "Select NVR231 and descend it to FL310.",
         "Watch vertical separation establish as the conflict resolves."
       ]
     }

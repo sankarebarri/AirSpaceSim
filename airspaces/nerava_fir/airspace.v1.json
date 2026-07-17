@@ -7,7 +7,7 @@
     "id": "nerava_fir",
     "name": "Nerava FIR Training Airspace",
     "source_type": "fictional_training",
-    "source": "airspacesim.seed",
+    "source": "airspacesim.training.nerava_fir",
     "generated_utc": "2026-07-17T00:00:00Z"
   },
   "data": {

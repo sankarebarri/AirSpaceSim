@@ -15,12 +15,12 @@ export interface SimulateScenarioDescriptor {
 
 export const SIMULATE_SCENARIOS: SimulateScenarioDescriptor[] = [
   {
-    slug: "gao-sector-traffic",
-    title: "Gao Sector Traffic",
+    slug: "nerava-sector-traffic",
+    title: "Nerava Sector Traffic",
     description:
       "A small en-route traffic simulation with several aircraft entering, crossing, and leaving the sector.",
-    airspaceId: "gao_demo",
-    scenarioId: "gao_sector_traffic",
+    airspaceId: "nerava_fir",
+    scenarioId: "sector_traffic",
     aircraftCount: 4,
     routeCount: 3,
     mode: "Solo",

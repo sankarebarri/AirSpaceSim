@@ -97,7 +97,7 @@ def test_hosted_browser_flow_supports_run_creation_and_commands(tmp_path):
             )
             add_aircraft_form.get_by_label("Aircraft ID").fill("AC901")
             add_aircraft_form.get_by_label("Callsign").fill("OPS901")
-            add_aircraft_form.get_by_label("Route ID").fill("UA612")
+            add_aircraft_form.get_by_label("Route ID").fill("UL602")
             add_aircraft_form.get_by_label("Speed (kt)").fill("420")
             add_aircraft_form.get_by_label("Flight level").fill("350")
             add_aircraft_form.get_by_role("button", name="Add Track").click()
@@ -108,7 +108,7 @@ def test_hosted_browser_flow_supports_run_creation_and_commands(tmp_path):
 
             add_aircraft_form.get_by_label("Aircraft ID").fill("AC902")
             add_aircraft_form.get_by_label("Callsign").fill("OPS902")
-            add_aircraft_form.get_by_label("Route ID").fill("UA612")
+            add_aircraft_form.get_by_label("Route ID").fill("UL602")
             add_aircraft_form.get_by_label("Speed (kt)").fill("410")
             add_aircraft_form.get_by_label("Flight level").fill("330")
             add_aircraft_form.get_by_role("button", name="Add Track").click()

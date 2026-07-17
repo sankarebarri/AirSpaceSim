@@ -19,7 +19,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from airspacesim.io import normalize_scenario_airspace_payload  # noqa: E402 (after sys.path setup)
 
-DEFAULT_AIRSPACE_PATH = PROJECT_ROOT / "airspaces" / "gao_demo" / "airspace.v1.json"
+DEFAULT_AIRSPACE_PATH = PROJECT_ROOT / "airspaces" / "nerava_fir" / "airspace.v1.json"
 LEGACY_DEFAULT_AIRSPACE_PATH = (
     PROJECT_ROOT / "airspacesim" / "data" / "scenario_airspace.v1.json"
 )
@@ -494,19 +494,19 @@ def _build_demo_airspace(base_airspace: dict, template: dict | None = None) -> d
     else:
         overflight_routes = [
             {
-                "id": "OVF_NW_SE",
+                "id": "UN866",
                 "name": "Overflight NW-SE",
-                "waypoint_ids": ["TAVIL", "GAO_VOR", "PILTI"],
+                "waypoint_ids": ["ORNAK", "NRV_VOR", "TIRGO"],
             },
             {
-                "id": "OVF_NE_SW",
+                "id": "UT204",
                 "name": "Overflight NE-SW",
-                "waypoint_ids": ["TESTI", "GAO_VOR", "OPUGO"],
+                "waypoint_ids": ["LUMEK", "NRV_VOR", "KOLVA"],
             },
             {
-                "id": "OVF_N_S",
+                "id": "UM551",
                 "name": "Overflight N-S",
-                "waypoint_ids": ["BIDUX", "GAO_VOR", "ARGAM"],
+                "waypoint_ids": ["NARVO", "NRV_VOR", "TULBA"],
             },
         ]
     routes.extend(
@@ -541,31 +541,31 @@ def _scenario_aircraft_payload(aircraft: list[dict]) -> dict:
 
 def _build_demo_aircraft(performance_db: dict) -> list[dict]:
     route_plan = [
-        ("UA612", "departure"),
-        ("UG859", "arrival"),
-        ("OVF_NW_SE", "overflight"),
-        ("UR971", "departure"),
-        ("UM629", "departure"),
-        ("OVF_NE_SW", "overflight"),
-        ("UA603", "departure"),
-        ("UG859_ALT", "departure"),
-        ("UT365", "departure"),
-        ("OVF_N_S", "overflight"),
-        ("UR981", "departure"),
-        ("UM629_ALT", "departure"),
-        ("UG859", "arrival"),
-        ("UA612", "departure"),
-        ("OVF_NW_SE", "overflight"),
-        ("UR971", "departure"),
-        ("UM629", "departure"),
-        ("OVF_NE_SW", "overflight"),
-        ("UA603", "departure"),
-        ("UG859_ALT", "departure"),
-        ("UT365", "departure"),
-        ("OVF_N_S", "overflight"),
-        ("UR981", "departure"),
-        ("UM629_ALT", "departure"),
-        ("UG859", "arrival"),
+        ("UL602", "departure"),
+        ("UM731", "arrival"),
+        ("UN866", "overflight"),
+        ("T45", "departure"),
+        ("B12", "departure"),
+        ("UT204", "overflight"),
+        ("UM214", "departure"),
+        ("A1", "departure"),
+        ("UN480", "departure"),
+        ("UM551", "overflight"),
+        ("UT88", "departure"),
+        ("UL335", "departure"),
+        ("UM731", "arrival"),
+        ("UL602", "departure"),
+        ("UN866", "overflight"),
+        ("T45", "departure"),
+        ("B12", "departure"),
+        ("UT204", "overflight"),
+        ("UM214", "departure"),
+        ("A1", "departure"),
+        ("UN480", "departure"),
+        ("UM551", "overflight"),
+        ("UT88", "departure"),
+        ("UL335", "departure"),
+        ("UM731", "arrival"),
     ]
     aircraft_types = [
         "B737",
@@ -702,7 +702,7 @@ def main() -> int:
         "--airspace",
         help=(
             "Optional airspace package JSON. Defaults to "
-            "airspaces/gao_demo/airspace.v1.json."
+            "airspaces/nerava_fir/airspace.v1.json."
         ),
     )
     parser.add_argument(

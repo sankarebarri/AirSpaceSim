@@ -19,7 +19,11 @@ class Settings:
         self.MAX_ABSURD_SPEED_KTS = 1200.0
         # One of: "reject", "clamp", "off"
         self.SPEED_GUARDRAIL_MODE = "reject"
-        self.AIRSPACE_CENTER = (16.25, -0.03)  # Default map center
+        # Default map/traffic-flow centre for the bundled fictional Nerava
+        # training environment. Environment-specific: managers accept an
+        # explicit airspace_center, and Simulation derives it from the
+        # loaded airspace data.
+        self.AIRSPACE_CENTER = (33.5, -41.0)
         self.DEFAULT_ZOOM_LEVEL = 8
 
         self._package_root = Path(__file__).resolve().parent

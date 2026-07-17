@@ -3,33 +3,41 @@
     "name": "airspacesim.airspace_package_manifest",
     "version": "1.0"
   },
-  "id": "gao_demo",
-  "name": "Sahel Control",
-  "description": "Fictional medium-complexity en-route sector for public AirSpaceSim training sessions.",
+  "id": "nerava_fir",
+  "name": "Nerava FIR",
+  "description": "Fictional mid-Atlantic en-route training sector for public AirSpaceSim sessions.",
   "package_type": "fictional",
-  "service_types": ["enroute"],
+  "service_types": [
+    "enroute"
+  ],
   "difficulty": "intermediate",
-  "training_modes": ["solo_free_practice", "solo_guided"],
+  "training_modes": [
+    "solo_free_practice",
+    "solo_guided"
+  ],
   "airspace_file": "airspace.v1.json",
-  "default_scenario": "mixed_traffic_demo",
+  "default_scenario": "mixed_traffic",
   "map": {
-    "default_center": [16.25, -0.03],
+    "default_center": [
+      33.5,
+      -41.0
+    ],
     "default_zoom_nm": 85
   },
   "scenarios": [
     {
-      "id": "mixed_traffic_demo",
+      "id": "mixed_traffic",
       "title": "Mixed Traffic Session",
-      "path": "scenarios/mixed_traffic_demo.v1.json",
+      "path": "scenarios/mixed_traffic.v1.json",
       "description": "Twenty-five training aircraft with departures, arrivals, and overflights.",
       "service_type": "enroute",
       "training_mode": "solo_free_practice",
       "difficulty": "intermediate"
     },
     {
-      "id": "gao_sector_traffic",
-      "title": "Gao Sector Traffic",
-      "path": "scenarios/gao_sector_traffic.v1.json",
+      "id": "sector_traffic",
+      "title": "Nerava Sector Traffic",
+      "path": "scenarios/sector_traffic.v1.json",
       "description": "A small en-route traffic simulation with several aircraft entering, crossing, and leaving the sector.",
       "service_type": "enroute",
       "training_mode": "solo_free_practice",

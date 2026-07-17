@@ -322,7 +322,7 @@ export function RunDetailPage() {
   const [addAircraftId, setAddAircraftId] = useState("AC900");
   const [addCallsign, setAddCallsign] = useState("OPS900");
   const [addAircraftType, setAddAircraftType] = useState("B737");
-  const [addRouteId, setAddRouteId] = useState("UA612");
+  const [addRouteId, setAddRouteId] = useState("UL602");
   const [addSpeedKt, setAddSpeedKt] = useState("420");
   const [addFlightLevel, setAddFlightLevel] = useState("350");
   const [setSpeedValue, setSetSpeedValue] = useState("240");
@@ -330,8 +330,8 @@ export function RunDetailPage() {
   const [setHeadingValue, setSetHeadingValue] = useState("090");
   const [turnAmountValue, setTurnAmountValue] = useState("30");
   const [setRadialValue, setSetRadialValue] = useState("265");
-  const [directToFixValue, setDirectToFixValue] = useState("GAO_VOR");
-  const [holdFixValue, setHoldFixValue] = useState("GAO_VOR");
+  const [directToFixValue, setDirectToFixValue] = useState("NRV_VOR");
+  const [holdFixValue, setHoldFixValue] = useState("NRV_VOR");
   const [setSimRateValue, setSetSimRateValue] = useState("1.0");
   const [aircraftLabelDirections, setAircraftLabelDirections] = useState<
     Record<string, AircraftLabelDirection>
@@ -1631,7 +1631,7 @@ export function RunDetailPage() {
                         style={{ width: "auto", flex: 1 }}
                         value={directToFixValue}
                         onChange={(event) => setDirectToFixValue(event.target.value)}
-                        placeholder="GAO_VOR"
+                        placeholder="NRV_VOR"
                         disabled={!selectedAircraft || commandMutation.isPending}
                       />
                       <button
@@ -1654,7 +1654,7 @@ export function RunDetailPage() {
                         style={{ width: "auto", flex: 1 }}
                         value={holdFixValue}
                         onChange={(event) => setHoldFixValue(event.target.value)}
-                        placeholder="GAO_VOR"
+                        placeholder="NRV_VOR"
                         disabled={!selectedAircraft || commandMutation.isPending}
                       />
                       <button
@@ -1733,7 +1733,7 @@ export function RunDetailPage() {
                       className="cq-inj-input"
                       value={addRouteId}
                       onChange={(event) => setAddRouteId(event.target.value)}
-                      placeholder="UA612"
+                      placeholder="UL602"
                     />
                   </div>
                   <div className="cq-inj-field">

@@ -2,7 +2,7 @@
   "data_source": {
     "airspace_data_file": "airspace_data.json",
     "selected_airspaces": [
-      "GAO_TMA_DEMO"
+      "NERAVA_CTA"
     ],
     "allow_manual_elements": true
   },
@@ -17,29 +17,29 @@
     }
   },
   "center": [
-    16.25,
-    -0.03
+    33.5,
+    -41.0
   ],
   "zoom": 8,
   "tile_layer": {
     "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    "attribution": "© OpenStreetMap contributors"
+    "attribution": "\u00a9 OpenStreetMap contributors"
   },
   "selected_airspaces_metadata": [
     {
-      "airspace_id": "GAO_TMA_DEMO",
-      "name": "Gao Airspace: 60 NM Radius"
+      "airspace_id": "NERAVA_CTA",
+      "name": "Nerava Control Area: 60 NM Training Sector"
     }
   ],
   "elements": [
     {
       "type": "circle",
-      "name": "Gao Airspace: 60 NM Radius",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_zone_id": "GAO_TMA_60NM",
+      "name": "Nerava Control Area: 60 NM Training Sector",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_zone_id": "NERAVA_CTA_60NM",
       "center": [
-        16.25,
-        -0.03
+        33.5,
+        -41.0
       ],
       "radius": 111120,
       "color": "blue",
@@ -50,21 +50,21 @@
     },
     {
       "type": "polyline",
-      "name": "UA612",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UA612",
+      "name": "UL602",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UL602",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          15.8425,
-          -0.9811111111
+          34.156,
+          -41.1398
         ],
         [
-          15.285,
-          -2.3038888889
+          34.8938,
+          -41.2997
         ]
       ],
       "color": "lightcoral",
@@ -73,21 +73,21 @@
     },
     {
       "type": "polyline",
-      "name": "UG859",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UG859",
+      "name": "UM731",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UM731",
       "coords": [
         [
-          20.2569444444,
-          0.9880555556
+          34.3638,
+          -39.8305
         ],
         [
-          17.2144444444,
-          0.2158333333
+          33.9222,
+          -40.4332
         ],
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ]
       ],
       "color": "lightcoral",
@@ -96,21 +96,21 @@
     },
     {
       "type": "polyline",
-      "name": "UR971",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UR971",
+      "name": "T45",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "T45",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          15.8491666667,
-          0.2933333333
+          33.3074,
+          -40.153
         ],
         [
-          15.4513888889,
-          0.6186111111
+          33.1092,
+          -39.3098
         ]
       ],
       "color": "lightcoral",
@@ -119,21 +119,17 @@
     },
     {
       "type": "polyline",
-      "name": "UM629",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UM629",
+      "name": "B12",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "B12",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          15.5461111111,
-          0.1733333333
-        ],
-        [
-          13.7961111111,
-          0.6727777778
+          32.4689,
+          -40.3513
         ]
       ],
       "color": "lightcoral",
@@ -142,17 +138,17 @@
     },
     {
       "type": "polyline",
-      "name": "UA603",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UA603",
+      "name": "A1",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "A1",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          13.9330555556,
-          -0.0138888889
+          32.6277,
+          -42.0669
         ]
       ],
       "color": "lightcoral",
@@ -161,17 +157,17 @@
     },
     {
       "type": "polyline",
-      "name": "UG859 (direct)",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UG859_ALT",
+      "name": "UT88",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UT88",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          14.0969444444,
-          -0.8511111111
+          33.4531,
+          -42.3567
         ]
       ],
       "color": "lightcoral",
@@ -180,17 +176,17 @@
     },
     {
       "type": "polyline",
-      "name": "UT365",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UT365",
+      "name": "UN480",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UN480",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          17.7347222222,
-          -1.8883333333
+          34.3858,
+          -42.1998
         ]
       ],
       "color": "lightcoral",
@@ -199,17 +195,17 @@
     },
     {
       "type": "polyline",
-      "name": "UR981",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UR981",
+      "name": "UM214",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UM214",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          18.1455555556,
-          -1.4288888889
+          32.1473,
+          -41.2245
         ]
       ],
       "color": "lightcoral",
@@ -218,17 +214,17 @@
     },
     {
       "type": "polyline",
-      "name": "UM629 (direct)",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_route_id": "UM629_ALT",
+      "name": "UL335",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_route_id": "UL335",
       "coords": [
         [
-          16.25,
-          -0.03
+          33.5,
+          -41.0
         ],
         [
-          18.6408333333,
-          -0.8708333333
+          33.9611,
+          -39.2429
         ]
       ],
       "color": "lightcoral",
@@ -237,252 +233,235 @@
     },
     {
       "type": "marker",
-      "name": "ETRUL",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "ETRUL",
+      "name": "Nerava VOR",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "NRV_VOR",
       "coords": [
-        15.8425,
-        -0.9811111111
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "ETRUL (ETRUL)",
-      "label_text": "ETRUL"
-    },
-    {
-      "type": "marker",
-      "name": "PILTI",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "PILTI",
-      "coords": [
-        15.285,
-        -2.3038888889
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "PILTI (PILTI)",
-      "label_text": "PILTI"
-    },
-    {
-      "type": "marker",
-      "name": "TESTI",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "TESTI",
-      "coords": [
-        20.2569444444,
-        0.9880555556
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "TESTI (TESTI)",
-      "label_text": "TESTI"
-    },
-    {
-      "type": "marker",
-      "name": "ILDAD",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "ILDAD",
-      "coords": [
-        17.2144444444,
-        0.2158333333
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "ILDAD (ILDAD)",
-      "label_text": "ILDAD"
-    },
-    {
-      "type": "marker",
-      "name": "UNOTA",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "UNOTA",
-      "coords": [
-        15.8491666667,
-        0.2933333333
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "UNOTA (UNOTA)",
-      "label_text": "UNOTA"
-    },
-    {
-      "type": "marker",
-      "name": "ERGIL",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "ERGIL",
-      "coords": [
-        15.4513888889,
-        0.6186111111
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "ERGIL (ERGIL)",
-      "label_text": "ERGIL"
-    },
-    {
-      "type": "marker",
-      "name": "EBVAP",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "EBVAP",
-      "coords": [
-        15.5461111111,
-        0.1733333333
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "EBVAP (EBVAP)",
-      "label_text": "EBVAP"
-    },
-    {
-      "type": "marker",
-      "name": "ARGAM",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "ARGAM",
-      "coords": [
-        13.7961111111,
-        0.6727777778
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "ARGAM (ARGAM)",
-      "label_text": "ARGAM"
-    },
-    {
-      "type": "marker",
-      "name": "LIPET",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "LIPET",
-      "coords": [
-        13.9330555556,
-        -0.0138888889
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "LIPET (LIPET)",
-      "label_text": "LIPET"
-    },
-    {
-      "type": "marker",
-      "name": "OPUGO",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "OPUGO",
-      "coords": [
-        14.0969444444,
-        -0.8511111111
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "OPUGO (OPUGO)",
-      "label_text": "OPUGO"
-    },
-    {
-      "type": "marker",
-      "name": "LUKNA",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "LUKNA",
-      "coords": [
-        17.7347222222,
-        -1.8883333333
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "LUKNA (LUKNA)",
-      "label_text": "LUKNA"
-    },
-    {
-      "type": "marker",
-      "name": "TAVIL",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "TAVIL",
-      "coords": [
-        18.1455555556,
-        -1.4288888889
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "TAVIL (TAVIL)",
-      "label_text": "TAVIL"
-    },
-    {
-      "type": "marker",
-      "name": "BIDUX",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_point_id": "BIDUX",
-      "coords": [
-        18.6408333333,
-        -0.8708333333
-      ],
-      "icon_url": "../icons/triangle_9.svg",
-      "icon_size": [
-        10,
-        10
-      ],
-      "popup_text": "BIDUX (BIDUX)",
-      "label_text": "BIDUX"
-    },
-    {
-      "type": "marker",
-      "name": "Gao VOR",
-      "source_airspace_id": "GAO_TMA_DEMO",
-      "source_navaid_id": "GAO_VOR",
-      "coords": [
-        16.25,
-        -0.03
+        33.5,
+        -41.0
       ],
       "icon_url": "../icons/vor.svg",
       "icon_size": [
-        30,
-        30
+        14,
+        14
       ],
-      "popup_text": "GAO VOR",
-      "label_text": "GAO"
+      "popup_text": "Nerava VOR (NRV)",
+      "label_text": "NRV"
+    },
+    {
+      "type": "marker",
+      "name": "NARVO",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "NARVO",
+      "coords": [
+        34.8938,
+        -41.2997
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "NARVO",
+      "label_text": "NARVO"
+    },
+    {
+      "type": "marker",
+      "name": "MOKRA",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "MOKRA",
+      "coords": [
+        34.156,
+        -41.1398
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "MOKRA",
+      "label_text": "MOKRA"
+    },
+    {
+      "type": "marker",
+      "name": "LUMEK",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "LUMEK",
+      "coords": [
+        34.3638,
+        -39.8305
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "LUMEK",
+      "label_text": "LUMEK"
+    },
+    {
+      "type": "marker",
+      "name": "DEVAN",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "DEVAN",
+      "coords": [
+        33.9222,
+        -40.4332
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "DEVAN",
+      "label_text": "DEVAN"
+    },
+    {
+      "type": "marker",
+      "name": "VESIN",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "VESIN",
+      "coords": [
+        33.9611,
+        -39.2429
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "VESIN",
+      "label_text": "VESIN"
+    },
+    {
+      "type": "marker",
+      "name": "SAVEN",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "SAVEN",
+      "coords": [
+        33.3074,
+        -40.153
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "SAVEN",
+      "label_text": "SAVEN"
+    },
+    {
+      "type": "marker",
+      "name": "RIKOS",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "RIKOS",
+      "coords": [
+        33.1092,
+        -39.3098
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "RIKOS",
+      "label_text": "RIKOS"
+    },
+    {
+      "type": "marker",
+      "name": "TIRGO",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "TIRGO",
+      "coords": [
+        32.4689,
+        -40.3513
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "TIRGO",
+      "label_text": "TIRGO"
+    },
+    {
+      "type": "marker",
+      "name": "TULBA",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "TULBA",
+      "coords": [
+        32.1473,
+        -41.2245
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "TULBA",
+      "label_text": "TULBA"
+    },
+    {
+      "type": "marker",
+      "name": "KOLVA",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "KOLVA",
+      "coords": [
+        32.6277,
+        -42.0669
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "KOLVA",
+      "label_text": "KOLVA"
+    },
+    {
+      "type": "marker",
+      "name": "PESUM",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "PESUM",
+      "coords": [
+        33.4531,
+        -42.3567
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "PESUM",
+      "label_text": "PESUM"
+    },
+    {
+      "type": "marker",
+      "name": "ORNAK",
+      "source_airspace_id": "NERAVA_CTA",
+      "source_point_id": "ORNAK",
+      "coords": [
+        34.3858,
+        -42.1998
+      ],
+      "icon_url": "../icons/triangle_9.svg",
+      "icon_size": [
+        10,
+        10
+      ],
+      "popup_text": "ORNAK",
+      "label_text": "ORNAK"
     }
   ],
   "render": {
     "map": {
       "center": {
-        "point_id": "GAO_VOR"
+        "point_id": "NRV_VOR"
       },
       "zoom": 8,
       "tile_layer": {
         "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "attribution": "© OpenStreetMap contributors"
+        "attribution": "\u00a9 OpenStreetMap contributors"
       }
     },
     "layers": [
@@ -521,7 +500,7 @@
           ]
         },
         "overrides": {
-          "GAO_VOR": {
+          "NRV_VOR": {
             "marker_icon": "static/icons/vor.svg",
             "marker_icon_size": [
               30,

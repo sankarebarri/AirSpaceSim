@@ -64,8 +64,8 @@ Operator payload rules:
 Aircraft map presentation:
 - Aircraft use an SVG aircraft icon marker (not circle marker).
 - Color semantics:
-  - outbound from Gao center: green
-  - inbound to Gao center: red
+  - outbound from the sector centre: green
+  - inbound to the sector centre: red
   - transit/unknown: amber/gray
 - Flow colors are also shown in the **Flow Legend** card on the right panel.
 - Permanent label shows flight level (`FLxxx`) instead of speed.
@@ -116,7 +116,7 @@ You can use the Operator Controls panel or edit `data/inbox_events.v1.json` manu
         "created_utc": "2026-02-20T00:00:01Z",
         "payload": {
           "aircraft_id": "AC900",
-          "route_id": "UA612",
+          "route_id": "UL602",
           "callsign": "TUT900",
           "speed_kt": 420
         }

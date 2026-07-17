@@ -8,12 +8,15 @@
     "name": "Training Alpha Airspace",
     "source_type": "fictional",
     "source": "airspaces.training_alpha",
-    "generated_utc": "2026-05-30T00:00:00Z",
+    "generated_utc": "2026-07-17T00:00:00Z",
     "country": "Training",
-    "notes": "Fictional airspace for beginner procedural and en-route training."
+    "notes": "Fictional airspace for beginner procedural and en-route training. Neutral mid-Atlantic coordinates; not operationally valid."
   },
   "map": {
-    "default_center": [16.25, -0.03],
+    "default_center": [
+      16.25,
+      -40.0
+    ],
     "default_zoom_nm": 85
   },
   "points": [
@@ -22,191 +25,300 @@
       "name": "Alpha VOR",
       "type": "navaid",
       "ident": "ALP",
-      "position": [16.25, -0.03]
+      "position": [
+        16.25,
+        -40.0
+      ]
     },
     {
       "id": "ALP_WEST",
       "name": "Alpha West",
       "type": "fix",
-      "position": [16.22, -1.85]
+      "position": [
+        16.22,
+        -41.82
+      ]
     },
     {
       "id": "ALP_EAST",
       "name": "Alpha East",
       "type": "fix",
-      "position": [16.28, 1.78]
+      "position": [
+        16.28,
+        -38.19
+      ]
     },
     {
       "id": "ALP_NORTH",
       "name": "Alpha North",
       "type": "fix",
-      "position": [17.72, -0.02]
+      "position": [
+        17.72,
+        -39.99
+      ]
     },
     {
       "id": "ALP_SOUTH",
       "name": "Alpha South",
       "type": "fix",
-      "position": [14.76, -0.04]
+      "position": [
+        14.76,
+        -40.01
+      ]
     },
     {
       "id": "ALP_NE",
       "name": "Alpha Northeast",
       "type": "fix",
-      "position": [17.18, 1.22]
+      "position": [
+        17.18,
+        -38.75
+      ]
     },
     {
       "id": "ALP_SW",
       "name": "Alpha Southwest",
       "type": "fix",
-      "position": [15.25, -1.25]
+      "position": [
+        15.25,
+        -41.22
+      ]
     },
     {
       "id": "ALP_NW",
       "name": "Alpha Northwest",
       "type": "fix",
-      "position": [17.08, -1.35]
+      "position": [
+        17.08,
+        -41.32
+      ]
     },
     {
       "id": "ALP_SE",
       "name": "Alpha Southeast",
       "type": "fix",
-      "position": [15.35, 1.18]
+      "position": [
+        15.35,
+        -38.79
+      ]
     },
     {
       "id": "XNG_NW",
       "name": "Crossing Northwest Gate",
       "type": "fix",
-      "position": [16.568, -0.362]
+      "position": [
+        16.568,
+        -40.332
+      ]
     },
     {
       "id": "XNG_NE",
       "name": "Crossing Northeast Gate",
       "type": "fix",
-      "position": [16.568, 0.302]
+      "position": [
+        16.568,
+        -39.668
+      ]
     },
     {
       "id": "XNG_SE",
       "name": "Crossing Southeast Gate",
       "type": "fix",
-      "position": [16.014, 0.216]
+      "position": [
+        16.014,
+        -39.754
+      ]
     },
     {
       "id": "XNG_SW",
       "name": "Crossing Southwest Gate",
       "type": "fix",
-      "position": [16.014, -0.276]
+      "position": [
+        16.014,
+        -40.246
+      ]
     },
     {
       "id": "BRV_FIX",
       "name": "Bravo Fix",
       "type": "fix",
-      "position": [15.85, 0.45]
+      "position": [
+        15.85,
+        -39.52
+      ]
     },
     {
       "id": "BRV_W",
       "name": "Bravo West Gate",
       "type": "fix",
-      "position": [15.98, -0.32]
+      "position": [
+        15.98,
+        -40.29
+      ]
     },
     {
       "id": "BRV_E",
       "name": "Bravo East Gate",
       "type": "fix",
-      "position": [15.72, 1.22]
+      "position": [
+        15.72,
+        -38.75
+      ]
     },
     {
       "id": "BRV_N",
       "name": "Bravo North Gate",
       "type": "fix",
-      "position": [16.59, 0.59]
+      "position": [
+        16.59,
+        -39.38
+      ]
     },
     {
       "id": "BRV_S",
       "name": "Bravo South Gate",
       "type": "fix",
-      "position": [15.11, 0.32]
+      "position": [
+        15.11,
+        -39.65
+      ]
     },
     {
       "id": "CHR_FIX",
       "name": "Charlie Fix",
       "type": "fix",
-      "position": [16.85, -0.95]
+      "position": [
+        16.85,
+        -40.92
+      ]
     },
     {
       "id": "CHR_N",
       "name": "Charlie North Gate",
       "type": "fix",
-      "position": [17.48, -1.19]
+      "position": [
+        17.48,
+        -41.16
+      ]
     },
     {
       "id": "CHR_S",
       "name": "Charlie South Gate",
       "type": "fix",
-      "position": [16.22, -0.71]
+      "position": [
+        16.22,
+        -40.68
+      ]
     },
     {
       "id": "CHR_E",
       "name": "Charlie East Gate",
       "type": "fix",
-      "position": [17.08, -0.29]
+      "position": [
+        17.08,
+        -40.26
+      ]
     },
     {
       "id": "CHR_W",
       "name": "Charlie West Gate",
       "type": "fix",
-      "position": [16.62, -1.61]
+      "position": [
+        16.62,
+        -41.58
+      ]
     }
   ],
   "routes": [
     {
       "id": "A1",
       "name": "Alpha West-East",
-      "waypoint_ids": ["ALP_WEST", "ALP_VOR", "ALP_EAST"]
+      "waypoint_ids": [
+        "ALP_WEST",
+        "ALP_VOR",
+        "ALP_EAST"
+      ]
     },
     {
       "id": "A2",
       "name": "Alpha North-South",
-      "waypoint_ids": ["ALP_NORTH", "ALP_VOR", "ALP_SOUTH"]
+      "waypoint_ids": [
+        "ALP_NORTH",
+        "ALP_VOR",
+        "ALP_SOUTH"
+      ]
     },
     {
       "id": "A3",
       "name": "Alpha Northeast-Southwest",
-      "waypoint_ids": ["ALP_NE", "ALP_VOR", "ALP_SW"]
+      "waypoint_ids": [
+        "ALP_NE",
+        "ALP_VOR",
+        "ALP_SW"
+      ]
     },
     {
       "id": "A4",
       "name": "Alpha Northwest-Southeast",
-      "waypoint_ids": ["ALP_NW", "ALP_VOR", "ALP_SE"]
+      "waypoint_ids": [
+        "ALP_NW",
+        "ALP_VOR",
+        "ALP_SE"
+      ]
     },
     {
       "id": "X1",
       "name": "Crossing Northwest-Southeast",
-      "waypoint_ids": ["XNG_NW", "ALP_VOR", "XNG_SE"]
+      "waypoint_ids": [
+        "XNG_NW",
+        "ALP_VOR",
+        "XNG_SE"
+      ]
     },
     {
       "id": "X2",
       "name": "Crossing Northeast-Southwest",
-      "waypoint_ids": ["XNG_NE", "ALP_VOR", "XNG_SW"]
+      "waypoint_ids": [
+        "XNG_NE",
+        "ALP_VOR",
+        "XNG_SW"
+      ]
     },
     {
       "id": "PX1",
       "name": "Bravo West-East",
-      "waypoint_ids": ["BRV_W", "BRV_FIX", "BRV_E"]
+      "waypoint_ids": [
+        "BRV_W",
+        "BRV_FIX",
+        "BRV_E"
+      ]
     },
     {
       "id": "PX2",
       "name": "Bravo North-South",
-      "waypoint_ids": ["BRV_N", "BRV_FIX", "BRV_S"]
+      "waypoint_ids": [
+        "BRV_N",
+        "BRV_FIX",
+        "BRV_S"
+      ]
     },
     {
       "id": "CX1",
       "name": "Charlie North-South",
-      "waypoint_ids": ["CHR_N", "CHR_FIX", "CHR_S"]
+      "waypoint_ids": [
+        "CHR_N",
+        "CHR_FIX",
+        "CHR_S"
+      ]
     },
     {
       "id": "CX2",
       "name": "Charlie East-West",
-      "waypoint_ids": ["CHR_W", "CHR_FIX", "CHR_E"]
+      "waypoint_ids": [
+        "CHR_W",
+        "CHR_FIX",
+        "CHR_E"
+      ]
     }
   ],
   "airspaces": [
@@ -215,12 +327,30 @@
       "name": "Training Alpha TMA",
       "type": "polygon",
       "points": [
-        [17.8, -1.75],
-        [17.95, 0.75],
-        [16.8, 1.95],
-        [15.0, 1.65],
-        [14.55, -0.65],
-        [15.55, -2.0]
+        [
+          17.8,
+          -41.72
+        ],
+        [
+          17.95,
+          -39.22
+        ],
+        [
+          16.8,
+          -38.02
+        ],
+        [
+          15.0,
+          -38.32
+        ],
+        [
+          14.55,
+          -40.62
+        ],
+        [
+          15.55,
+          -41.97
+        ]
       ],
       "lower_limit_ft": 0,
       "upper_limit_ft": 99999

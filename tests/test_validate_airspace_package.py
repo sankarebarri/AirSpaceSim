@@ -22,11 +22,11 @@ def test_validate_airspace_package_accepts_existing_packages():
     validator = load_validator_module()
     root = Path(__file__).resolve().parents[1]
 
-    gao_result = validator.validate_package(root / "airspaces" / "gao_demo")
+    nerava_result = validator.validate_package(root / "airspaces" / "nerava_fir")
     training_result = validator.validate_package(root / "airspaces" / "training_alpha")
 
-    assert gao_result["errors"] == []
-    assert gao_result["scenario_count"] == 2
+    assert nerava_result["errors"] == []
+    assert nerava_result["scenario_count"] == 2
     assert training_result["errors"] == []
     assert training_result["scenario_count"] == 4
     assert training_result["lesson_count"] == 7

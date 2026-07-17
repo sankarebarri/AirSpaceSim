@@ -5,18 +5,18 @@ from airspacesim.routes.registry import FlightPlan, RouteRegistry, RouteResoluti
 
 def test_route_registry_stitches_two_routes_on_intersection():
     routes = {
-        "UR981": ["NIAMEY", "GAO_VOR", "TAVIL"],
-        "UA612": ["BAMAKO", "GAO_VOR", "ETRUL"],
+        "UT88": ["VESTA", "NRV_VOR", "ORNAK"],
+        "UL602": ["TARUM", "NRV_VOR", "MOKRA"],
     }
     registry = RouteRegistry(routes)
     plan = FlightPlan(
-        departure_id="NIAMEY",
-        destination_id="BAMAKO",
-        route_ids=("UR981", "UA612"),
+        departure_id="VESTA",
+        destination_id="TARUM",
+        route_ids=("UT88", "UL602"),
     )
 
     resolved = registry.resolve_flight_plan(plan)
-    assert resolved == ["NIAMEY", "GAO_VOR", "BAMAKO"]
+    assert resolved == ["VESTA", "NRV_VOR", "TARUM"]
 
 
 def test_route_registry_raises_when_consecutive_routes_do_not_intersect():

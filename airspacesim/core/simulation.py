@@ -77,11 +77,15 @@ class Simulation:
         """
         from airspacesim.simulation.scenario_runner import (
             _build_routes_from_scenario_airspace,
+            derive_airspace_center,
         )
 
         routes = _build_routes_from_scenario_airspace(scenario_airspace)
         manager = AircraftManager(
-            routes, execution_mode="batched", enable_file_output=False
+            routes,
+            execution_mode="batched",
+            enable_file_output=False,
+            airspace_center=derive_airspace_center(scenario_airspace),
         )
         pending = []
         for item in scenario_aircraft["data"]["aircraft"]:

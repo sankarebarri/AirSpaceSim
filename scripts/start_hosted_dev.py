@@ -18,10 +18,10 @@ from urllib.request import urlopen
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 API_DIR = PROJECT_ROOT / "apps" / "api"
 WEB_DIR = PROJECT_ROOT / "apps" / "web"
-DEFAULT_GAO_TEMPLATE = (
-    PROJECT_ROOT / "airspaces" / "gao_demo" / "scenarios" / "mixed_traffic_demo.v1.json"
+DEFAULT_DEMO_TEMPLATE = (
+    PROJECT_ROOT / "airspaces" / "nerava_fir" / "scenarios" / "mixed_traffic.v1.json"
 )
-DEFAULT_GAO_AIRSPACE = PROJECT_ROOT / "airspaces" / "gao_demo" / "airspace.v1.json"
+DEFAULT_DEMO_AIRSPACE = PROJECT_ROOT / "airspaces" / "nerava_fir" / "airspace.v1.json"
 
 
 def _repo_relative(path: Path) -> str:
@@ -181,12 +181,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--seed-airspace",
-        default=_repo_relative(DEFAULT_GAO_AIRSPACE),
+        default=_repo_relative(DEFAULT_DEMO_AIRSPACE),
         help="Airspace JSON path to use when --seed is set.",
     )
     parser.add_argument(
         "--seed-template",
-        default=_repo_relative(DEFAULT_GAO_TEMPLATE),
+        default=_repo_relative(DEFAULT_DEMO_TEMPLATE),
         help="Scenario template JSON path to use when --seed is set.",
     )
     parser.add_argument(

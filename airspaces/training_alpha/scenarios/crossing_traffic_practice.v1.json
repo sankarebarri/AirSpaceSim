@@ -5,17 +5,30 @@
   },
   "metadata": {
     "name": "Crossing Traffic — Practice",
-    "description": "DAL217 and UAE203 converge near Bravo Fix on different routes, timing, and geometry than the Learn walkthrough, with KLM891 as an additional non-conflicting track sharing the sector. The resolution is left to the trainee.",
+    "description": "VLR217 and KTR203 converge near Bravo Fix on different routes, timing, and geometry than the Learn walkthrough, with NVR891 as an additional non-conflicting track sharing the sector. The resolution is left to the trainee.",
     "practice": {
       "title": "Crossing Traffic · Practice",
       "objective": "Maintain the required separation between all aircraft.",
       "assistance": "A conflict is developing. Identify it and resolve it.",
-      "conflict_pair": ["DAL217", "UAE203"],
+      "conflict_pair": [
+        "VLR217",
+        "KTR203"
+      ],
       "required_horizontal_separation_nm": 10,
       "required_vertical_separation_ft": 1000,
-      "crossing_point": [15.85, 0.45],
-      "visible_route_ids": ["PX1", "PX2", "A4"],
-      "active_commands": ["SET_FL", "ASSIGN_HEADING"],
+      "crossing_point": [
+        15.85,
+        -39.52
+      ],
+      "visible_route_ids": [
+        "PX1",
+        "PX2",
+        "A4"
+      ],
+      "active_commands": [
+        "SET_FL",
+        "ASSIGN_HEADING"
+      ],
       "next": {
         "label": "Continue to Practice 2",
         "path": "/lessons/crossing-traffic/practice-2"
@@ -25,34 +38,40 @@
   "airspace_id": "training_alpha",
   "aircraft": [
     {
-      "id": "DAL217",
-      "callsign": "DAL217",
+      "id": "VLR217",
+      "callsign": "VLR217",
       "aircraft_type": "B738",
       "route_id": "PX1",
       "speed_kt": 450,
       "flight_level": 330,
       "appear_after_seconds": 0,
-      "metadata": { "role": "crossing-a" }
+      "metadata": {
+        "role": "crossing-a"
+      }
     },
     {
-      "id": "UAE203",
-      "callsign": "UAE203",
+      "id": "KTR203",
+      "callsign": "KTR203",
       "aircraft_type": "A320",
       "route_id": "PX2",
       "speed_kt": 465,
       "flight_level": 330,
       "appear_after_seconds": 0,
-      "metadata": { "role": "crossing-b" }
+      "metadata": {
+        "role": "crossing-b"
+      }
     },
     {
-      "id": "KLM891",
-      "callsign": "KLM891",
+      "id": "NVR891",
+      "callsign": "NVR891",
       "aircraft_type": "CRJ9",
       "route_id": "A4",
       "speed_kt": 380,
       "flight_level": 250,
       "appear_after_seconds": 25,
-      "metadata": { "role": "background" }
+      "metadata": {
+        "role": "background"
+      }
     }
   ]
 }

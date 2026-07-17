@@ -19,6 +19,13 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - `Aircraft.update_position(time_step)` now advances by `time_step` **simulated seconds** and reads no global runtime state; callers own time acceleration.
 - `SET_SIMULATION_SPEED` events scale only the receiving manager, not the whole process.
 
+### Changed (breaking — fictional environment migration, decision Q3)
+- All public Gao-derived aeronautical data replaced by the fully fictional **Nerava FIR** at neutral mid-Atlantic coordinates (Nerava VOR `NRV`, 33.5N 41.0W): new fixes (NARVO, LUMEK, SAVEN, …), new ATS-style routes (UL602, UM731, T45, B12, A1, …), new 60 NM training sector. `airspaces/gao_demo` deleted (last available under git tag `pre-gao-removal`); replaced by `airspaces/nerava_fir` with ported `sector_traffic` and `mixed_traffic` scenarios.
+- `airspacesim/data/*.json` package seeds regenerated for the Nerava environment; `settings.AIRSPACE_CENTER` now points at the fictional centre and is overridable per manager (`AircraftManager(airspace_center=...)`); `Simulation`/`initialize_manager_from_scenarios` derive the traffic-flow centre from the loaded airspace (first navaid, then centroid).
+- `training_alpha` re-centred to neutral coordinates via an exact longitude rotation (16.25N 40.0W) — an isometry, so every distance, bearing, crossing point, and scenario timing is preserved.
+- Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
+- Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
+
 ### Added
 - Core `Simulation` façade (`airspacesim.Simulation`) owning the deterministic `SimulationClock`, scheduled aircraft entry, command application, serialisable snapshots, factual summaries, and an emitted `EngineEvent` stream (`aircraft_entered/exited`, `separation_loss_started/ended`, `command_applied`, `simulation_completed`).
 - General `SeparationMonitor` + `SeparationStandard` in the engine: a pair is separated when either the horizontal or the vertical minimum is satisfied; one continuous loss of separation counts as one event until separation is restored (ported from the frontend monitor so behaviour is preserved).

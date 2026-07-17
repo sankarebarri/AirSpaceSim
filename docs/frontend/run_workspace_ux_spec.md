@@ -403,7 +403,7 @@ Contains:
 - current FL and trend
 - heading and assigned heading
 - lateral mode, radial, direct-to, hold state
-- GAO DME
+- NRV DME
 - position
 - label position controls
 - speed assignment

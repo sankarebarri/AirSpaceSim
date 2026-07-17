@@ -5,15 +5,14 @@
   },
   "metadata": {
     "source": "airspacesim.seed",
-    "generated_utc": "2026-02-20T00:00:00Z"
+    "generated_utc": "2026-07-17T00:00:00Z"
   },
   "data": {
     "aircraft": [
       {
-        "id": "AC_UA612_01",
-        "callsign": "UA612SIM",
-        "aircraft_type": "B737",
-        "route_id": "UA612",
+        "id": "AC_UL602_01",
+        "callsign": "NVR101",
+        "route_id": "UL602",
         "speed_kt": 460
       }
     ]

@@ -140,17 +140,55 @@ def load_scenario_bundle(airspace_path=None, aircraft_path=None, scenario_path=N
     )
 
 
+def derive_airspace_center(scenario_airspace):
+    """Derive the environment centre from airspace data.
+
+    Preference order: first navaid point (sector VOR convention), then the
+    centroid of all points, then None (caller falls back to defaults).
+    """
+    points = scenario_airspace.get("data", {}).get("points", {})
+    if not isinstance(points, dict) or not points:
+        return None
+    navaids = sorted(
+        (point_id, point)
+        for point_id, point in points.items()
+        if isinstance(point, dict) and point.get("type") == "navaid"
+    )
+    if navaids:
+        coord = navaids[0][1].get("coord", {}).get("dd")
+        if isinstance(coord, (list, tuple)) and len(coord) == 2:
+            return (float(coord[0]), float(coord[1]))
+    coords = [
+        point.get("coord", {}).get("dd")
+        for point in points.values()
+        if isinstance(point, dict)
+    ]
+    coords = [c for c in coords if isinstance(c, (list, tuple)) and len(c) == 2]
+    if not coords:
+        return None
+    return (
+        sum(float(c[0]) for c in coords) / len(coords),
+        sum(float(c[1]) for c in coords) / len(coords),
+    )
+
+
 def initialize_manager_from_scenarios(
     scenario_airspace,
     scenario_aircraft,
     execution_mode="thread_per_aircraft",
     enable_file_output=True,
+    airspace_center=None,
 ):
     routes = _build_routes_from_scenario_airspace(scenario_airspace)
     manager = AircraftManager(
         routes,
         execution_mode=execution_mode,
         enable_file_output=enable_file_output,
+        airspace_center=(
+            airspace_center
+            if airspace_center is not None
+            else derive_airspace_center(scenario_airspace)
+        ),
     )
     for item in scenario_aircraft["data"]["aircraft"]:
         manager.add_aircraft(

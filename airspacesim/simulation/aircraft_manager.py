@@ -50,6 +50,7 @@ class AircraftManager:
         execution_mode="thread_per_aircraft",
         sim_rate=1.0,
         enable_file_output=True,
+        airspace_center=None,
     ):
         """
         Initialize an Aircraft Manager to handle multiple aircraft simulations.
@@ -62,12 +63,21 @@ class AircraftManager:
         :param enable_file_output: When False, save_aircraft_data() is a no-op
             so embedding applications (for example the hosted API) can drive
             the manager without JSON file side effects.
+        :param airspace_center: (lat, lon) used to classify traffic flow
+            (inbound/outbound/transit) for this environment. Defaults to the
+            workspace setting for legacy flows; hosted runs derive it from
+            the loaded airspace data.
         """
         self.aircraft_list = []  # Stores active aircraft
         self.routes = routes  # Available routes
         self.execution_mode = execution_mode
         self.sim_rate = float(sim_rate)
         self.enable_file_output = bool(enable_file_output)
+        self.airspace_center = (
+            (float(airspace_center[0]), float(airspace_center[1]))
+            if airspace_center is not None
+            else tuple(settings.AIRSPACE_CENTER)
+        )
         self.threads = []  # List to track active simulation threads
         self.lock = threading.Lock()  # Thread safety
         self.stop_event = threading.Event()
@@ -76,7 +86,7 @@ class AircraftManager:
     def _is_near_airspace_center(self, point_dd):
         if not isinstance(point_dd, (list, tuple)) or len(point_dd) != 2:
             return False
-        center_lat, center_lon = settings.AIRSPACE_CENTER
+        center_lat, center_lon = self.airspace_center
         distance_nm = haversine(
             float(point_dd[0]),
             float(point_dd[1]),

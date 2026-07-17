@@ -341,7 +341,7 @@ For `ADD_AIRCRAFT`, try:
 
 - Aircraft ID: `AC901`
 - Callsign: `OPS901`
-- Route ID: `UA612`
+- Route ID: `UL602`
 - Speed: `420`
 - Flight level: `350`
 
@@ -432,7 +432,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/runs/<run-id>/commands \
     "payload":{
       "aircraft_id":"AC950",
       "callsign":"OPS950",
-      "route_id":"UA612",
+      "route_id":"UL602",
       "speed_kt":420,
       "flight_level":350
     }

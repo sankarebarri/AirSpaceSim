@@ -99,7 +99,7 @@ def test_seed_demo_validation_reports_template_errors():
                 "id": "AC1",
                 "callsign": "DUP",
                 "aircraft_type": "B737",
-                "route_id": "UA612",
+                "route_id": "UL602",
                 "speed_kt": 410,
                 "flight_level": 290,
             },
@@ -136,7 +136,7 @@ def test_seed_demo_validation_rejects_mismatched_airspace_id():
                 "id": "AC1",
                 "callsign": "DEP01",
                 "aircraft_type": "B737",
-                "route_id": "UA612",
+                "route_id": "UL602",
                 "speed_kt": 410,
                 "flight_level": 290,
             }

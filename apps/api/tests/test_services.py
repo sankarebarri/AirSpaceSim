@@ -50,9 +50,9 @@ def test_list_airspace_packages_reads_package_manifests():
     packages = list_airspace_packages()
     package_by_id = {package["id"]: package for package in packages}
 
-    assert "gao_demo" in package_by_id
+    assert "nerava_fir" in package_by_id
     assert "training_alpha" in package_by_id
-    assert package_by_id["gao_demo"]["default_scenario"] == "mixed_traffic_demo"
+    assert package_by_id["nerava_fir"]["default_scenario"] == "mixed_traffic"
     assert package_by_id["training_alpha"]["lessons"][0]["id"] == (
         "enroute_heading_vs_radial_intro"
     )

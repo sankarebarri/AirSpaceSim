@@ -30,7 +30,9 @@ Delivered 2026-07-17 (tag `phase-2-simulation-core`): `Simulation`, `SimulationC
 **Rollback**: feature-flag the server-computed summary (client keeps computing until parity confirmed), then remove the client computation.
 **Done when**: separation state and LoS events come from the API; a stopped run has a persisted factual summary; frontend performs no separation math except display formatting.
 
-## Phase 3 — New fictional FIR replaces gao_demo (04 §2–3, Q3)
+## Phase 3 — New fictional FIR replaces gao_demo (04 §2–3, Q3) ✅ COMPLETE
+
+Delivered 2026-07-17 (tag `phase-3-fictional-environment`; last pre-removal state tagged `pre-gao-removal`): `airspaces/nerava_fir` created with new geometry at 33.5N 41.0W and deleted `airspaces/gao_demo`; package seeds regenerated; `training_alpha` re-centred by exact longitude rotation (behaviour-preserving); fictional callsigns throughout; engine derives the traffic-flow centre from environment data; scripts/web/tests/docs migrated in the same change. Tracked-file Gao references now exist only in historical/instructional documents (brief, CLAUDE.md, CHANGELOG, migration notes, audit, timeline, archived planning docs).
 
 **Goal**: a completely new fictional environment at **neutral fictional coordinates**; `airspaces/gao_demo` deleted; no Gao names, fixes, VOR/airway identifiers, frequencies, or exact geometry anywhere. No slug/seed/link compatibility required.
 **Files**: `airspaces/<new-pack>/**` (new); `airspaces/gao_demo/**` (deleted after reference migration); `airspacesim/data/*.json` (content swap to fictional sample, `gao_airspace.json` deleted); `airspacesim/settings.py` (`AIRSPACE_CENTER` becomes environment-supplied); `scripts/seed_hosted_demo.py`, `start_hosted_dev.py`; `apps/web/src/lib/simulateScenarios.ts`; affected tests, docs, and defaults — all in the same migration; CHANGELOG breaking-data note.

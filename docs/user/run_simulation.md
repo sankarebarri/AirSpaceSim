@@ -15,7 +15,7 @@ API: http://127.0.0.1:8000/health
 Web: http://127.0.0.1:5174
 ```
 
-The script starts both dev servers and creates a Gao demo run. Press `Ctrl-C` to stop both servers.
+The script starts both dev servers and creates a Nerava demo run. Press `Ctrl-C` to stop both servers.
 
 For all demo aircraft quickly:
 
@@ -103,10 +103,10 @@ python3 scripts/seed_hosted_demo.py --web-base-url http://127.0.0.1:5174 --stagg
 
 ## Optional Airspace Package
 
-The default airspace is Gao:
+The default airspace is the fictional Nerava FIR:
 
 ```text
-airspaces/gao_demo/airspace.v1.json
+airspaces/nerava_fir/airspace.v1.json
 ```
 
 You can also pass it explicitly:
@@ -114,7 +114,7 @@ You can also pass it explicitly:
 ```bash
 python3 scripts/seed_hosted_demo.py \
   --web-base-url http://127.0.0.1:5174 \
-  --airspace airspaces/gao_demo/airspace.v1.json
+  --airspace airspaces/nerava_fir/airspace.v1.json
 ```
 
 Custom airspaces can use the same `airspaces/<airspace_id>/airspace.v1.json` pattern. The seed script validates points, routes, boundaries, aircraft types, speeds, and flight levels before it creates a run.
@@ -122,7 +122,7 @@ Custom airspaces can use the same `airspaces/<airspace_id>/airspace.v1.json` pat
 Validate an airspace package without starting the API:
 
 ```bash
-python3 scripts/validate_airspace_package.py airspaces/gao_demo
+python3 scripts/validate_airspace_package.py airspaces/nerava_fir
 ```
 
 For Training Alpha:
@@ -167,13 +167,13 @@ First validate the template:
 ```bash
 python3 scripts/seed_hosted_demo.py \
   --validate-only \
-  --template airspaces/gao_demo/scenarios/mixed_traffic_demo.v1.json
+  --template airspaces/nerava_fir/scenarios/mixed_traffic.v1.json
 ```
 
 Expected result:
 
 ```text
-Template validation passed: airspaces/gao_demo/scenarios/mixed_traffic_demo.v1.json
+Template validation passed: airspaces/nerava_fir/scenarios/mixed_traffic.v1.json
 ```
 
 Then create the run:
@@ -181,8 +181,8 @@ Then create the run:
 ```bash
 python3 scripts/seed_hosted_demo.py \
   --web-base-url http://127.0.0.1:5174 \
-  --airspace airspaces/gao_demo/airspace.v1.json \
-  --template airspaces/gao_demo/scenarios/mixed_traffic_demo.v1.json
+  --airspace airspaces/nerava_fir/airspace.v1.json \
+  --template airspaces/nerava_fir/scenarios/mixed_traffic.v1.json
 ```
 
 The template can define:

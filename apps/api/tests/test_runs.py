@@ -85,7 +85,7 @@ def test_run_lifecycle_and_command_persistence(
         created_run.id,
         RunCommandCreateRequest(
             command_type="ADD_AIRCRAFT",
-            payload={"id": "AC900", "route": "UA612"},
+            payload={"id": "AC900", "route": "UL602"},
         ),
         db_session,
         session_registry,
@@ -200,7 +200,7 @@ def test_command_without_runtime_session_is_queued(
         created_run.id,
         RunCommandCreateRequest(
             command_type="ADD_AIRCRAFT",
-            payload={"id": "AC901", "route": "UA612"},
+            payload={"id": "AC901", "route": "UL602"},
         ),
         db_session,
         session_registry,
@@ -300,7 +300,7 @@ def test_run_state_and_trajectory_fall_back_to_checkpoint(
         created_run.id,
         RunCommandCreateRequest(
             command_type="ADD_AIRCRAFT",
-            payload={"id": "AC902", "route": "UA612"},
+            payload={"id": "AC902", "route": "UL602"},
         ),
         db_session,
         session_registry,

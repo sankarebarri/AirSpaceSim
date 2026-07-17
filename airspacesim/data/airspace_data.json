@@ -4,238 +4,418 @@
     "version": "1.0"
   },
   "metadata": {
-    "id": "mali.gao.demo",
-    "name": "Gao Demo Airspace",
-    "icao_region": "GMMM",
-    "country": "Mali",
-    "source": "AirSpaceSim example dataset",
-    "generated_utc": "2026-02-20T00:00:00Z",
-    "notes": "Derived from Gao demo dataset with real fixes/routes and DD+DMS coordinates."
+    "id": "fictional.nerava.training",
+    "name": "Nerava FIR Training Airspace",
+    "icao_region": "ZZZZ",
+    "country": "Fictional",
+    "source": "AirSpaceSim fictional training dataset",
+    "generated_utc": "2026-07-17T00:00:00Z",
+    "notes": "Fully fictional training environment. Not operationally valid."
   },
   "validation": {
     "min_waypoints_per_airspace": 1
   },
   "airspaces": [
     {
-      "airspace_id": "GAO_TMA_DEMO",
-      "name": "Gao Airspace: 60 NM Radius",
+      "airspace_id": "NERAVA_CTA",
+      "name": "Nerava Control Area: 60 NM Training Sector",
       "center": {
-        "dec_coords": [16.25, -0.03]
+        "dec_coords": [
+          33.5,
+          -41.0
+        ]
       },
       "waypoints": [
         {
-          "id": "GAO_VOR",
-          "name": "Gao VOR",
+          "id": "NRV_VOR",
+          "name": "Nerava VOR",
           "type": "navaid",
-          "ident": "GAO",
-          "dec_coords": [16.25, -0.03],
+          "ident": "NRV",
+          "dec_coords": [
+            33.5,
+            -41.0
+          ],
           "coords": {
-            "lat": [16, 15, 0, "N"],
-            "lon": [0, 1, 48, "W"]
+            "lat": [
+              33,
+              30,
+              0,
+              "N"
+            ],
+            "lon": [
+              41,
+              0,
+              0,
+              "W"
+            ]
           }
         },
         {
-          "id": "ETRUL",
-          "name": "ETRUL",
+          "id": "NARVO",
+          "name": "NARVO",
           "type": "fix",
-          "dec_coords": [15.8425, -0.9811111111],
+          "dec_coords": [
+            34.8938,
+            -41.2997
+          ],
           "coords": {
-            "lat": [15, 50, 33, "N"],
-            "lon": [0, 58, 52, "W"]
+            "lat": [
+              34,
+              53,
+              38,
+              "N"
+            ],
+            "lon": [
+              41,
+              17,
+              59,
+              "W"
+            ]
           }
         },
         {
-          "id": "PILTI",
-          "name": "PILTI",
+          "id": "MOKRA",
+          "name": "MOKRA",
           "type": "fix",
-          "dec_coords": [15.285, -2.3038888889],
+          "dec_coords": [
+            34.156,
+            -41.1398
+          ],
           "coords": {
-            "lat": [15, 17, 6, "N"],
-            "lon": [2, 18, 14, "W"]
+            "lat": [
+              34,
+              9,
+              22,
+              "N"
+            ],
+            "lon": [
+              41,
+              8,
+              23,
+              "W"
+            ]
           }
         },
         {
-          "id": "TESTI",
-          "name": "TESTI",
+          "id": "LUMEK",
+          "name": "LUMEK",
           "type": "fix",
-          "dec_coords": [20.2569444444, 0.9880555556],
+          "dec_coords": [
+            34.3638,
+            -39.8305
+          ],
           "coords": {
-            "lat": [20, 15, 25, "N"],
-            "lon": [0, 59, 17, "E"]
+            "lat": [
+              34,
+              21,
+              50,
+              "N"
+            ],
+            "lon": [
+              39,
+              49,
+              50,
+              "W"
+            ]
           }
         },
         {
-          "id": "ILDAD",
-          "name": "ILDAD",
+          "id": "DEVAN",
+          "name": "DEVAN",
           "type": "fix",
-          "dec_coords": [17.2144444444, 0.2158333333],
+          "dec_coords": [
+            33.9222,
+            -40.4332
+          ],
           "coords": {
-            "lat": [17, 12, 52, "N"],
-            "lon": [0, 12, 57, "E"]
+            "lat": [
+              33,
+              55,
+              20,
+              "N"
+            ],
+            "lon": [
+              40,
+              26,
+              0,
+              "W"
+            ]
           }
         },
         {
-          "id": "UNOTA",
-          "name": "UNOTA",
+          "id": "VESIN",
+          "name": "VESIN",
           "type": "fix",
-          "dec_coords": [15.8491666667, 0.2933333333],
+          "dec_coords": [
+            33.9611,
+            -39.2429
+          ],
           "coords": {
-            "lat": [15, 50, 57, "N"],
-            "lon": [0, 17, 36, "E"]
+            "lat": [
+              33,
+              57,
+              40,
+              "N"
+            ],
+            "lon": [
+              39,
+              14,
+              34,
+              "W"
+            ]
           }
         },
         {
-          "id": "ERGIL",
-          "name": "ERGIL",
+          "id": "SAVEN",
+          "name": "SAVEN",
           "type": "fix",
-          "dec_coords": [15.4513888889, 0.6186111111],
+          "dec_coords": [
+            33.3074,
+            -40.153
+          ],
           "coords": {
-            "lat": [15, 27, 5, "N"],
-            "lon": [0, 37, 7, "E"]
+            "lat": [
+              33,
+              18,
+              27,
+              "N"
+            ],
+            "lon": [
+              40,
+              9,
+              11,
+              "W"
+            ]
           }
         },
         {
-          "id": "EBVAP",
-          "name": "EBVAP",
+          "id": "RIKOS",
+          "name": "RIKOS",
           "type": "fix",
-          "dec_coords": [15.5461111111, 0.1733333333],
+          "dec_coords": [
+            33.1092,
+            -39.3098
+          ],
           "coords": {
-            "lat": [15, 32, 46, "N"],
-            "lon": [0, 10, 24, "E"]
+            "lat": [
+              33,
+              6,
+              33,
+              "N"
+            ],
+            "lon": [
+              39,
+              18,
+              35,
+              "W"
+            ]
           }
         },
         {
-          "id": "ARGAM",
-          "name": "ARGAM",
+          "id": "TIRGO",
+          "name": "TIRGO",
           "type": "fix",
-          "dec_coords": [13.7961111111, 0.6727777778],
+          "dec_coords": [
+            32.4689,
+            -40.3513
+          ],
           "coords": {
-            "lat": [13, 47, 46, "N"],
-            "lon": [0, 40, 22, "E"]
+            "lat": [
+              32,
+              28,
+              8,
+              "N"
+            ],
+            "lon": [
+              40,
+              21,
+              5,
+              "W"
+            ]
           }
         },
         {
-          "id": "LIPET",
-          "name": "LIPET",
+          "id": "TULBA",
+          "name": "TULBA",
           "type": "fix",
-          "dec_coords": [13.9330555556, -0.0138888889],
+          "dec_coords": [
+            32.1473,
+            -41.2245
+          ],
           "coords": {
-            "lat": [13, 55, 59, "N"],
-            "lon": [0, 0, 50, "W"]
+            "lat": [
+              32,
+              8,
+              50,
+              "N"
+            ],
+            "lon": [
+              41,
+              13,
+              28,
+              "W"
+            ]
           }
         },
         {
-          "id": "OPUGO",
-          "name": "OPUGO",
+          "id": "KOLVA",
+          "name": "KOLVA",
           "type": "fix",
-          "dec_coords": [14.0969444444, -0.8511111111],
+          "dec_coords": [
+            32.6277,
+            -42.0669
+          ],
           "coords": {
-            "lat": [14, 5, 49, "N"],
-            "lon": [0, 51, 4, "W"]
+            "lat": [
+              32,
+              37,
+              40,
+              "N"
+            ],
+            "lon": [
+              42,
+              4,
+              1,
+              "W"
+            ]
           }
         },
         {
-          "id": "LUKNA",
-          "name": "LUKNA",
+          "id": "PESUM",
+          "name": "PESUM",
           "type": "fix",
-          "dec_coords": [17.7347222222, -1.8883333333],
+          "dec_coords": [
+            33.4531,
+            -42.3567
+          ],
           "coords": {
-            "lat": [17, 44, 5, "N"],
-            "lon": [1, 53, 18, "W"]
+            "lat": [
+              33,
+              27,
+              11,
+              "N"
+            ],
+            "lon": [
+              42,
+              21,
+              24,
+              "W"
+            ]
           }
         },
         {
-          "id": "TAVIL",
-          "name": "TAVIL",
+          "id": "ORNAK",
+          "name": "ORNAK",
           "type": "fix",
-          "dec_coords": [18.1455555556, -1.4288888889],
+          "dec_coords": [
+            34.3858,
+            -42.1998
+          ],
           "coords": {
-            "lat": [18, 8, 44, "N"],
-            "lon": [1, 25, 44, "W"]
-          }
-        },
-        {
-          "id": "BIDUX",
-          "name": "BIDUX",
-          "type": "fix",
-          "dec_coords": [18.6408333333, -0.8708333333],
-          "coords": {
-            "lat": [18, 38, 27, "N"],
-            "lon": [0, 52, 15, "W"]
+            "lat": [
+              34,
+              23,
+              9,
+              "N"
+            ],
+            "lon": [
+              42,
+              11,
+              59,
+              "W"
+            ]
           }
         }
       ],
       "routes": [
         {
-          "route_id": "UA612",
-          "name": "UA612",
-          "waypoint_ids": ["GAO_VOR", "ETRUL", "PILTI"]
+          "id": "UL602",
+          "name": "UL602",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "MOKRA",
+            "NARVO"
+          ]
         },
         {
-          "route_id": "UG859",
-          "name": "UG859",
-          "waypoint_ids": ["TESTI", "ILDAD", "GAO_VOR"]
+          "id": "UM731",
+          "name": "UM731",
+          "waypoint_ids": [
+            "LUMEK",
+            "DEVAN",
+            "NRV_VOR"
+          ]
         },
         {
-          "route_id": "UR971",
-          "name": "UR971",
-          "waypoint_ids": ["GAO_VOR", "UNOTA", "ERGIL"]
+          "id": "T45",
+          "name": "T45",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "SAVEN",
+            "RIKOS"
+          ]
         },
         {
-          "route_id": "UM629",
-          "name": "UM629",
-          "waypoint_ids": ["GAO_VOR", "EBVAP", "ARGAM"]
+          "id": "B12",
+          "name": "B12",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "TIRGO"
+          ]
         },
         {
-          "route_id": "UA603",
-          "name": "UA603",
-          "waypoint_ids": ["GAO_VOR", "LIPET"]
+          "id": "A1",
+          "name": "A1",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "KOLVA"
+          ]
         },
         {
-          "route_id": "UG859_ALT",
-          "name": "UG859 (direct)",
-          "waypoint_ids": ["GAO_VOR", "OPUGO"]
+          "id": "UT88",
+          "name": "UT88",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "PESUM"
+          ]
         },
         {
-          "route_id": "UT365",
-          "name": "UT365",
-          "waypoint_ids": ["GAO_VOR", "LUKNA"]
+          "id": "UN480",
+          "name": "UN480",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "ORNAK"
+          ]
         },
         {
-          "route_id": "UR981",
-          "name": "UR981",
-          "waypoint_ids": ["GAO_VOR", "TAVIL"]
+          "id": "UM214",
+          "name": "UM214",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "TULBA"
+          ]
         },
         {
-          "route_id": "UM629_ALT",
-          "name": "UM629 (direct)",
-          "waypoint_ids": ["GAO_VOR", "BIDUX"]
+          "id": "UL335",
+          "name": "UL335",
+          "waypoint_ids": [
+            "NRV_VOR",
+            "VESIN"
+          ]
         }
       ],
       "zones": [
         {
-          "zone_id": "GAO_TMA_60NM",
+          "zone_id": "NERAVA_CTA_60NM",
+          "name": "Nerava Control Area: 60 NM Training Sector",
           "type": "circle",
-          "name": "Gao Airspace: 60 NM Radius",
           "center": {
-            "dec_coords": [16.25, -0.03]
+            "dec_coords": [
+              33.5,
+              -41.0
+            ]
           },
-          "radius_m": 111120,
-          "lower_limit_ft": 0,
-          "upper_limit_ft": 99999
-        }
-      ],
-      "navaids": [
-        {
-          "id": "GAO_VOR",
-          "name": "Gao VOR",
-          "ident": "GAO",
-          "type": "VOR",
-          "dec_coords": [16.25, -0.03],
-          "coords": {
-            "lat": [16, 15, 0, "N"],
-            "lon": [0, 1, 48, "W"]
-          }
+          "radius_nm": 60
         }
       ]
     }
