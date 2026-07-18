@@ -17,6 +17,9 @@ decisions refer to `docs/repository-audit/08_OPEN_QUESTIONS.md`.
 | 2026-07-18 | `phase-6-postgres-auth` | `e83e588` | Phase 6 complete: squashed PostgreSQL-verified Alembic baseline (API suite green on PG 16 locally and in CI); email/password auth with server-side HttpOnly cookie sessions (scrypt hashing); guest adoption + user-attributed cross-device run history; protected learning-progress persistence synced from the lesson runner; preferred language on profile; 14-day anonymous-run retention sweep; account page EN/FR; dev seed account; AUTHENTICATION/DATABASE developer docs. Last SQLite-era migration chain lives at `phase-5-traffic-relationships`. |
 | 2026-07-18 | `phase-7-deployment` | `142d008` | Phase 7 complete: API Docker image (migrate-then-serve entrypoint), web Docker image (nginx SPA fallback) + `_redirects` for static hosts, root docker-compose with PostgreSQL 16 and `.env.example`, structured key=value API logging, loud production guard for unset `VITE_API_BASE_URL`, and `docs/developer/DEPLOYMENT.md`. Verified live end-to-end on the compose stack (smoke, auth on containerized PG, live practice run, deep-route refresh 200). |
 
+| 2026-07-18 | `pre-legacy-ui-removal` | `b5a638a` | Last state containing the legacy static Leaflet UI, file-based dev server, workspace-generating `airspacesim init`, and UI seed data — retired in Phase 8. |
+| 2026-07-18 | `phase-8-legacy-ui-retired` | `8c6baf6` | Phase 8 complete — **all eight refactor phases done**: legacy static UI, map helpers, dev server, and UI seed data removed from the engine package (wheel verified clean: engine code, schemas, Nerava seeds, performance DB, examples only); `airspacesim init` repurposed to scaffold validator-passing airspace packages; headless engine quickstart needs no init; legacy tests retired/rewritten; README/tutorial/docs updated. |
+
 ## Tagging conventions
 
 - Tag name: `phase-<n>-<short-slug>` for refactor phases; `v<semver>` for PyPI
