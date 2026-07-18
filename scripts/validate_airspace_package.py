@@ -13,15 +13,21 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
+# File loading helpers stay in the seed script; validation logic is shared
+# in airspacesim.io.templates (single source of truth).
 from seed_hosted_demo import (  # noqa: E402 (after sys.path setup)
     PROJECT_ROOT,
-    _airspace_id,
-    _build_demo_airspace,
-    _format_validation_errors,
-    _load_aircraft_performance,
     _load_airspace,
     _load_template,
-    _validate_template_or_exit,
+)
+from airspacesim.io.templates import (  # noqa: E402 (after sys.path setup)
+    airspace_id as _airspace_id,
+    environment_version,
+    format_validation_errors as _format_validation_errors,
+    is_semver,
+    load_aircraft_performance as _load_aircraft_performance,
+    merge_template_routes,
+    validate_scenario_template,
 )
 
 VALID_PACKAGE_TYPES = {
@@ -235,6 +241,12 @@ def _validate_package_manifest(
         if not _is_string(manifest.get(field)):
             errors.append(f"{manifest_label} is missing required string field '{field}'.")
 
+    if not is_semver(manifest.get("version")):
+        errors.append(
+            f"{manifest_label} version must be a semantic version string "
+            "(for example 1.0.0)."
+        )
+
     manifest_id = manifest.get("id")
     if _is_string(manifest_id):
         if manifest_id != package_dir.name:
@@ -427,6 +439,12 @@ def validate_package(package_dir: Path, *, require_scenarios: bool = False) -> d
             f"'{selected_airspace_id}'."
         )
 
+    if not is_semver(environment_version(airspace)):
+        errors.append(
+            f"{_repo_relative(airspace_path)} metadata.version must be a semantic "
+            "version string (for example 1.0.0)."
+        )
+
     manifest = _validate_package_manifest(
         package_dir,
         airspace_path,
@@ -443,17 +461,22 @@ def validate_package(package_dir: Path, *, require_scenarios: bool = False) -> d
         try:
             template = _load_template(str(scenario_path))
             assert template is not None
-            scenario_airspace = _build_demo_airspace(airspace, template)
-            _validate_template_or_exit(
-                template,
-                scenario_airspace,
-                template.get("aircraft"),
-                performance_db,
-            )
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(f"{_repo_relative(scenario_path)} could not be loaded: {exc}")
-        except SystemExit as exc:
-            errors.append(f"{_repo_relative(scenario_path)}: {exc}")
+            continue
+        if not is_semver(template.get("version")):
+            errors.append(
+                f"{_repo_relative(scenario_path)} version must be a semantic "
+                "version string (for example 1.0.0)."
+            )
+        scenario_airspace = merge_template_routes(airspace, template)
+        for error in validate_scenario_template(
+            template,
+            scenario_airspace,
+            template.get("aircraft"),
+            performance_db,
+        ):
+            errors.append(f"{_repo_relative(scenario_path)}: {error}")
 
     scenario_path_set = {path.resolve() for path in scenario_paths}
     for lesson_path in lesson_paths:

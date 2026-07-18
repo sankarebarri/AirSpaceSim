@@ -45,6 +45,25 @@ Legacy filename fallbacks (`gao_airspace.json`, `gao_airspace_config.json`,
 - Patch/minor versions: backward-compatible additions.
 - Major versions: breaking changes with migration notes.
 
+## Content versioning (0.2.0)
+
+Airspace packages and scenario templates carry semantic versions:
+
+- `airspaces/<id>/package.v1.json`: top-level `version` (e.g. `1.0.0`)
+- `airspaces/<id>/airspace.v1.json`: `metadata.version` (environment version)
+- `airspaces/<id>/scenarios/*.v1.json`: top-level `version` (template version)
+
+`scripts/validate_airspace_package.py` enforces all three. When the hosted
+API creates a practice run it stamps a `content_versions` block (airspace id,
+environment version, scenario template id + version) into the scenario
+metadata and into the persisted run summary, so every run identifies the
+exact content it executed.
+
+Validation logic is shared in `airspacesim.io.templates` (airspace geometry,
+aircraft plans against routes and the performance database, semver format,
+supported `active_commands`), returning plain-English messages — used by the
+API (HTTP 400s), the seeding script, and the package validator.
+
 ## Schema files
 - Versioned JSON schemas are published under `airspacesim/schemas/`.
 - Current files:

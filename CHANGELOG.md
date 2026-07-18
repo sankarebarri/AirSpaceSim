@@ -26,6 +26,11 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
 - Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
 
+### Added (content versioning and shared validation)
+- Semantic `version` fields on airspace package manifests, environment definitions (`metadata.version`), and every scenario template; enforced by `scripts/validate_airspace_package.py`.
+- Shared validation module `airspacesim.io.templates`: airspace geometry, aircraft plans (unique ids/callsigns, route existence, performance-based speed/level ranges, entry times), template metadata (semver, supported `active_commands` against `KNOWN_COMMAND_TYPES`), with plain-English error messages. The seeding script and package validator now delegate to it.
+- Hosted API validates scenario templates when creating practice runs and returns readable HTTP 400s (e.g. "AC1 references unknown route 'NO_SUCH_ROUTE'."); `content_versions` (airspace id, environment version, template id + version) are stamped into scenario metadata and carried into persisted run summaries for reproducibility. Airspace listings expose the package `version`.
+
 ### Added
 - Core `Simulation` façade (`airspacesim.Simulation`) owning the deterministic `SimulationClock`, scheduled aircraft entry, command application, serialisable snapshots, factual summaries, and an emitted `EngineEvent` stream (`aircraft_entered/exited`, `separation_loss_started/ended`, `command_applied`, `simulation_completed`).
 - General `SeparationMonitor` + `SeparationStandard` in the engine: a pair is separated when either the horizontal or the vertical minimum is satisfied; one continuous loss of separation counts as one event until separation is restored (ported from the frontend monitor so behaviour is preserved).

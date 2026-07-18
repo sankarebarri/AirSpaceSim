@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Crossing Traffic — Practice 2",
     "description": "TIR328 and RIK504 converge near Charlie Fix on different routes, timing, and geometry than Practice 1, with SKL550 as an additional non-conflicting track. No conflict information is provided — the trainee must identify and resolve the encounter independently.",

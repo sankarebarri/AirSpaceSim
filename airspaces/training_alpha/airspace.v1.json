@@ -10,7 +10,8 @@
     "source": "airspaces.training_alpha",
     "generated_utc": "2026-07-17T00:00:00Z",
     "country": "Training",
-    "notes": "Fictional airspace for beginner procedural and en-route training. Neutral mid-Atlantic coordinates; not operationally valid."
+    "notes": "Fictional airspace for beginner procedural and en-route training. Neutral mid-Atlantic coordinates; not operationally valid.",
+    "version": "1.0.0"
   },
   "map": {
     "default_center": [

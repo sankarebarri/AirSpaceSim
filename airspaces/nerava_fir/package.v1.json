@@ -4,6 +4,7 @@
     "version": "1.0"
   },
   "id": "nerava_fir",
+  "version": "1.0.0",
   "name": "Nerava FIR",
   "description": "Fictional mid-Atlantic en-route training sector for public AirSpaceSim sessions.",
   "package_type": "fictional",

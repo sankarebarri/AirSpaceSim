@@ -21,6 +21,29 @@ CANONICAL_DATA_DOMAINS = {
 }
 
 
+# Canonical command/event types the engine can apply
+# (see airspacesim.simulation.events.apply_events_idempotent).
+KNOWN_COMMAND_TYPES = frozenset(
+    {
+        "ADD_AIRCRAFT",
+        "SET_SPEED",
+        "SET_FL",
+        "ASSIGN_HEADING",
+        "ASSIGN_RADIAL",
+        "ASSIGN_RADIAL_DEVIATION",
+        "REMOVE_AIRCRAFT",
+        "REROUTE",
+        "DIRECT_TO",
+        "INTERCEPT_ROUTE",
+        "RESUME_ROUTE",
+        "HOLD_AT_FIX",
+        "EXIT_HOLD",
+        "SET_VERTICAL_RATE",
+        "SET_SIMULATION_SPEED",
+    }
+)
+
+
 class ValidationError(ValueError):
     """Raised when a contract payload fails strict validation."""
 
@@ -387,23 +410,7 @@ def validate_inbox_events(payload):
     events = data.get("events")
     _require_list(events, "data.events")
 
-    allowed_types = {
-        "ADD_AIRCRAFT",
-        "SET_SPEED",
-        "SET_FL",
-        "ASSIGN_HEADING",
-        "ASSIGN_RADIAL",
-        "ASSIGN_RADIAL_DEVIATION",
-        "REMOVE_AIRCRAFT",
-        "REROUTE",
-        "DIRECT_TO",
-        "INTERCEPT_ROUTE",
-        "RESUME_ROUTE",
-        "HOLD_AT_FIX",
-        "EXIT_HOLD",
-        "SET_VERTICAL_RATE",
-        "SET_SIMULATION_SPEED",
-    }
+    allowed_types = KNOWN_COMMAND_TYPES
     for idx, event in enumerate(events):
         _require_dict(event, f"data.events[{idx}]")
         _require(

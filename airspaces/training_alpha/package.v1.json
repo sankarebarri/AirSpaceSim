@@ -4,6 +4,7 @@
     "version": "1.0"
   },
   "id": "training_alpha",
+  "version": "1.0.0",
   "name": "Training Alpha",
   "description": "Fictional beginner airspace with crossing routes for classroom-style en-route practice.",
   "package_type": "fictional",
@@ -36,7 +37,7 @@
     },
     {
       "id": "crossing_traffic",
-      "title": "Crossing Traffic \u2014 Learn",
+      "title": "Crossing Traffic — Learn",
       "path": "scenarios/crossing_traffic.v1.json",
       "description": "NVR231 and SKL842 converge at the same flight level near the Alpha VOR.",
       "service_type": "enroute",
@@ -45,7 +46,7 @@
     },
     {
       "id": "crossing_traffic_practice",
-      "title": "Crossing Traffic \u2014 Practice",
+      "title": "Crossing Traffic — Practice",
       "path": "scenarios/crossing_traffic_practice.v1.json",
       "description": "A similar crossing conflict with less guidance.",
       "service_type": "enroute",
@@ -54,7 +55,7 @@
     },
     {
       "id": "crossing_traffic_practice_2",
-      "title": "Crossing Traffic \u2014 Practice 2",
+      "title": "Crossing Traffic — Practice 2",
       "path": "scenarios/crossing_traffic_practice_2.v1.json",
       "description": "A crossing conflict with different geometry and no conflict announcement.",
       "service_type": "enroute",

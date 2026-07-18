@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Training Alpha Beginner Mix",
     "description": "Fictional beginner traffic mix for validating custom airspace loading and basic ATC actions."

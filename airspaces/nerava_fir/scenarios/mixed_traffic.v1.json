@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Mixed Traffic Session",
     "description": "Twenty-five-track training session with departures, arrivals, and overflights."

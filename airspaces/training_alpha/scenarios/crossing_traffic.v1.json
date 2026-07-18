@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Crossing Traffic — Learn",
     "description": "NVR231 and SKL842 converge at the same flight level near the Alpha VOR. Deterministic two-aircraft scenario used by the Crossing Traffic Learn experience."

@@ -41,7 +41,9 @@ Delivered 2026-07-17 (tag `phase-3-fictional-environment`; last pre-removal stat
 **Rollback**: data-only swap; old pack remains in git history (tag before deletion), not in main.
 **Done when**: `grep -ri gao` over tracked files returns only historical CHANGELOG/audit references; `airspaces/gao_demo` no longer exists.
 
-## Phase 4 — Scenario/environment schema versioning + validation (04 §4–5, Q4)
+## Phase 4 — Scenario/environment schema versioning + validation (04 §4–5, Q4) ✅ COMPLETE
+
+Delivered 2026-07-17 (tag `phase-4-versioned-validation`): semver `version` on pack manifests, environment definitions, and all scenario templates (enforced by the package validator); shared validation module `airspacesim/io/templates.py` (single source for geometry/aircraft-plan/metadata checks incl. supported-command whitelist) with the seed script and `validate_airspace_package.py` delegating to it; hosted API validates templates at practice-run creation with plain-language 400s and stamps `content_versions` into scenario metadata and persisted run summaries. Entry times were already engine-honoured (Phase 2).
 
 **Goal**: versioned, validated **JSON** packs and scenario templates with plain-language errors; engine honours entry times. (JSON confirmed canonical; any future friendly template generates JSON.)
 **Files**: `airspacesim/io/contracts.py` (+ template validator), pack manifests (`version` fields), `apps/api/app/services/{practice_runs,scenarios}.py` (validate on load, stamp versions into run metadata), `scripts/validate_airspace_package.py` (delegates to shared validator).

@@ -88,6 +88,10 @@ class SimulationRuntimeSession:
         self._summary_kind = (
             "practice" if self.practice_tracker is not None else "simulate"
         )
+        content_versions = (metadata_payload or {}).get("content_versions")
+        self.content_versions = (
+            dict(content_versions) if isinstance(content_versions, dict) else None
+        )
 
     def start(self) -> None:
         with self._state_lock:
@@ -229,6 +233,8 @@ class SimulationRuntimeSession:
 
         summary = self.simulation.summary()
         summary["kind"] = self._summary_kind
+        if self.content_versions is not None:
+            summary["content_versions"] = dict(self.content_versions)
         if self.practice_tracker is not None:
             summary["practice_outcome"] = self.practice_tracker.outcome
         return summary

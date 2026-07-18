@@ -93,6 +93,11 @@ def normalize_package_manifest(
 
     return {
         "id": package_id.strip(),
+        "version": (
+            manifest["version"].strip()
+            if isinstance(manifest.get("version"), str)
+            else None
+        ),
         "name": name.strip(),
         "description": description.strip(),
         "package_type": package_type.strip(),

@@ -9,6 +9,11 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from airspacesim.io import build_envelope, normalize_scenario_airspace_payload
+from airspacesim.io.templates import (
+    environment_version,
+    load_aircraft_performance,
+    validate_scenario_template,
+)
 
 from ..airspace_packages import (
     default_scenario_id,
@@ -228,6 +233,22 @@ def create_practice_run(
             ),
         )
 
+    airspace_payload = _build_airspace_payload(manifest, package_dir, template)
+    validation_errors = validate_scenario_template(
+        template,
+        airspace_payload,
+        template.get("aircraft"),
+        load_aircraft_performance(),
+    )
+    if validation_errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Scenario template '{resolved_scenario_id}' failed validation: "
+                + " ".join(validation_errors)
+            ),
+        )
+
     template_metadata = (
         template.get("metadata") if isinstance(template.get("metadata"), dict) else {}
     )
@@ -246,13 +267,25 @@ def create_practice_run(
             or scenario_item.get("description")
             or "Practice scenario created from an airspace package."
         ),
-        airspace_payload=_build_airspace_payload(manifest, package_dir, template),
+        airspace_payload=airspace_payload,
         aircraft_payload=_build_aircraft_payload(template),
         metadata_payload={
             "source": "airspacesim.api.practice_runs",
             "airspace_id": airspace_id,
             "scenario_template_id": resolved_scenario_id,
             "lesson_id": lesson_id,
+            # Exact content versions used by this run, for reproducibility
+            # (brief: run records must identify scenario/environment versions).
+            "content_versions": {
+                "airspace_id": airspace_id,
+                "environment_version": environment_version(airspace_payload),
+                "scenario_template_id": resolved_scenario_id,
+                "scenario_template_version": (
+                    template.get("version")
+                    if isinstance(template.get("version"), str)
+                    else None
+                ),
+            },
             **(
                 {"practice": template_metadata["practice"]}
                 if isinstance(template_metadata.get("practice"), dict)

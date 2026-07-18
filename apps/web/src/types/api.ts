@@ -37,6 +37,7 @@ export interface AirspaceLessonSummary {
 
 export interface AirspacePackageSummary {
   id: string;
+  version?: string | null;
   name: string;
   description: string;
   package_type: string;

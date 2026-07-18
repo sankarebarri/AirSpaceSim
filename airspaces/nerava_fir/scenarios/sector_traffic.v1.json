@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Nerava Sector Traffic",
     "description": "A small en-route traffic simulation with four aircraft entering, crossing, and leaving the sector.",

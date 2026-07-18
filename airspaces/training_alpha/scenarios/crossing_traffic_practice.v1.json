@@ -3,6 +3,7 @@
     "name": "airspacesim.demo_template",
     "version": "1.0"
   },
+  "version": "1.0.0",
   "metadata": {
     "name": "Crossing Traffic — Practice",
     "description": "VLR217 and KTR203 converge near Bravo Fix on different routes, timing, and geometry than the Learn walkthrough, with NVR891 as an additional non-conflicting track sharing the sector. The resolution is left to the trainee.",

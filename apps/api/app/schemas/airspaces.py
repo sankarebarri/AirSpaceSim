@@ -32,6 +32,7 @@ class AirspacePackageSummary(BaseModel):
     """Discoverable airspace package summary."""
 
     id: str
+    version: str | None = None
     name: str
     description: str
     package_type: str
