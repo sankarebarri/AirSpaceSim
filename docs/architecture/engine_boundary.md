@@ -107,41 +107,23 @@ The engine should not import:
 - hosted API configuration
 - database models
 
-## Current Legacy Assets Inside The Engine Package
+## Legacy Assets: Retired (Phase 8)
 
-The package still contains legacy browser/demo assets:
-
-- `airspacesim/templates/`
-- `airspacesim/static/`
-- `airspacesim/map/`
-- `airspacesim/dev_server.py`
-- `airspacesim/cli/commands.py`
-
-For now, these are retained because the packaged `airspacesim init` workflow and compatibility tests still use them.
-
-Decision for the current cleanup phase: keep these assets in place and document them as legacy compatibility assets. Do not move or delete them until the hosted React app fully replaces that workflow and the compatibility tests are updated.
-
-See `docs/architecture/legacy_static_ui_decision.md` for the detailed decision and retirement criteria.
-
-Longer term, choose one of these options:
-
-1. Keep them as a documented legacy demo feature.
-2. Move them under a clearer namespace, such as `airspacesim.legacy_static`.
-3. Remove them after the hosted React app fully replaces the legacy static UI.
-
-Do not mix these legacy assets with the hosted app in `apps/web/`.
+The legacy browser/demo assets (`airspacesim/templates/`, `airspacesim/static/`,
+`airspacesim/map/`, `airspacesim/dev_server.py`, and the workspace-generating
+`airspacesim init`) were removed from the package in 0.2.0. The wheel now
+contains only engine code, JSON schemas, engine seed data, and examples.
+`airspacesim init` was repurposed to scaffold airspace packages. The final
+legacy state is preserved at the git tag `pre-legacy-ui-removal`.
 
 ## Package Data
 
-Package data currently includes:
+Package data now includes only:
 
-- JSON data contracts and defaults
+- JSON scenario contracts and the fictional Nerava seed data
+- the aircraft performance database
 - JSON schemas
-- legacy HTML templates
-- legacy static JS/CSS/icons
 - example Python files
-
-Before publishing a reusable engine package, review whether legacy UI assets should still ship by default.
 
 ## Minimal Engine Example
 
@@ -164,7 +146,7 @@ manager.add_aircraft(
     flight_level=250,
     aircraft_type="B737",
 )
-manager.step_all(1.0)
+manager.step_aircraft(1.0)
 ```
 
 ## Current Guardrails

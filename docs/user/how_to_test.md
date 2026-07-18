@@ -19,10 +19,7 @@ These are the main files worth opening while testing:
 Core package and compatibility UI:
 
 - [airspacesim/settings.py](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/settings.py)
-- [airspacesim/dev_server.py](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/dev_server.py)
-- [dev_server.py](/home/sankarebarri/code/aircore/AirSpaceSim/dev_server.py)
 - [airspacesim/simulation/aircraft_manager.py](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/simulation/aircraft_manager.py)
-- [airspacesim/templates/map.html](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/templates/map.html)
 - [airspacesim/static/js/aircraft_simulation.js](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/static/js/aircraft_simulation.js)
 - [airspacesim/static/js/map_renderer.js](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/static/js/map_renderer.js)
 - [airspacesim/static/js/ui_runtime.js](/home/sankarebarri/code/aircore/AirSpaceSim/airspacesim/static/js/ui_runtime.js)
@@ -121,90 +118,24 @@ Notes:
 - `tests/test_hosted_browser_flow.py` checks the hosted stack path.
 - On restricted environments, the hosted browser smoke may skip if loopback socket binding is blocked.
 
-## 4. Manual Test A: Legacy Package Compatibility UI
+## 4. Manual Test A: Headless Engine Run
 
-This tests the `airspacesim init` workflow and the static compatibility map.
+> The legacy static-UI compatibility test was retired in 0.2.0 (Phase 8);
+> the old flow is preserved at git tag `pre-legacy-ui-removal`.
 
-### 4.1 Create a clean workspace
-
-Use a separate temporary directory so you do not mix generated files into the repo:
+From a clean temporary directory:
 
 ```bash
-mkdir -p /tmp/airspacesim-manual
-cd /tmp/airspacesim-manual
+mkdir -p /tmp/airspacesim-manual && cd /tmp/airspacesim-manual
 source /home/sankarebarri/code/aircore/AirSpaceSim/.venv/bin/activate
-airspacesim init
+python -m airspacesim.examples.example_simulation --max-wait 5
 ```
-
-### 4.2 Files to inspect in the generated workspace
-
-Open these files:
-
-- `templates/map.html`
-- `static/js/map_renderer.js`
-- `static/js/aircraft_simulation.js`
-- `static/js/ui_runtime.js`
-- `data/aircraft_state.v1.json`
-- `data/trajectory.v0.1.json`
-- `data/inbox_events.v1.json`
-- `dev_server.py`
-
-### 4.3 Start the simulation and dev server
-
-Terminal 1:
-
-```bash
-python examples/example_simulation.py
-```
-
-Optional quick-run:
-
-```bash
-python examples/example_simulation.py --max-wait 5
-```
-
-Terminal 2:
-
-```bash
-python dev_server.py
-```
-
-### 4.4 Open the compatibility UI
-
-Open:
-
-- `http://127.0.0.1:8080/templates/map.html`
-
-Optional legacy playground path:
-
-- `http://127.0.0.1:8080/airspacesim-playground/templates/map.html`
-
-### 4.5 Features to test
-
-Confirm these behaviors:
-
-- The page loads without a blank screen.
-- The browser console has no JavaScript errors.
-- Aircraft appear and move.
-- The map reads from generated files under `data/`.
-- `SET_SPEED` works when you use an aircraft ID, not a callsign.
-- `ADD_AIRCRAFT` accepts a new aircraft and rejects duplicate aircraft IDs.
-- The event sink accepts POST requests through `dev_server.py`.
-
-### 4.6 Files that should change while it runs
-
-Watch these files:
-
-- `data/aircraft_state.v1.json`
-- `data/trajectory.v0.1.json`
-- `data/inbox_events.v1.json`
-- `data/ui_runtime.v1.json`
 
 Pass condition:
 
-- aircraft state and trajectory files update
-- the page stays interactive
-- operator actions produce expected changes
+- `data/aircraft_state.v1.json` exists with schema `airspacesim.aircraft_state`
+- `data/trajectory.v0.1.json` exists with schema `airspacesim.trajectory`
+- both contain at least one aircraft/track
 
 ## 5. Manual Test B: Hosted FastAPI + React Stack
 

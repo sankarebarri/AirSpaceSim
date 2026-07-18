@@ -97,7 +97,6 @@ Minimum structure:
 - `data.ui.aircraft_poll_interval_ms` (optional, minimum 250)
 - Optional event sink configuration:
   - `data.sinks.aircraft_events` (string URL or `{ "url": "..." }`)
-  - Example for playground pathing: `"/airspacesim-playground/api/events"`
 
 ### `data/scenario.v0.1.json`
 Purpose: unified scenario input contract for simulation startup.

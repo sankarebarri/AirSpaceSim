@@ -1,7 +1,8 @@
 # AirSpaceSim Docs Index
 
-- `docs/improvements/new-roadmap.md`: active execution tracker for the FastAPI/React/SQLite migration
-- `docs/improvements/legacy_static_ui_roadmap.md`: legacy static-UI roadmap retained during migration
+- `docs/timeline.md`: milestone tags and phase history (active tracker)
+- `docs/repository-audit/`: audit, decisions, and the phased refactor plan
+- `docs/developer/`: authentication, database, and deployment guides
 - `docs/tutorial.md`: step-by-step run and operations walkthrough
 - `docs/architecture.md`: module boundaries and data flow
 - `docs/architecture/codebase_tidy_and_packaging_plan.md`: cleanup plan for engine/app separation and hosting readiness

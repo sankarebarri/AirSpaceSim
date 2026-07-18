@@ -24,6 +24,30 @@ Approved removals with no deprecation cycle (see
   `data/gao_airspace.json` and `data/new_aircraft.json` seed files were
   deleted.
 
+Retired in 0.2.0 (Phase 8, decision Q2) — preserved at git tag
+`pre-legacy-ui-removal`:
+
+- **The static HTML/JS map UI** (`airspacesim/templates/`,
+  `airspacesim/static/`), the Leaflet map-config helpers
+  (`airspacesim.map`), and the file-based dev server
+  (`airspacesim/dev_server.py`, root `dev_server.py`). Use the hosted
+  application (`apps/web` + `apps/api`) instead.
+- **The workspace-generating `airspacesim init`**: the command now
+  scaffolds a data-driven airspace package
+  (`airspacesim init <id> --dir airspaces`). The `list-routes` command was
+  removed with the map-config files it read.
+- **UI seed data** removed from the wheel (`airspace_config.json`,
+  `airspace_data.json`, `map_config.v1.json`, `ui_runtime.v1.json`,
+  `render_profile.v1.json`, plus the init-only runtime templates). The
+  engine still ships the scenario contracts
+  (`scenario_airspace.v1.json`, `scenario_aircraft.v1.json`,
+  `scenario.v0.1.json`), `aircraft_performance.v1.json`, and
+  `inbox_events.v1.json`. Headless runs still write the state/trajectory
+  contracts to `<cwd>/data/`.
+- Settings removed with the UI: `AIRSPACE_FILE`, `AIRSPACE_DATA_FILE`,
+  `RENDER_PROFILE_FILE`, `DEFAULT_ZOOM_LEVEL`, and the corresponding
+  `DEFAULT_*` package-seed paths.
+
 New in 0.2.0:
 
 - `AircraftManager(enable_file_output=False)` (also exposed through

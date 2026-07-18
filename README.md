@@ -1,12 +1,14 @@
 # AirSpaceSim
 Aircraft Simulation and Airspace Visualization
 
-AirSpaceSim is a simulation-first Python library for modeling aircraft movement in structured airspace and visualizing trajectories on map-based interfaces.
+AirSpaceSim is an air traffic learning and simulation platform built on a reusable simulation engine:
+- `airspacesim/` — the standalone Python engine package (published to PyPI)
+- `apps/api/` — the FastAPI service layer
+- `apps/web/` — the React frontend (Learn / Practice / Simulate)
+- `airspaces/` + `content/` — data-driven airspace packages and curriculum
 
-This repository is also being migrated toward a hosted application split:
-- `airspacesim/` remains the standalone Python package
-- `apps/api/` is the FastAPI service layer
-- `apps/web/` is the React frontend
+Training and visualisation software only — not for operational use. All
+airspaces and scenarios are fictional.
 
 ## Purpose
 
@@ -21,11 +23,11 @@ It is designed to be useful as a standalone simulator.
 ## Scope
 
 Current focus:
-- multi-aircraft movement simulation with both legacy thread-per-aircraft mode and scalable batched scheduler mode
+- deterministic multi-aircraft simulation (`Simulation` façade: clock, commands, separation monitoring, engine events)
 - waypoint and route processing (DMS and decimal coordinates)
-- map configuration and visualization helpers (Leaflet-compatible)
-- JSON-based aircraft state output for downstream tooling
-- CLI bootstrap with `airspacesim init`
+- versioned JSON contracts for scenarios, state, and trajectories
+- hosted Learn/Practice/Simulate application on the same engine
+- `airspacesim init` scaffolding for data-driven airspace packages
 
 Non-goals:
 - operational ATM/UTM control
@@ -69,63 +71,64 @@ python3 -m build
 pip install --no-index --find-links dist airspacesim
 ```
 
-## Quick Start
+## Quick Start (hosted application)
 
-Initialize project files in your working directory:
-
-```bash
-airspacesim init
-```
-
-Then run your simulation script (for example `examples/example_simulation.py`) and open `templates/map.html` in a browser.
-
-The default generated data files are:
-- `data/map_config.v1.json`
-- `data/airspace_config.json`
-- `data/airspace_data.json`
-- `data/scenario_airspace.v1.json`
-- `data/scenario.v0.1.json`
-- `data/scenario_aircraft.v1.json`
-- `data/inbox_events.v1.json`
-- `data/render_profile.v1.json`
-- `data/aircraft_data.json`
-- `data/aircraft_state.v1.json`
-- `data/trajectory.v0.1.json`
-- `data/ui_runtime.v1.json`
-- `data/aircraft_ingest.json`
-
-## UI Simulation Test
-
-The static HTML/JS map remains the current compatibility UI path for package users.
-It is not the long-term hosted architecture.
-
-Run these in separate terminals from your initialized project directory:
+Full stack with Docker (PostgreSQL + API + web):
 
 ```bash
-python3 examples/example_simulation.py
+cp .env.example .env
+docker compose up --build
+# Web: http://127.0.0.1:8080   API health: http://127.0.0.1:8000/health
 ```
 
-Optional quick run:
+Or without Docker (SQLite + dev servers):
 
 ```bash
-python3 examples/example_simulation.py --max-wait 5
+python3 scripts/start_hosted_dev.py --seed
 ```
+
+See `docs/developer/DEPLOYMENT.md` for hosting.
+
+## Quick Start (engine library)
+
+Run a headless simulation from any directory — scenario inputs fall back to
+the packaged fictional Nerava seeds and contract outputs are written to
+`<cwd>/data/`:
 
 ```bash
-python3 dev_server.py
+python3 -m airspacesim.examples.example_simulation --max-wait 5
 ```
 
-Then open one of:
-- `http://127.0.0.1:8080/templates/map.html`
-- `http://127.0.0.1:8080/airspacesim-playground/templates/map.html` (legacy playground compatibility path)
+Or drive the engine directly:
 
-Operator controls notes:
-- Use `dev_server.py` for POST support. Static-only servers (for example Live Server on `:5500`) may return `405` on `/api/events`.
-- `SET_SPEED.payload.aircraft_id` must be the aircraft ID (for example `AC800`), not callsign (for example `OPS800`).
-- `ADD_AIRCRAFT` now skips duplicate aircraft IDs instead of creating duplicate runtime entries.
-- Speed guardrails apply:
-  - warning above `700 kt`
-  - rejection above `1200 kt` (default mode)
+```python
+from airspacesim import Simulation
+from airspacesim.simulation.scenario_runner import load_scenarios
+
+airspace, aircraft = load_scenarios()
+simulation = Simulation.from_contracts(airspace, aircraft)
+simulation.step(seconds=60)
+snapshot = simulation.snapshot()
+```
+
+More in `docs/architecture/engine_usage_quickstart.md`.
+
+Scaffold a new airspace package (the data-driven environment format used by
+the hosted app):
+
+```bash
+airspacesim init my_sector --dir airspaces
+```
+
+> The pre-0.2.0 static HTML/JS map UI, file-based dev server, and generated
+> workspace were retired; their final state is preserved at the git tag
+> `pre-legacy-ui-removal` (see `docs/migration.md`).
+
+Engine behaviour notes:
+- `SET_SPEED.payload.aircraft_id` must be the aircraft ID, not the callsign.
+- `ADD_AIRCRAFT` skips duplicate aircraft IDs instead of creating duplicates.
+- Speed guardrails apply: warning above `700 kt`, rejection above `1200 kt`
+  (default mode).
 
 ## Simulation Quality Tools
 
@@ -144,7 +147,7 @@ python3 -m airspacesim.examples.benchmark_simulation --aircraft 200 --steps 50 -
 Interoperability export example:
 
 ```bash
-python3 examples/interoperability_export.py
+python3 -m airspacesim.examples.interoperability_export
 ```
 
 ## Minimal Runnable Example
@@ -200,17 +203,15 @@ Production claims:
 - Not an operational separation assurance system
 - No regulatory assurance, certification, or operational safety case
 - Results depend on scenario design and model assumptions
-- Current packaging/docs need consolidation for full out-of-the-box setup
 
-## Roadmap
+## Roadmap and documentation
 
-Active execution milestones are in `docs/improvements/new-roadmap.md`.
+The refactor phases, decisions, and milestone tags are tracked in
+`docs/timeline.md` and `docs/repository-audit/`.
 
-`docs/improvements/legacy_static_ui_roadmap.md` remains as the legacy static-UI planning document during migration and should not be treated as the primary tracker.
-
-Operational/developer guide is maintained in `documentation.md`.
-Hands-on walkthrough is in `docs/tutorial.md`.
-User startup and simulator-use guides are in `docs/user/`.
+Developer guides live under `docs/developer/` (authentication, database,
+deployment); engine architecture notes under `docs/architecture/`;
+user-facing guides under `docs/user/`.
 
 ## Ecosystem Compatibility
 

@@ -65,7 +65,7 @@ Behavior:
 Common operator-control failures:
 - `405 Method Not Allowed` on `/api/events`
   - Cause: page served from static-only dev server that does not accept POST.
-  - Action: use `python3 dev_server.py` and open map from its URL.
+  - Action: legacy static-UI serving was retired in 0.2.0 (tag `pre-legacy-ui-removal`); use the hosted app (`scripts/start_hosted_dev.py`).
 - `SET_SPEED` skipped with "aircraft not found"
   - Cause: `payload.aircraft_id` was a callsign, not aircraft ID.
   - Action: use the runtime `id` value (for example `AC800`), not callsign (`OPS800`).

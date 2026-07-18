@@ -84,7 +84,11 @@ Delivered 2026-07-18 (tag `phase-7-deployment`): API Dockerfile (repo-root conte
 **Tests**: production build in CI; `/health` check in the smoke script against a built deployment; route-refresh browser test; compose-up smoke locally.
 **Done when**: brief §Deployment acceptance list is verifiably green in a staging environment reachable from the static frontend.
 
-## Phase 8 — Legacy static UI retirement + engine packaging finalisation (03 E6, Q1/Q2)
+## Phase 8 — Legacy static UI retirement + engine packaging finalisation (03 E6, Q1/Q2) ✅ COMPLETE
+
+Delivered 2026-07-18 (tag `phase-8-legacy-ui-retired`; last legacy state at `pre-legacy-ui-removal`): static UI, map helpers, dev server, workspace-init flow, and UI seed data removed from the package; `airspacesim init` repurposed into an airspace-package scaffolder (validated output); legacy tests retired or rewritten (headless quickstart + scaffolder tests); README/tutorial/documentation/boundary docs updated; wheel verified clean (54 files: cli/core/data/examples/io/routes/schemas/simulation/utils only). **All eight refactor phases are complete.**
+
+## Phase 8 — original scope (for reference)
 
 **Goal**: retire the legacy static Leaflet UI, file-based dev server, generated-workspace flow, and related wheel assets from the core package (decided — no compatibility package, no permanent shims). Tag the last release containing the legacy surface so its final state is preserved in git history. Optionally repurpose `airspacesim init` into an environment/scenario scaffolding command.
 **Files**: `airspacesim/{static,templates,map,dev_server.py}`, root `dev_server.py`, `cli/commands.py` (init asset list → scaffolding or removal), `pyproject.toml` package-data, legacy tests (`test_browser_console_clean`, `test_phase1_clean_run`, `test_cli_init`, `test_docs_quickstart` — retired or rewritten against the new surface), README/docs updates, CHANGELOG.

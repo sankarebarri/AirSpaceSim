@@ -26,6 +26,15 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
 - Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
 
+### Removed (breaking — legacy static UI retirement, Phase 8, decision Q2)
+- The legacy static HTML/JS map UI (`airspacesim/templates/`, `airspacesim/static/`), the Leaflet map-config helpers (`airspacesim.map`), the file-based dev server (`airspacesim/dev_server.py`, root `dev_server.py`), and the UI seed data (`airspace_config.json`, `airspace_data.json`, `map_config.v1.json`, `ui_runtime.v1.json`, `render_profile.v1.json`, plus init-only runtime templates). Final state preserved at git tag `pre-legacy-ui-removal`. No compatibility package or shims (per decision).
+- Settings removed with the UI: `AIRSPACE_FILE`, `AIRSPACE_DATA_FILE`, `RENDER_PROFILE_FILE`, `DEFAULT_ZOOM_LEVEL`, and their packaged defaults. The `list-routes` CLI command was removed with the map-config files it read.
+- The wheel now contains only engine code, JSON schemas, the fictional Nerava scenario seeds, the aircraft-performance database, and examples (verified by building and inspecting the artifact: 54 files, no UI assets).
+
+### Changed (CLI repurposed — Phase 8)
+- `airspacesim init` now scaffolds a data-driven **airspace package** (`airspacesim init my_sector --dir airspaces`): versioned manifest, fictional airspace definition, and a starter scenario that pass `scripts/validate_airspace_package.py` and are discoverable by the hosted API.
+- Headless engine runs no longer require any init step: `python3 -m airspacesim.examples.example_simulation` works from any directory, writing the state/trajectory contracts to `<cwd>/data/`.
+
 ### Added (deployment readiness — Phase 7)
 - Dockerfiles and local `docker-compose.yml` (decision Q6): the API image applies Alembic migrations then serves uvicorn (`apps/api/docker-entrypoint.sh` with a database wait loop); the web image builds the bundle and serves it via nginx with the SPA route fallback; compose wires PostgreSQL 16 + API + web for a portable full stack (`cp .env.example .env && docker compose up --build`).
 - Structured API logging (`key=value` single-line records) configured from `AIRSPACESIM_API_LOG_LEVEL`.

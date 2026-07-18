@@ -1,87 +1,68 @@
-from airspacesim.cli.commands import initialize_project
+"""`airspacesim init` scaffolds a valid airspace package (Phase 8 CLI)."""
+
+import importlib.util
+import json
+from pathlib import Path
+
+from airspacesim.cli.commands import scaffold_airspace_package
 
 
-EXPECTED_FILES = [
-    "templates/map.html",
-    "static/js/map_renderer.js",
-    "static/js/aircraft_simulation.js",
-    "static/js/ui_runtime.js",
-    "static/css/map_styles.css",
-    "static/icons/circle.svg",
-    "static/icons/triangle_9.svg",
-    "data/airspace_config.json",
-    "data/map_config.v1.json",
-    "data/airspace_data.json",
-    "data/scenario_airspace.v1.json",
-    "data/scenario.v0.1.json",
-    "data/scenario_aircraft.v1.json",
-    "data/inbox_events.v1.json",
-    "data/render_profile.v1.json",
-    "data/aircraft_data.json",
-    "data/aircraft_state.v1.json",
-    "data/trajectory.v0.1.json",
-    "data/ui_runtime.v1.json",
-    "data/aircraft_ingest.json",
-    "examples/example_simulation.py",
-    "examples/interoperability_export.py",
-    "dev_server.py",
-]
-
-
-def test_initialize_project_creates_expected_structure(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-
-    initialize_project()
-
-    for rel_path in EXPECTED_FILES:
-        assert (tmp_path / rel_path).exists(), f"Missing {rel_path}"
-
-
-def test_initialize_project_is_idempotent(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-
-    initialize_project()
-    # Run again to ensure existing files are skipped instead of failing.
-    initialize_project()
-
-    for rel_path in EXPECTED_FILES:
-        assert (tmp_path / rel_path).exists(), f"Missing {rel_path} after second run"
-
-
-def test_initialized_map_runtime_references_are_coherent(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    initialize_project()
-
-    map_html = (tmp_path / "templates/map.html").read_text(encoding="utf-8")
-    map_renderer_js = (tmp_path / "static/js/map_renderer.js").read_text(
-        encoding="utf-8"
+def load_validator_module():
+    script_path = (
+        Path(__file__).resolve().parents[1] / "scripts" / "validate_airspace_package.py"
     )
-    aircraft_js = (tmp_path / "static/js/aircraft_simulation.js").read_text(
-        encoding="utf-8"
+    spec = importlib.util.spec_from_file_location("validate_airspace_package", script_path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_scaffolded_package_passes_the_package_validator(tmp_path):
+    package_dir = scaffold_airspace_package(
+        "my_sector", base_dir=str(tmp_path / "airspaces"), name="My Sector"
     )
-    runtime_js = (tmp_path / "static/js/ui_runtime.js").read_text(encoding="utf-8")
 
-    # Avoid duplicate renderer initialization: renderer is imported by aircraft_simulation.js.
-    assert "../static/js/map_renderer.js" not in map_html
-    assert "../static/js/aircraft_simulation.js" in map_html
+    assert (package_dir / "package.v1.json").exists()
+    assert (package_dir / "airspace.v1.json").exists()
+    assert (package_dir / "scenarios" / "basic_traffic.v1.json").exists()
+    assert (package_dir / "README.md").exists()
 
-    # Core runtime data files used by JS polling/config loading must exist after init.
-    assert (tmp_path / "data/airspace_config.json").exists()
-    assert (tmp_path / "data/map_config.v1.json").exists()
-    assert (tmp_path / "data/aircraft_state.v1.json").exists()
-    assert (tmp_path / "data/ui_runtime.v1.json").exists()
-    assert (tmp_path / "data/aircraft_data.json").exists()
+    validator = load_validator_module()
+    result = validator.validate_package(package_dir, require_scenarios=True)
+    assert result["errors"] == []
+    assert result["airspace_id"] == "my_sector"
+    assert result["scenario_count"] == 1
 
-    # Icon assets required by configured markers/defaults should exist.
-    assert (tmp_path / "static/icons/triangle_9.svg").exists()
-    assert (tmp_path / "static/icons/circle.svg").exists()
-    assert (tmp_path / "static/icons/vor.svg").exists()
 
-    # Sanity checks for deterministic data path resolution from static/js module location.
-    assert 'from "./ui_runtime.js"' in map_renderer_js
-    assert 'new URL("../../data/", import.meta.url)' in runtime_js
-    assert 'new URL("map_config.v1.json", DATA_BASE_URL)' in map_renderer_js
-    assert 'new URL("airspace_config.json", DATA_BASE_URL)' in map_renderer_js
-    assert 'from "./ui_runtime.js"' in aircraft_js
-    assert 'new URL("aircraft_state.v1.json", DATA_BASE_URL)' in aircraft_js
-    assert 'new URL("aircraft_data.json", DATA_BASE_URL)' in aircraft_js
+def test_scaffold_is_idempotent_and_respects_force(tmp_path):
+    base_dir = str(tmp_path / "airspaces")
+    package_dir = scaffold_airspace_package("alpha_two", base_dir=base_dir)
+
+    manifest_path = package_dir / "package.v1.json"
+    manifest_path.write_text(
+        json.dumps({**json.loads(manifest_path.read_text()), "description": "edited"})
+    )
+
+    # Re-running without --force keeps user edits.
+    scaffold_airspace_package("alpha_two", base_dir=base_dir)
+    assert json.loads(manifest_path.read_text())["description"] == "edited"
+
+    # --force restores the scaffold.
+    scaffold_airspace_package("alpha_two", base_dir=base_dir, overwrite=True)
+    assert json.loads(manifest_path.read_text())["description"] != "edited"
+
+
+def test_scaffolded_scenario_is_versioned_and_fictional(tmp_path):
+    package_dir = scaffold_airspace_package(
+        "training_two", base_dir=str(tmp_path / "airspaces")
+    )
+    scenario = json.loads(
+        (package_dir / "scenarios" / "basic_traffic.v1.json").read_text()
+    )
+    airspace = json.loads((package_dir / "airspace.v1.json").read_text())
+
+    assert scenario["version"] == "1.0.0"
+    assert airspace["metadata"]["version"] == "1.0.0"
+    assert airspace["metadata"]["source_type"] == "fictional_training"
+    assert "not operationally valid" in airspace["metadata"]["notes"].lower()

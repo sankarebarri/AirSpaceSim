@@ -104,3 +104,15 @@ Do not remove the legacy static UI until all of these are true:
 - New airspace/scenario/lesson content goes in `airspaces/`.
 - No new hosted-product features should be added to `airspacesim/templates/`, `airspacesim/static/`, or `airspacesim-playground/`.
 - Root `dev_server.py` remains a compatibility entrypoint only.
+
+
+---
+
+## Decision executed (2026-07-18, Phase 8)
+
+Per decision Q2 (`docs/repository-audit/08_OPEN_QUESTIONS.md`), the legacy
+static Leaflet UI, file-based dev server, generated workspace flow, and
+related wheel assets were removed in 0.2.0 — no compatibility package, no
+permanent shims. The final state is preserved at the git tag
+`pre-legacy-ui-removal`. `airspacesim init` now scaffolds airspace packages
+instead of static-UI workspaces.

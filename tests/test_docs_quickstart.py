@@ -1,28 +1,31 @@
+"""README quickstart: a headless engine run writes valid contract files.
+
+The legacy `airspacesim init` static-UI workspace flow was retired in
+Phase 8; the library quickstart is now: run the example simulation from any
+working directory — scenario inputs fall back to the packaged fictional
+seeds and contract outputs land in `<cwd>/data/`.
+"""
+
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
 
-from airspacesim.cli.commands import initialize_project
 
-
-def test_docs_quickstart_smoke_init_and_run_example(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    initialize_project()
-    assert (tmp_path / "dev_server.py").exists()
-
+def test_docs_quickstart_headless_engine_run_writes_contracts(tmp_path):
     repo_root = Path(__file__).resolve().parents[1]
+    example = repo_root / "airspacesim" / "examples" / "example_simulation.py"
     env = dict(os.environ)
     existing_pythonpath = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = (
         str(repo_root)
         if not existing_pythonpath
-        else f"{str(repo_root)}:{existing_pythonpath}"
+        else f"{repo_root}:{existing_pythonpath}"
     )
 
     subprocess.run(
-        [sys.executable, "examples/example_simulation.py", "--max-wait", "5"],
+        [sys.executable, str(example), "--max-wait", "5"],
         cwd=tmp_path,
         env=env,
         check=True,
@@ -40,3 +43,5 @@ def test_docs_quickstart_smoke_init_and_run_example(tmp_path, monkeypatch):
     assert trajectory_payload["schema"]["name"] == "airspacesim.trajectory"
     assert len(state_payload["data"]["aircraft"]) >= 1
     assert len(trajectory_payload["data"]["tracks"]) >= 1
+    # The packaged seeds are the fictional Nerava environment.
+    assert state_payload["data"]["aircraft"][0]["route_id"] == "UL602"

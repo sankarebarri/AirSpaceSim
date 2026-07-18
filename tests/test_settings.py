@@ -22,12 +22,10 @@ def test_runtime_paths_default_to_workspace_data_dir(tmp_path):
 def test_seed_inputs_fall_back_to_packaged_defaults_without_workspace_files(tmp_path):
     resolved = Settings(workspace_root=tmp_path)
 
-    assert resolved.AIRSPACE_FILE == resolved.DEFAULT_AIRSPACE_FILE
     assert resolved.SCENARIO_AIRSPACE_FILE == resolved.DEFAULT_SCENARIO_AIRSPACE_FILE
     assert resolved.SCENARIO_AIRCRAFT_FILE == resolved.DEFAULT_SCENARIO_AIRCRAFT_FILE
     assert resolved.SCENARIO_FILE == resolved.DEFAULT_SCENARIO_FILE
-    assert resolved.RENDER_PROFILE_FILE == resolved.DEFAULT_RENDER_PROFILE_FILE
-    assert Path(resolved.AIRSPACE_FILE).exists()
+    assert Path(resolved.SCENARIO_AIRSPACE_FILE).exists()
 
 
 def test_workspace_files_override_packaged_defaults_and_runtime_aliases(tmp_path):

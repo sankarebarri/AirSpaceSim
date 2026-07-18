@@ -57,10 +57,6 @@ namespaces = false
 
 [tool.setuptools.package-data]
 airspacesim = [
-  "templates/*.html",
-  "static/js/*.js",
-  "static/css/*.css",
-  "static/icons/*.svg",
   "data/*.json",
   "schemas/*.json",
   "examples/*.py",

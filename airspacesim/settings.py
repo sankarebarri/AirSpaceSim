@@ -3,7 +3,14 @@ from pathlib import Path
 
 
 class Settings:
-    """Global settings manager for AirSpaceSim with user-defined options."""
+    """Engine settings: domain constants plus workspace-aware file paths.
+
+    The file paths back the engine's optional JSON contract IO (scenario
+    loading defaults, trajectory/state outputs, inbox events). Hosted
+    applications typically disable file output entirely
+    (`AircraftManager(enable_file_output=False)`) and pass configuration
+    explicitly; these paths exist for headless/library workflows.
+    """
 
     def __init__(self, workspace_root=None):
         # Constants
@@ -19,39 +26,22 @@ class Settings:
         self.MAX_ABSURD_SPEED_KTS = 1200.0
         # One of: "reject", "clamp", "off"
         self.SPEED_GUARDRAIL_MODE = "reject"
-        # Default map/traffic-flow centre for the bundled fictional Nerava
+        # Default traffic-flow centre for the bundled fictional Nerava
         # training environment. Environment-specific: managers accept an
         # explicit airspace_center, and Simulation derives it from the
         # loaded airspace data.
         self.AIRSPACE_CENTER = (33.5, -41.0)
-        self.DEFAULT_ZOOM_LEVEL = 8
 
         self._package_root = Path(__file__).resolve().parent
         self._package_data_dir = self._package_root / "data"
 
-        # Default File Paths (Library seed data)
-        self.DEFAULT_AIRSPACE_FILE = self._package_data_path("airspace_config.json")
-        self.DEFAULT_AIRSPACE_DATA_FILE = self._package_data_path("airspace_data.json")
+        # Default File Paths (library seed data shipped in the wheel)
         self.DEFAULT_SCENARIO_AIRSPACE_FILE = self._package_data_path(
             "scenario_airspace.v1.json"
         )
         self.DEFAULT_SCENARIO_FILE = self._package_data_path("scenario.v0.1.json")
         self.DEFAULT_SCENARIO_AIRCRAFT_FILE = self._package_data_path(
             "scenario_aircraft.v1.json"
-        )
-        self.DEFAULT_INBOX_EVENTS_FILE = self._package_data_path(
-            "inbox_events.v1.json"
-        )
-        self.DEFAULT_RENDER_PROFILE_FILE = self._package_data_path(
-            "render_profile.v1.json"
-        )
-        self.DEFAULT_AIRCRAFT_FILE = self._package_data_path("aircraft_data.json")
-        self.DEFAULT_AIRCRAFT_STATE_FILE = self._package_data_path(
-            "aircraft_state.v1.json"
-        )
-        self.DEFAULT_TRAJECTORY_FILE = self._package_data_path("trajectory.v0.1.json")
-        self.DEFAULT_NEW_AIRCRAFT_FILE = self._package_data_path(
-            "aircraft_ingest.json"
         )
 
         self.refresh_paths(workspace_root=workspace_root)
@@ -64,14 +54,7 @@ class Settings:
         self.WORKSPACE_ROOT = str(self._workspace_root)
         self.WORKSPACE_DATA_DIR = str(self._workspace_data_dir)
 
-        # User-defined overrides (if they exist)
-        self.AIRSPACE_FILE = self.get_user_override(
-            "airspace_config.json",
-            self.DEFAULT_AIRSPACE_FILE,
-        )
-        self.AIRSPACE_DATA_FILE = self.get_user_override(
-            "airspace_data.json", self.DEFAULT_AIRSPACE_DATA_FILE
-        )
+        # Scenario inputs: workspace overrides fall back to packaged seeds.
         self.SCENARIO_AIRSPACE_FILE = self.get_user_override(
             "scenario_airspace.v1.json",
             self.DEFAULT_SCENARIO_AIRSPACE_FILE,
@@ -84,10 +67,7 @@ class Settings:
             "scenario_aircraft.v1.json",
             self.DEFAULT_SCENARIO_AIRCRAFT_FILE,
         )
-        self.RENDER_PROFILE_FILE = self.get_user_override(
-            "render_profile.v1.json",
-            self.DEFAULT_RENDER_PROFILE_FILE,
-        )
+        # Runtime outputs/inputs always live in the writable workspace.
         self.AIRCRAFT_FILE = self.get_workspace_runtime_path("aircraft_data.json")
         self.AIRCRAFT_STATE_FILE = self.get_workspace_runtime_path(
             "aircraft_state.v1.json"
