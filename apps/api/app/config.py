@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     cors_allow_credentials: bool = True
     debug: bool = False
     environment: str = "development"
+    log_level: str = "INFO"
     auth_cookie_name: str = "airspacesim_session"
     auth_session_ttl_days: int = 30
     anonymous_run_retention_days: int = 14

@@ -19,6 +19,15 @@ const SESSION_QUERY_PARAM = "sid";
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 
+if (import.meta.env.PROD && !import.meta.env.VITE_API_BASE_URL) {
+  // Production must never depend on localhost (brief deployment criteria).
+  console.error(
+    "VITE_API_BASE_URL is not set: this production build is falling back to " +
+      `${DEFAULT_API_BASE_URL} and will not reach a hosted API. ` +
+      "Rebuild with VITE_API_BASE_URL pointing at the deployed backend.",
+  );
+}
+
 export function buildApiUrl(path: string): string {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${API_BASE_URL}${normalizedPath}`;

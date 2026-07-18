@@ -26,6 +26,12 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
 - Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
 
+### Added (deployment readiness — Phase 7)
+- Dockerfiles and local `docker-compose.yml` (decision Q6): the API image applies Alembic migrations then serves uvicorn (`apps/api/docker-entrypoint.sh` with a database wait loop); the web image builds the bundle and serves it via nginx with the SPA route fallback; compose wires PostgreSQL 16 + API + web for a portable full stack (`cp .env.example .env && docker compose up --build`).
+- Structured API logging (`key=value` single-line records) configured from `AIRSPACESIM_API_LOG_LEVEL`.
+- Production URL guard: building the frontend without `VITE_API_BASE_URL` prints a loud build warning and the bundle logs a console error instead of silently targeting localhost; `dist/_redirects` ships the SPA fallback for static hosts.
+- Root `.env.example` for compose; `docs/developer/DEPLOYMENT.md` with the decided static-frontend + PaaS-API + managed-PostgreSQL architecture, migration/rollback procedure, and a deployment checklist.
+
 ### Added (PostgreSQL, authentication, persistence — Phase 6)
 - Email/password authentication with secure server-side sessions (decision Q7): stdlib scrypt password hashing, opaque tokens in HttpOnly SameSite=Lax cookies (Secure in production), 30-day TTL. Endpoints: register, login, logout, current user, profile update (display name + preferred language). Guests keep full access.
 - Guest adoption: signing in attaches the anonymous browser session's runs and scenarios to the account, and account-owned history is visible across devices; runs/scenarios created while signed in are attributed to the user.

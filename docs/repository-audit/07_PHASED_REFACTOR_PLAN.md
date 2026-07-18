@@ -73,7 +73,11 @@ Delivered 2026-07-18 (tag `phase-5-traffic-relationships`): curriculum + five TR
 **Rollback**: auth routes additive; PG adoption via `DATABASE_URL` (SQLite path remains for quick local dev until compose lands).
 **Done when**: brief Phase-4 acceptance criteria pass; baseline migration is the preserved start of future history; anonymous runs older than the retention window are pruned automatically.
 
-## Phase 7 — Deployment readiness (05 §4–5, Q6)
+## Phase 7 — Deployment readiness (05 §4–5, Q6) ✅ COMPLETE
+
+Delivered 2026-07-18 (tag `phase-7-deployment`): API Dockerfile (repo-root context, migrate-then-serve entrypoint with DB wait), web Dockerfile (build + nginx SPA fallback) plus `dist/_redirects` for static hosts, root `docker-compose.yml` with PostgreSQL 16 and root `.env.example`, structured key=value API logging via `AIRSPACESIM_API_LOG_LEVEL`, loud production guard for unset `VITE_API_BASE_URL`, and `docs/developer/DEPLOYMENT.md`. Verified live on the compose stack: smoke script green (health/airspaces/runs/web HTML), registration + session cookie against containerized PostgreSQL, curriculum served from the image, a practice run simulating live in the container, deep-route refresh returning HTTP 200, structured logs flowing. The site disclaimer footer ships on all pages.
+
+## Phase 7 — original scope (for reference)
 
 **Goal**: deployable per the decided architecture — **static-hosted React frontend, PaaS-hosted FastAPI backend, managed PostgreSQL** — plus **Dockerfiles and local docker-compose** for portable development. Provider-specific configuration kept minimal and documented for PaaS portability.
 **Files**: `Dockerfile` (api), `Dockerfile`/static-build docs (web), `docker-compose.yml` (api + web + postgres for local dev), structured logging config, `.env.example` completion, SPA-fallback config for the static host, CI production-build checks, `docs/developer/DEPLOYMENT.md`, site disclaimer footer.

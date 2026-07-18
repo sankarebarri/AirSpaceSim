@@ -18,6 +18,7 @@ from .api.v1.routes import (
 from .config import get_settings
 from .db.session import get_session_factory, init_db
 from .limits import SlidingWindowRateLimiter
+from .logging_config import configure_logging
 from .middleware import MaxBodySizeMiddleware
 from .services.retention import RetentionSweeper
 from .sessions import SessionRegistry
@@ -28,6 +29,7 @@ def create_app() -> FastAPI:
     """Build and configure the FastAPI application."""
 
     settings = get_settings()
+    configure_logging(settings.log_level)
     if settings.environment == "production":
         insecure_origins = [
             origin
