@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "2.0"
+  },
+  "version": "1.0.0",
+  "id": "tr_reciprocal_track",
+  "title": "Reciprocal-Track Traffic",
+  "title_key": "lessons.tr_reciprocal_track.title",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 3,
+  "concept": "traffic_relationships",
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "recognise reciprocal-track traffic",
+    "observe closure"
+  ],
+  "lesson_steps": [
+    {
+      "type": "observe",
+      "id": "observe",
+      "text_key": "lessons.tr_reciprocal_track.steps.observe.text",
+      "sim": "running",
+      "scenario_template": "tr_reciprocal_track.v1.json",
+      "scenario_id": "tr_reciprocal_track"
+    },
+    {
+      "type": "observe",
+      "id": "closure",
+      "text_key": "lessons.tr_reciprocal_track.steps.closure.text",
+      "sim": "running",
+      "highlight": "track_vector"
+    },
+    {
+      "type": "observe",
+      "id": "relationship",
+      "text_key": "lessons.tr_reciprocal_track.steps.relationship.text",
+      "sim": "running"
+    },
+    {
+      "type": "classify",
+      "id": "classify",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_reciprocal_track.steps.classify.explanation",
+      "sim": "running"
+    },
+    {
+      "type": "complete",
+      "id": "complete",
+      "title_key": "lessons.tr_reciprocal_track.complete.title",
+      "text_key": "lessons.tr_reciprocal_track.complete.text",
+      "next_lesson_id": "tr_crossing_track"
+    }
+  ]
+}

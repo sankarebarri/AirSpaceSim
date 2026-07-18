@@ -1,0 +1,50 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Crossing-Track Traffic",
+    "description": "Two aircraft approach on intersecting routes X1 and X2 at different levels; the lesson teaches classification only.",
+    "learn": {
+      "visible_route_ids": [
+        "X1",
+        "X2",
+        "A2"
+      ],
+      "labels": {
+        "NVR632": "left",
+        "SKL741": "right"
+      }
+    },
+    "traffic_relationship": {
+      "type": "crossing_track",
+      "aircraft": [
+        "NVR632",
+        "SKL741"
+      ]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "aircraft": [
+    {
+      "id": "NVR632",
+      "callsign": "NVR632",
+      "aircraft_type": "A320",
+      "route_id": "X1",
+      "speed_kt": 440,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    },
+    {
+      "id": "SKL741",
+      "callsign": "SKL741",
+      "aircraft_type": "B738",
+      "route_id": "X2",
+      "speed_kt": 430,
+      "flight_level": 350,
+      "appear_after_seconds": 0
+    }
+  ]
+}

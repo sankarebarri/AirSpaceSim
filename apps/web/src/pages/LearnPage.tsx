@@ -1,32 +1,53 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
+import { fetchCurriculum, type CurriculumConcept } from "../lib/content";
+import { LanguageToggle, useI18n } from "../lib/i18n";
 import { getContinueLearningEntry, type LearnProgressEntry } from "../lib/learnProgress";
 import "./LearnPage.css";
 
-interface LearnConcept {
-  key: string;
-  title: string;
-  description: string;
-  href: string;
+function ConceptCard({ concept }: { concept: CurriculumConcept }) {
+  const { t } = useI18n();
+  if (concept.status !== "available") {
+    return (
+      <div className="learn-concept-card learn-concept-planned" aria-disabled="true">
+        <div className="learn-concept-header">
+          <span className="learn-concept-title">{t(concept.title_key)}</span>
+          <span className="learn-status-chip">{t("learn.status.planned")}</span>
+        </div>
+        <p className="learn-concept-desc">{t(concept.description_key)}</p>
+      </div>
+    );
+  }
+  return (
+    <Link to={`/learn/${concept.id}`} className="learn-concept-card">
+      <div className="learn-concept-header">
+        <span className="learn-concept-title">{t(concept.title_key)}</span>
+        {concept.lessons ? (
+          <span className="learn-status-chip learn-status-available">
+            {t("learn.lessonCount", { count: concept.lessons.length })}
+          </span>
+        ) : null}
+      </div>
+      <p className="learn-concept-desc">{t(concept.description_key)}</p>
+    </Link>
+  );
 }
 
-const concepts: LearnConcept[] = [
-  {
-    key: "crossing_traffic",
-    title: "Crossing Traffic",
-    description:
-      "Understand how two aircraft on converging tracks can develop a conflict and learn one way to resolve it.",
-    href: "/lessons/crossing-traffic",
-  },
-];
-
 export function LearnPage() {
+  const { t } = useI18n();
   const [continueEntry, setContinueEntry] = useState<LearnProgressEntry | null>(null);
+  const curriculumQuery = useQuery({
+    queryKey: ["curriculum"],
+    queryFn: fetchCurriculum,
+  });
 
   useEffect(() => {
     setContinueEntry(getContinueLearningEntry());
   }, []);
+
+  const families = curriculumQuery.data?.families ?? [];
 
   return (
     <div className="learn-page">
@@ -34,41 +55,60 @@ export function LearnPage() {
         <Link to="/" className="learn-brand">
           AirSpaceSim
         </Link>
-        <button type="button" className="learn-signin">
-          Sign in
-        </button>
+        <div className="learn-nav-actions">
+          <LanguageToggle />
+          <button type="button" className="learn-signin">
+            {t("nav.signIn")}
+          </button>
+        </div>
       </nav>
 
       <main className="learn-main">
         <div className="learn-heading">
-          <h1>Learn</h1>
-          <p>Understand traffic situations through guided simulation.</p>
+          <h1>{t("learn.title")}</h1>
+          <p>{t("learn.subtitle")}</p>
         </div>
 
         {continueEntry ? (
           <section className="learn-continue">
-            <div className="learn-continue-label">Continue learning</div>
+            <div className="learn-continue-label">{t("learn.continueLearning")}</div>
             <div className="learn-continue-card">
               <div>
                 <div className="learn-continue-title">{continueEntry.title}</div>
                 <div className="learn-continue-stage">{continueEntry.stageLabel}</div>
               </div>
               <Link to="/lessons/crossing-traffic/learn" className="learn-continue-btn">
-                Continue
+                {t("home.continue")}
               </Link>
             </div>
           </section>
         ) : null}
 
+        {families.map((family) => (
+          <section className="learn-concepts" key={family.id}>
+            <div className="learn-concepts-label">{t(family.title_key)}</div>
+            <p className="learn-family-desc">{t(family.description_key)}</p>
+            <div className="learn-concepts-grid">
+              {family.concepts.map((concept) => (
+                <ConceptCard concept={concept} key={concept.id} />
+              ))}
+            </div>
+          </section>
+        ))}
+
         <section className="learn-concepts">
-          <div className="learn-concepts-label">Available learning concepts</div>
+          <div className="learn-concepts-label">{t("learn.otherConcepts")}</div>
           <div className="learn-concepts-grid">
-            {concepts.map((concept) => (
-              <Link to={concept.href} className="learn-concept-card" key={concept.key}>
-                <span className="learn-concept-title">{concept.title}</span>
-                <p className="learn-concept-desc">{concept.description}</p>
-              </Link>
-            ))}
+            <Link to="/lessons/crossing-traffic" className="learn-concept-card">
+              <div className="learn-concept-header">
+                <span className="learn-concept-title">
+                  {t("curriculum.crossing_traffic.title")}
+                </span>
+              </div>
+              <p className="learn-concept-desc">
+                {t("curriculum.crossing_traffic.description")}
+              </p>
+            </Link>
           </div>
         </section>
       </main>

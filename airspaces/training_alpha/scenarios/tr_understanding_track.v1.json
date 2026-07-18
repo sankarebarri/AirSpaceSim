@@ -1,0 +1,31 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Understanding Track",
+    "description": "A single aircraft follows route A1 so the learner can observe route, track, and heading.",
+    "learn": {
+      "visible_route_ids": [
+        "A1"
+      ],
+      "labels": {
+        "NVR101": "right"
+      }
+    }
+  },
+  "airspace_id": "training_alpha",
+  "aircraft": [
+    {
+      "id": "NVR101",
+      "callsign": "NVR101",
+      "aircraft_type": "A320",
+      "route_id": "A1",
+      "speed_kt": 420,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    }
+  ]
+}

@@ -28,8 +28,8 @@ def test_validate_airspace_package_accepts_existing_packages():
     assert nerava_result["errors"] == []
     assert nerava_result["scenario_count"] == 2
     assert training_result["errors"] == []
-    assert training_result["scenario_count"] == 4
-    assert training_result["lesson_count"] == 7
+    assert training_result["scenario_count"] == 10
+    assert training_result["lesson_count"] == 12
     assert training_result["package_name"] == "Training Alpha"
 
 

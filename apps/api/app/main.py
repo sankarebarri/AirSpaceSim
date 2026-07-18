@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.v1.routes import airspaces, commands, health, runs, scenarios
+from .api.v1.routes import airspaces, commands, content, health, runs, scenarios
 from .config import get_settings
 from .db.session import init_db
 from .limits import SlidingWindowRateLimiter
@@ -63,6 +63,7 @@ def create_app() -> FastAPI:
     app.state.run_creation_rate_limiter = run_creation_rate_limiter
 
     app.include_router(health.router)
+    app.include_router(content.router, prefix=settings.api_v1_prefix)
     app.include_router(airspaces.router, prefix=settings.api_v1_prefix)
     app.include_router(scenarios.router, prefix=settings.api_v1_prefix)
     app.include_router(runs.router, prefix=settings.api_v1_prefix)

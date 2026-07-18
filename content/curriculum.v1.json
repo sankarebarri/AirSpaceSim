@@ -1,0 +1,75 @@
+{
+  "schema": {
+    "name": "airspacesim.curriculum",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "source": "airspacesim.content",
+    "generated_utc": "2026-07-18T00:00:00Z"
+  },
+  "families": [
+    {
+      "id": "separation_fundamentals",
+      "title_key": "curriculum.separation_fundamentals.title",
+      "description_key": "curriculum.separation_fundamentals.description",
+      "service": "enroute",
+      "concepts": [
+        {
+          "id": "traffic_relationships",
+          "status": "available",
+          "title_key": "curriculum.traffic_relationships.title",
+          "description_key": "curriculum.traffic_relationships.description",
+          "overview_key": "curriculum.traffic_relationships.overview",
+          "airspace_id": "training_alpha",
+          "lessons": [
+            {
+              "lesson_id": "tr_understanding_track",
+              "title_key": "lessons.tr_understanding_track.title"
+            },
+            {
+              "lesson_id": "tr_same_track",
+              "title_key": "lessons.tr_same_track.title"
+            },
+            {
+              "lesson_id": "tr_reciprocal_track",
+              "title_key": "lessons.tr_reciprocal_track.title"
+            },
+            {
+              "lesson_id": "tr_crossing_track",
+              "title_key": "lessons.tr_crossing_track.title"
+            },
+            {
+              "lesson_id": "tr_identify_relationship",
+              "title_key": "lessons.tr_identify_relationship.title"
+            }
+          ],
+          "related_next": {
+            "title_key": "curriculum.crossing_traffic.title",
+            "note_key": "curriculum.traffic_relationships.next_note",
+            "path": "/lessons/crossing-traffic"
+          }
+        },
+        {
+          "id": "vertical_separation",
+          "status": "planned",
+          "title_key": "curriculum.vertical_separation.title",
+          "description_key": "curriculum.vertical_separation.description"
+        },
+        {
+          "id": "horizontal_separation",
+          "status": "planned",
+          "title_key": "curriculum.horizontal_separation.title",
+          "description_key": "curriculum.horizontal_separation.description",
+          "planned_outline_keys": [
+            "curriculum.horizontal_separation.outline.lateral",
+            "curriculum.horizontal_separation.outline.longitudinal",
+            "curriculum.horizontal_separation.outline.longitudinal_same",
+            "curriculum.horizontal_separation.outline.longitudinal_reciprocal",
+            "curriculum.horizontal_separation.outline.longitudinal_crossing"
+          ]
+        }
+      ]
+    }
+  ]
+}

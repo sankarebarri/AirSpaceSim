@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
+import { LanguageToggle, useI18n } from "../lib/i18n";
+
 interface AppFrameProps {
   children: ReactNode;
   pageClassName?: string;
 }
 
 export function AppFrame({ children, pageClassName }: AppFrameProps) {
+  const { t } = useI18n();
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -25,7 +28,7 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
               isActive ? "topnav-link topnav-link-active" : "topnav-link"
             }
           >
-            Home
+            {t("nav.home")}
           </NavLink>
           <NavLink
             to="/runs"
@@ -33,7 +36,7 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
               isActive ? "topnav-link topnav-link-active" : "topnav-link"
             }
           >
-            Simulation
+            {t("nav.simulation")}
           </NavLink>
           <NavLink
             to="/lessons"
@@ -41,7 +44,7 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
               isActive ? "topnav-link topnav-link-active" : "topnav-link"
             }
           >
-            Lessons
+            {t("nav.lessons")}
           </NavLink>
           <NavLink
             to="/airspaces"
@@ -49,7 +52,7 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
               isActive ? "topnav-link topnav-link-active" : "topnav-link"
             }
           >
-            Airspaces
+            {t("nav.airspaces")}
           </NavLink>
           <NavLink
             to="/scenarios"
@@ -57,9 +60,10 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
               isActive ? "topnav-link topnav-link-active" : "topnav-link"
             }
           >
-            Scenarios
+            {t("nav.scenarios")}
           </NavLink>
         </nav>
+        <LanguageToggle className="topbar-lang" />
       </header>
 
       <main className={pageClassName ? `page-shell ${pageClassName}` : "page-shell"}>
@@ -67,10 +71,7 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
       </main>
 
       <footer className="site-footer">
-        <span>
-          Training and visualization only — not certified for real ATC,
-          aircraft operations, or navigation.
-        </span>
+        <span>{t("footer.disclaimer")}</span>
         <a
           href="https://github.com/sankarebarri/AirSpaceSim"
           target="_blank"

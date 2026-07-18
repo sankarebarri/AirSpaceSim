@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "2.0"
+  },
+  "version": "1.0.0",
+  "id": "tr_same_track",
+  "title": "Same-Track Traffic",
+  "title_key": "lessons.tr_same_track.title",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 4,
+  "concept": "traffic_relationships",
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "recognise same-track traffic",
+    "identify leader and follower",
+    "understand that spacing changes do not change the classification"
+  ],
+  "lesson_steps": [
+    {
+      "type": "observe",
+      "id": "observe",
+      "text_key": "lessons.tr_same_track.steps.observe.text",
+      "sim": "running",
+      "scenario_template": "tr_same_track.v1.json",
+      "scenario_id": "tr_same_track"
+    },
+    {
+      "type": "observe",
+      "id": "direction",
+      "text_key": "lessons.tr_same_track.steps.direction.text",
+      "sim": "running",
+      "highlight": "track_vector"
+    },
+    {
+      "type": "observe",
+      "id": "leader",
+      "text_key": "lessons.tr_same_track.steps.leader.text",
+      "sim": "running"
+    },
+    {
+      "type": "observe",
+      "id": "spacing",
+      "text_key": "lessons.tr_same_track.steps.spacing.text",
+      "sim": "running"
+    },
+    {
+      "type": "classify",
+      "id": "classify",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_same_track.steps.classify.explanation",
+      "sim": "running"
+    },
+    {
+      "type": "complete",
+      "id": "complete",
+      "title_key": "lessons.tr_same_track.complete.title",
+      "text_key": "lessons.tr_same_track.complete.text",
+      "next_lesson_id": "tr_reciprocal_track"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "2.0"
+  },
+  "version": "1.0.0",
+  "id": "tr_understanding_track",
+  "title": "Understanding Track",
+  "title_key": "lessons.tr_understanding_track.title",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 4,
+  "concept": "traffic_relationships",
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "explain track",
+    "distinguish route and track",
+    "distinguish heading"
+  ],
+  "lesson_steps": [
+    {
+      "type": "observe",
+      "id": "observe",
+      "text_key": "lessons.tr_understanding_track.steps.observe.text",
+      "sim": "running",
+      "scenario_template": "tr_understanding_track.v1.json",
+      "scenario_id": "tr_understanding_track"
+    },
+    {
+      "type": "observe",
+      "id": "track",
+      "text_key": "lessons.tr_understanding_track.steps.track.text",
+      "sim": "running",
+      "highlight": "track_vector"
+    },
+    {
+      "type": "observe",
+      "id": "route_vs_track",
+      "text_key": "lessons.tr_understanding_track.steps.route_vs_track.text",
+      "sim": "running",
+      "highlight": "route"
+    },
+    {
+      "type": "observe",
+      "id": "heading",
+      "text_key": "lessons.tr_understanding_track.steps.heading.text",
+      "sim": "running"
+    },
+    {
+      "type": "classify",
+      "id": "check",
+      "question_key": "lessons.tr_understanding_track.steps.check.question",
+      "options": [
+        "route_line",
+        "track_vector",
+        "aircraft_label"
+      ],
+      "explanation_key": "lessons.tr_understanding_track.steps.check.explanation",
+      "sim": "paused",
+      "correct": "track_vector"
+    },
+    {
+      "type": "complete",
+      "id": "complete",
+      "title_key": "lessons.tr_understanding_track.complete.title",
+      "text_key": "lessons.tr_understanding_track.complete.text",
+      "next_lesson_id": "tr_same_track"
+    }
+  ]
+}

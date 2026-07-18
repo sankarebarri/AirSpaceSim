@@ -28,8 +28,8 @@ import {
   submitRunCommand,
 } from "../lib/api";
 import { describeError, formatLabel, formatTimestamp } from "../lib/format";
-import { parsePracticeConfig, usePracticeOutcome } from "../lib/practiceOutcome";
-import { parseSimulateConfig, useSimulateSummary } from "../lib/simulateSummary";
+import { parsePracticeConfig, practiceOutcomeFromRunState } from "../lib/practiceOutcome";
+import { parseSimulateConfig, simulateSummaryFromRunState } from "../lib/simulateSummary";
 import { filterOverlayByRouteIds, parseScenarioMapOverlay } from "../lib/scenario-map";
 import type {
   RunAircraftStateResponse,
@@ -684,19 +684,10 @@ export function RunDetailPage() {
   const activeAircraftList = filteredAircraft.filter((item) => item.status !== "finished");
   const finishedAircraftList = filteredAircraft.filter((item) => item.status === "finished");
 
-  const practiceOutcome = usePracticeOutcome({
-    config: practiceConfig,
-    aircraft,
-    runStatus: run?.status,
-    commandCount: totalCommandCount,
-  });
-  const simulateSummary = useSimulateSummary({
-    config: simulateConfig,
-    aircraft,
-    runStatus: run?.status,
-    runStartedAt: run?.started_at,
-    commandCount: totalCommandCount,
-  });
+  // Debrief data is server-authoritative: the engine monitor and the
+  // API practice tracker compute and persist it with the run.
+  const practiceOutcome = practiceOutcomeFromRunState(state);
+  const simulateSummary = simulateSummaryFromRunState(state, run);
 
   useEffect(() => {
     if (filteredAircraft.length === 0) {

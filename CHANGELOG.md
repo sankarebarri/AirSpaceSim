@@ -26,6 +26,17 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
 - Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
 
+### Added (Traffic Relationships curriculum, generic runners, EN/FR i18n)
+- Separation Fundamentals curriculum (`content/curriculum.v1.json`) with the five-lesson Traffic Relationships journey (Understanding Track, Same-Track, Reciprocal-Track, Crossing-Track, Identify the Relationship) available, and Vertical/Horizontal Separation shown as quiet planned placeholders with outline metadata.
+- Six deterministic Traffic Relationships scenarios in `training_alpha` (2 aircraft, ≤3 visible routes, scenario-configurable label placement, `traffic_relationship` classification metadata in scenario data per the content spec).
+- Content API: `GET /api/v1/content/curriculum` and `GET /api/v1/content/lessons/{airspace_id}/{lesson_id}` — lesson steps are data (translation keys + scenario references), so adding a lesson requires JSON + locale entries only.
+- Generic lesson runner (`LessonRunnerPage`) with observation, classification (correct answer read from scenario metadata), and completion steps driving real engine runs; curriculum-driven Learn page and generic `ConceptPage` with guest-local progress; no prediction metrics anywhere in foundational lessons (asserted by test).
+- English/French internationalisation with central keys (`src/locales/en.json`, `fr.json`), a dependency-free provider, and an EN|FR switcher; homepage, navigation, Learn catalogue, concept pages, and all lesson content translated. French drafts pending owner terminology review (decision Q9). Operational simulation surfaces (run workspace, commands) remain English by design.
+- i18n coverage tests: every key referenced by curriculum/lesson content must exist in both catalogues, and the catalogues must stay key-identical.
+
+### Changed (server-authoritative debriefs)
+- The run workspace debrief now consumes the server-computed run summary and engine separation monitoring: `practiceOutcome.ts` and `simulateSummary.ts` no longer perform client-side separation math (the Phase 2 parity cutover). Practice/Simulate outcomes shown in the UI are exactly what is persisted with the run.
+
 ### Added (content versioning and shared validation)
 - Semantic `version` fields on airspace package manifests, environment definitions (`metadata.version`), and every scenario template; enforced by `scripts/validate_airspace_package.py`.
 - Shared validation module `airspacesim.io.templates`: airspace geometry, aircraft plans (unique ids/callsigns, route existence, performance-based speed/level ranges, entry times), template metadata (semver, supported `active_commands` against `KNOWN_COMMAND_TYPES`), with plain-English error messages. The seeding script and package validator now delegate to it.

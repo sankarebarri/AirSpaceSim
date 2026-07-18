@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "2.0"
+  },
+  "version": "1.0.0",
+  "id": "tr_crossing_track",
+  "title": "Crossing-Track Traffic",
+  "title_key": "lessons.tr_crossing_track.title",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 3,
+  "concept": "traffic_relationships",
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "recognise crossing-track traffic",
+    "identify the common crossing point"
+  ],
+  "lesson_steps": [
+    {
+      "type": "observe",
+      "id": "observe",
+      "text_key": "lessons.tr_crossing_track.steps.observe.text",
+      "sim": "running",
+      "scenario_template": "tr_crossing_track.v1.json",
+      "scenario_id": "tr_crossing_track"
+    },
+    {
+      "type": "observe",
+      "id": "intersection",
+      "text_key": "lessons.tr_crossing_track.steps.intersection.text",
+      "sim": "running",
+      "highlight": "crossing_point"
+    },
+    {
+      "type": "observe",
+      "id": "relationship",
+      "text_key": "lessons.tr_crossing_track.steps.relationship.text",
+      "sim": "running"
+    },
+    {
+      "type": "classify",
+      "id": "classify",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_crossing_track.steps.classify.explanation",
+      "sim": "running"
+    },
+    {
+      "type": "complete",
+      "id": "complete",
+      "title_key": "lessons.tr_crossing_track.complete.title",
+      "text_key": "lessons.tr_crossing_track.complete.text",
+      "next_lesson_id": "tr_identify_relationship"
+    }
+  ]
+}

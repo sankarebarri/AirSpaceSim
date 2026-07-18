@@ -1,20 +1,12 @@
-// Simulate mode has no conflict pair, no crossing point, and no pass/fail
-// evaluation — it's free traffic control. This only tracks the small set of
-// facts the end-of-run summary needs: how long the run lasted, how many
-// aircraft were in the scenario, how many real instructions were issued, and
-// how many discrete loss-of-separation events occurred between any two
-// aircraft (a generalization of the pairwise distance check already used by
-// Practice, applied across all active pairs instead of one fixed pair).
+// Simulate debrief for the run workspace.
+//
+// Since Phase 2/5 the general separation monitoring runs in the ENGINE
+// (airspacesim SeparationMonitor: one event per continuous loss) and the
+// factual summary is computed and persisted server-side. This module only
+// parses the scenario-metadata simulate config for display and adapts the
+// server summary — no client-side separation math remains here.
 
-import { useEffect, useRef, useState } from "react";
-
-import {
-  REQUIRED_HORIZONTAL_SEPARATION_NM,
-  REQUIRED_VERTICAL_SEPARATION_FT,
-  distanceNm,
-  isSeparated,
-} from "./conflict";
-import type { RunAircraftStateResponse } from "../types/api";
+import type { RunResponse, RunStateResponse } from "../types/api";
 
 export interface SimulateConfig {
   title: string;
@@ -56,99 +48,55 @@ export function parseSimulateConfig(
     requiredHorizontalNm:
       typeof record.required_horizontal_separation_nm === "number"
         ? record.required_horizontal_separation_nm
-        : REQUIRED_HORIZONTAL_SEPARATION_NM,
+        : 10,
     requiredVerticalFt:
       typeof record.required_vertical_separation_ft === "number"
         ? record.required_vertical_separation_ft
-        : REQUIRED_VERTICAL_SEPARATION_FT,
+        : 1000,
   };
 }
 
-function pairKey(firstId: string, secondId: string): string {
-  return [firstId, secondId].sort().join("|");
-}
-
 /**
- * Tracks discrete loss-of-separation events across every pair of active
- * aircraft (not just a single configured pair), and reports a final summary
- * once the run ends — naturally (all aircraft finished) or manually
- * (terminated). No per-tick history is kept, only running counters.
+ * Adapt the server-computed run summary to the Simulate debrief shape.
+ * Ready once the run has ended (stopped by the trainee or completed
+ * naturally); the loss-of-separation count comes from the engine monitor
+ * (one event per continuous violation, never per tick).
  */
-export function useSimulateSummary(params: {
-  config: SimulateConfig | null;
-  aircraft: RunAircraftStateResponse[];
-  runStatus: string | undefined;
-  runStartedAt: string | null | undefined;
-  commandCount: number;
-}): SimulateSummaryState {
-  const { config, aircraft, runStatus, runStartedAt, commandCount } = params;
-
-  const [summary, setSummary] = useState<SimulateSummaryState>(EMPTY_SUMMARY);
-  const [losCount, setLosCount] = useState(0);
-  const violatingPairs = useRef(new Set<string>());
-  const isFrozen = useRef(false);
-
-  useEffect(() => {
-    isFrozen.current = false;
-    violatingPairs.current = new Set();
-    setLosCount(0);
-    setSummary(EMPTY_SUMMARY);
-    // Reset whenever the active simulate scenario changes (new run).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config?.title]);
-
-  useEffect(() => {
-    if (!config || isFrozen.current) {
-      return;
-    }
-
-    const trackable = aircraft.filter((item) => item.status !== "finished");
-    let newLosCount = losCount;
-    for (let i = 0; i < trackable.length; i += 1) {
-      for (let j = i + 1; j < trackable.length; j += 1) {
-        const first = trackable[i];
-        const second = trackable[j];
-        const horizontalNm = distanceNm(first.position_dd, second.position_dd);
-        const verticalFt = Math.abs(first.flight_level - second.flight_level) * 100;
-        const violated = !isSeparated(
-          horizontalNm,
-          verticalFt,
-          config.requiredHorizontalNm,
-          config.requiredVerticalFt,
-        );
-        const key = pairKey(first.id, second.id);
-        if (violated && !violatingPairs.current.has(key)) {
-          violatingPairs.current.add(key);
-          newLosCount += 1;
-        } else if (!violated && violatingPairs.current.has(key)) {
-          violatingPairs.current.delete(key);
-        }
-      }
-    }
-    if (newLosCount !== losCount) {
-      setLosCount(newLosCount);
-    }
-
-    const allFinished = aircraft.length > 0 && aircraft.every((item) => item.status === "finished");
-    const manuallyStopped = runStatus === "stopped";
-    if (!allFinished && !manuallyStopped) {
-      return;
-    }
-
-    isFrozen.current = true;
-    const startedAtMs = runStartedAt ? Date.parse(runStartedAt) : NaN;
-    const durationSeconds = Number.isFinite(startedAtMs)
-      ? Math.max(Math.floor((Date.now() - startedAtMs) / 1000), 0)
+export function simulateSummaryFromRunState(
+  state: RunStateResponse | null | undefined,
+  run: RunResponse | null | undefined,
+): SimulateSummaryState {
+  const summary = (state?.summary ?? null) as Record<string, unknown> | null;
+  const runtimeStatus = state?.runtime_status;
+  const isTerminal =
+    runtimeStatus === "stopped" ||
+    runtimeStatus === "completed" ||
+    run?.status === "stopped";
+  if (!summary || !isTerminal) {
+    return EMPTY_SUMMARY;
+  }
+  const startedAtMs = run?.started_at ? Date.parse(run.started_at) : NaN;
+  const endedAtMs = run?.ended_at ? Date.parse(run.ended_at) : NaN;
+  const wallDurationSeconds =
+    Number.isFinite(startedAtMs) && Number.isFinite(endedAtMs)
+      ? Math.max(Math.floor((endedAtMs - startedAtMs) / 1000), 0)
+      : null;
+  const simulatedSeconds =
+    typeof summary.simulated_seconds === "number"
+      ? Math.floor(summary.simulated_seconds)
       : 0;
-    setSummary({
-      ready: true,
-      durationSeconds,
-      aircraftInSimulation: aircraft.length,
-      instructionsIssued: commandCount,
-      lossOfSeparationCount: newLosCount,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config, aircraft, runStatus, runStartedAt, commandCount, losCount]);
-
-  return summary;
+  return {
+    ready: true,
+    durationSeconds: wallDurationSeconds ?? simulatedSeconds,
+    aircraftInSimulation:
+      typeof summary.aircraft_total === "number" ? summary.aircraft_total : 0,
+    instructionsIssued:
+      typeof summary.instructions_issued === "number"
+        ? summary.instructions_issued
+        : 0,
+    lossOfSeparationCount:
+      typeof summary.loss_of_separation_count === "number"
+        ? summary.loss_of_separation_count
+        : 0,
+  };
 }

@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
 import { AppRoutes } from "../src/app/routes";
+import { LanguageProvider } from "../src/lib/i18n";
 import { installJsonFetchMock } from "./http";
 
 const routerFuture = {
@@ -24,11 +25,13 @@ function renderRoutes(initialEntry: string) {
   });
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[initialEntry]} future={routerFuture}>
-        <AppRoutes />
-      </MemoryRouter>
-    </QueryClientProvider>,
+    <LanguageProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[initialEntry]} future={routerFuture}>
+          <AppRoutes />
+        </MemoryRouter>
+      </QueryClientProvider>
+    </LanguageProvider>,
   );
 }
 

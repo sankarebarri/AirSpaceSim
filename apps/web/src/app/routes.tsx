@@ -6,8 +6,10 @@ import { CrossingTrafficIntroPage } from "../pages/CrossingTrafficIntroPage";
 import { CrossingTrafficLearnPage } from "../pages/CrossingTrafficLearnPage";
 import { CrossingTrafficPracticeIntroPage } from "../pages/CrossingTrafficPracticeIntroPage";
 import { CrossingTrafficPractice2IntroPage } from "../pages/CrossingTrafficPractice2IntroPage";
+import { ConceptPage } from "../pages/ConceptPage";
 import { HeadingVersusRadialLessonPage } from "../pages/HeadingVersusRadialLessonPage";
 import { LearnPage } from "../pages/LearnPage";
+import { LessonRunnerPage } from "../pages/LessonRunnerPage";
 import { RunDetailPage } from "../pages/RunDetailPage";
 import { RunsPage } from "../pages/RunsPage";
 import { ScenariosPage } from "../pages/ScenariosPage";
@@ -20,6 +22,8 @@ export function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/airspaces" element={<AirspacesPage />} />
       <Route path="/lessons" element={<LearnPage />} />
+      <Route path="/learn/:conceptId" element={<ConceptPage />} />
+      <Route path="/learn/:conceptId/:lessonId" element={<LessonRunnerPage />} />
       <Route path="/lessons/crossing-traffic" element={<CrossingTrafficIntroPage />} />
       <Route path="/lessons/crossing-traffic/learn" element={<CrossingTrafficLearnPage />} />
       <Route

@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Identify: Diverging Pair",
+    "description": "Two aircraft move outward on tracks that never meet ahead of them: no same, reciprocal, or crossing relationship.",
+    "learn": {
+      "visible_route_ids": [
+        "DV1",
+        "DV2",
+        "A2"
+      ],
+      "labels": {
+        "VLR104": "left",
+        "KTR205": "right"
+      }
+    },
+    "traffic_relationship": {
+      "type": "neither",
+      "aircraft": [
+        "VLR104",
+        "KTR205"
+      ]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "airspace": {
+    "extra_routes": [
+      {
+        "id": "DV1",
+        "name": "Diverging Northwest",
+        "waypoint_ids": [
+          "XNG_NW",
+          "ALP_NW"
+        ]
+      },
+      {
+        "id": "DV2",
+        "name": "Diverging Northeast",
+        "waypoint_ids": [
+          "XNG_NE",
+          "ALP_NE"
+        ]
+      }
+    ]
+  },
+  "aircraft": [
+    {
+      "id": "VLR104",
+      "callsign": "VLR104",
+      "aircraft_type": "A320",
+      "route_id": "DV1",
+      "speed_kt": 430,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    },
+    {
+      "id": "KTR205",
+      "callsign": "KTR205",
+      "aircraft_type": "B738",
+      "route_id": "DV2",
+      "speed_kt": 420,
+      "flight_level": 350,
+      "appear_after_seconds": 0
+    }
+  ]
+}

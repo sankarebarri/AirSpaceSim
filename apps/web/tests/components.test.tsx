@@ -3,6 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
 import { AppFrame } from "../src/components/AppFrame";
+import { LanguageProvider } from "../src/lib/i18n";
 
 const routerFuture = {
   v7_startTransition: true,
@@ -12,11 +13,13 @@ const routerFuture = {
 describe("AppFrame", () => {
   it("renders the shared hosted navigation shell", () => {
     render(
-      <MemoryRouter future={routerFuture}>
-        <AppFrame>
-          <section>Dashboard body</section>
-        </AppFrame>
-      </MemoryRouter>,
+      <LanguageProvider>
+        <MemoryRouter future={routerFuture}>
+          <AppFrame>
+            <section>Dashboard body</section>
+          </AppFrame>
+        </MemoryRouter>
+      </LanguageProvider>,
     );
 
     expect(screen.getByRole("link", { name: "AirSpaceSim" })).toBeInTheDocument();

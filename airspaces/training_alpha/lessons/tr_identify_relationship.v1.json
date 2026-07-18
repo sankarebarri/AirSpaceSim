@@ -1,0 +1,115 @@
+{
+  "schema": {
+    "name": "airspacesim.lesson",
+    "version": "2.0"
+  },
+  "version": "1.0.0",
+  "id": "tr_identify_relationship",
+  "title": "Identify the Relationship",
+  "title_key": "lessons.tr_identify_relationship.title",
+  "service_type": "enroute",
+  "training_mode": "solo_guided",
+  "level": "beginner",
+  "duration_minutes": 6,
+  "concept": "traffic_relationships",
+  "disclaimer": "Training support only. Confirm phraseology, minima, and local procedures with an instructor and current official references.",
+  "learning_objectives": [
+    "classify traffic relationships from track geometry",
+    "avoid judging relationships from proximity alone"
+  ],
+  "lesson_steps": [
+    {
+      "type": "observe",
+      "id": "intro",
+      "text_key": "lessons.tr_identify_relationship.steps.intro.text",
+      "sim": "paused"
+    },
+    {
+      "type": "classify",
+      "id": "example_1",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_identify_relationship.steps.example_1.explanation",
+      "sim": "running",
+      "scenario_template": "tr_same_track.v1.json",
+      "scenario_id": "tr_same_track"
+    },
+    {
+      "type": "classify",
+      "id": "example_2",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_identify_relationship.steps.example_2.explanation",
+      "sim": "running",
+      "scenario_template": "tr_reciprocal_track.v1.json",
+      "scenario_id": "tr_reciprocal_track"
+    },
+    {
+      "type": "classify",
+      "id": "example_3",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_identify_relationship.steps.example_3.explanation",
+      "sim": "running",
+      "scenario_template": "tr_crossing_track.v1.json",
+      "scenario_id": "tr_crossing_track"
+    },
+    {
+      "type": "classify",
+      "id": "example_4",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_identify_relationship.steps.example_4.explanation",
+      "sim": "running",
+      "scenario_template": "tr_identify_diverging.v1.json",
+      "scenario_id": "tr_identify_diverging"
+    },
+    {
+      "type": "classify",
+      "id": "example_5",
+      "question_key": "lessons.classify.question",
+      "options": [
+        "same_track",
+        "reciprocal_track",
+        "crossing_track",
+        "neither"
+      ],
+      "explanation_key": "lessons.tr_identify_relationship.steps.example_5.explanation",
+      "sim": "running",
+      "scenario_template": "tr_identify_deceptive.v1.json",
+      "scenario_id": "tr_identify_deceptive"
+    },
+    {
+      "type": "complete",
+      "id": "complete",
+      "title_key": "lessons.tr_identify_relationship.complete.title",
+      "text_key": "lessons.tr_identify_relationship.complete.text",
+      "point_keys": [
+        "lessons.tr_identify_relationship.complete.points.same",
+        "lessons.tr_identify_relationship.complete.points.reciprocal",
+        "lessons.tr_identify_relationship.complete.points.crossing",
+        "lessons.tr_identify_relationship.complete.points.unrelated"
+      ]
+    }
+  ]
+}

@@ -296,6 +296,16 @@ def create_practice_run(
                 if isinstance(template_metadata.get("simulate"), dict)
                 else {}
             ),
+            **(
+                {"learn": template_metadata["learn"]}
+                if isinstance(template_metadata.get("learn"), dict)
+                else {}
+            ),
+            **(
+                {"traffic_relationship": template_metadata["traffic_relationship"]}
+                if isinstance(template_metadata.get("traffic_relationship"), dict)
+                else {}
+            ),
         },
     )
     return create_run(

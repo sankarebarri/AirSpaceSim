@@ -2289,3 +2289,26 @@ a {
     height: 380px;
   }
 }
+
+/* Language toggle (Phase 5 i18n) */
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lang-option {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.lang-option-active {
+  background: var(--accent);
+  color: #fff;
+}

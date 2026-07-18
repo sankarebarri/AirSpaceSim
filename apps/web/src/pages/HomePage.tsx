@@ -2,37 +2,39 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { getContinueLearningEntry, type LearnProgressEntry } from "../lib/learnProgress";
+import { LanguageToggle, useI18n } from "../lib/i18n";
 import "./HomePage.css";
 
 interface PrimaryAction {
   key: string;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   href: string;
 }
 
 const primaryActions: PrimaryAction[] = [
   {
     key: "learn",
-    label: "Learn",
-    description: "Understand traffic situations through guided demonstrations and actions.",
+    labelKey: "home.learn.title",
+    descriptionKey: "home.learn.description",
     href: "/lessons",
   },
   {
     key: "practice",
-    label: "Practice",
-    description: "Work through traffic scenarios with progressively less assistance.",
+    labelKey: "home.practice.title",
+    descriptionKey: "home.practice.description",
     href: "/scenarios",
   },
   {
     key: "simulate",
-    label: "Simulate",
-    description: "Control predefined traffic freely in the simulation environment.",
+    labelKey: "home.simulate.title",
+    descriptionKey: "home.simulate.description",
     href: "/simulate",
   },
 ];
 
 export function HomePage() {
+  const { t } = useI18n();
   const [continueEntry, setContinueEntry] = useState<LearnProgressEntry | null>(null);
 
   useEffect(() => {
@@ -45,37 +47,40 @@ export function HomePage() {
         <Link to="/" className="home-brand">
           AirSpaceSim
         </Link>
-        <button type="button" className="home-signin">
-          Sign in
-        </button>
+        <div className="home-nav-actions">
+          <LanguageToggle />
+          <button type="button" className="home-signin">
+            {t("nav.signIn")}
+          </button>
+        </div>
       </nav>
 
       <main className="home-main">
         <h1 className="home-tagline">
-          Learn traffic.
+          {t("home.tagline1")}
           <br />
-          Control traffic.
+          {t("home.tagline2")}
         </h1>
 
         <div className="home-actions">
           {primaryActions.map((action) => (
             <Link to={action.href} className="home-action" key={action.key}>
-              <span className="home-action-label">{action.label}</span>
-              <p className="home-action-desc">{action.description}</p>
+              <span className="home-action-label">{t(action.labelKey)}</span>
+              <p className="home-action-desc">{t(action.descriptionKey)}</p>
             </Link>
           ))}
         </div>
 
         {continueEntry ? (
           <div className="home-continue">
-            <div className="home-continue-label">Continue training</div>
+            <div className="home-continue-label">{t("home.continueTraining")}</div>
             <div className="home-continue-card">
               <div>
                 <div className="home-continue-title">{continueEntry.title}</div>
                 <div className="home-continue-stage">{continueEntry.stageLabel}</div>
               </div>
               <Link to="/lessons/crossing-traffic/learn" className="home-continue-btn">
-                Continue
+                {t("home.continue")}
               </Link>
             </div>
           </div>
@@ -84,10 +89,7 @@ export function HomePage() {
 
       <footer className="home-footer">
         <span className="home-footer-brand">AirSpaceSim</span>
-        <p className="home-footer-legal">
-          Training and visualisation software only. Not for real aircraft operations or live
-          traffic control. All airspaces and scenarios are fictional.
-        </p>
+        <p className="home-footer-legal">{t("footer.disclaimer")}</p>
       </footer>
     </div>
   );

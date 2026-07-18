@@ -61,6 +61,60 @@
       "service_type": "enroute",
       "training_mode": "solo_guided",
       "difficulty": "beginner"
+    },
+    {
+      "id": "tr_understanding_track",
+      "title": "Understanding Track",
+      "path": "scenarios/tr_understanding_track.v1.json",
+      "description": "A single aircraft follows route A1 so the learner can observe route, track, and heading.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "tr_same_track",
+      "title": "Same-Track Traffic",
+      "path": "scenarios/tr_same_track.v1.json",
+      "description": "Two aircraft follow route A1 in the same direction; the follower is faster, so spacing visibly changes while the relationship stays same track.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "tr_reciprocal_track",
+      "title": "Reciprocal-Track Traffic",
+      "path": "scenarios/tr_reciprocal_track.v1.json",
+      "description": "Two aircraft use the same path in opposite directions at different levels, making the closure visually obvious.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "tr_crossing_track",
+      "title": "Crossing-Track Traffic",
+      "path": "scenarios/tr_crossing_track.v1.json",
+      "description": "Two aircraft approach on intersecting routes X1 and X2 at different levels; the lesson teaches classification only.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "tr_identify_diverging",
+      "title": "Identify: Diverging Pair",
+      "path": "scenarios/tr_identify_diverging.v1.json",
+      "description": "Two aircraft move outward on tracks that never meet ahead of them: no same, reciprocal, or crossing relationship.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "tr_identify_deceptive",
+      "title": "Identify: Close But Unrelated",
+      "path": "scenarios/tr_identify_deceptive.v1.json",
+      "description": "Two aircraft pass close to the same fix, but their tracks lead away from each other: closeness alone does not create a relationship.",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "difficulty": "beginner"
     }
   ],
   "lessons": [
@@ -133,6 +187,56 @@
       "training_mode": "solo_guided",
       "level": "beginner",
       "duration_minutes": 5
+    },
+    {
+      "id": "tr_understanding_track",
+      "title": "Understanding Track",
+      "path": "lessons/tr_understanding_track.v1.json",
+      "scenario_id": "tr_understanding_track",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 4
+    },
+    {
+      "id": "tr_same_track",
+      "title": "Same-Track Traffic",
+      "path": "lessons/tr_same_track.v1.json",
+      "scenario_id": "tr_same_track",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 4
+    },
+    {
+      "id": "tr_reciprocal_track",
+      "title": "Reciprocal-Track Traffic",
+      "path": "lessons/tr_reciprocal_track.v1.json",
+      "scenario_id": "tr_reciprocal_track",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 3
+    },
+    {
+      "id": "tr_crossing_track",
+      "title": "Crossing-Track Traffic",
+      "path": "lessons/tr_crossing_track.v1.json",
+      "scenario_id": "tr_crossing_track",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 3
+    },
+    {
+      "id": "tr_identify_relationship",
+      "title": "Identify the Relationship",
+      "path": "lessons/tr_identify_relationship.v1.json",
+      "scenario_id": "tr_same_track",
+      "service_type": "enroute",
+      "training_mode": "solo_guided",
+      "level": "beginner",
+      "duration_minutes": 6
     }
   ]
 }

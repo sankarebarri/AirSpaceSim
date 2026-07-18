@@ -1,0 +1,49 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Same-Track Traffic",
+    "description": "Two aircraft follow route A1 in the same direction; the follower is faster, so spacing visibly changes while the relationship stays same track.",
+    "learn": {
+      "visible_route_ids": [
+        "A1",
+        "A2"
+      ],
+      "labels": {
+        "NVR212": "right",
+        "SKL308": "left"
+      }
+    },
+    "traffic_relationship": {
+      "type": "same_track",
+      "aircraft": [
+        "NVR212",
+        "SKL308"
+      ]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "aircraft": [
+    {
+      "id": "NVR212",
+      "callsign": "NVR212",
+      "aircraft_type": "B738",
+      "route_id": "A1",
+      "speed_kt": 410,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    },
+    {
+      "id": "SKL308",
+      "callsign": "SKL308",
+      "aircraft_type": "A320",
+      "route_id": "A1",
+      "speed_kt": 465,
+      "flight_level": 350,
+      "appear_after_seconds": 110
+    }
+  ]
+}

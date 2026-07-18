@@ -195,3 +195,44 @@
     margin-bottom: 36px;
   }
 }
+
+/* Curriculum additions (Phase 5) */
+.learn-page .learn-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.learn-page .learn-family-desc {
+  margin: 0 0 var(--space-md);
+  color: var(--muted);
+}
+
+.learn-page .learn-concept-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.learn-page .learn-status-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.learn-page .learn-status-available {
+  color: var(--accent-deep);
+  border-color: rgba(14, 131, 216, 0.35);
+}
+
+.learn-page .learn-concept-planned {
+  opacity: 0.72;
+  cursor: default;
+}

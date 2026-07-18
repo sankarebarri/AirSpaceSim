@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Identify: Close But Unrelated",
+    "description": "Two aircraft pass close to the same fix, but their tracks lead away from each other: closeness alone does not create a relationship.",
+    "learn": {
+      "visible_route_ids": [
+        "DC1",
+        "DC2",
+        "PX1"
+      ],
+      "labels": {
+        "TIR316": "right",
+        "RIK427": "left"
+      }
+    },
+    "traffic_relationship": {
+      "type": "neither",
+      "aircraft": [
+        "TIR316",
+        "RIK427"
+      ]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "airspace": {
+    "extra_routes": [
+      {
+        "id": "DC1",
+        "name": "Bravo East Departure",
+        "waypoint_ids": [
+          "BRV_FIX",
+          "BRV_E"
+        ]
+      },
+      {
+        "id": "DC2",
+        "name": "Bravo South Departure",
+        "waypoint_ids": [
+          "BRV_FIX",
+          "BRV_S"
+        ]
+      }
+    ]
+  },
+  "aircraft": [
+    {
+      "id": "TIR316",
+      "callsign": "TIR316",
+      "aircraft_type": "A320",
+      "route_id": "DC1",
+      "speed_kt": 430,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    },
+    {
+      "id": "RIK427",
+      "callsign": "RIK427",
+      "aircraft_type": "B738",
+      "route_id": "DC2",
+      "speed_kt": 420,
+      "flight_level": 350,
+      "appear_after_seconds": 60
+    }
+  ]
+}

@@ -38,7 +38,7 @@ export interface MeasurementPoint {
   type: "aircraft" | "fix";
 }
 
-const DEFAULT_CENTER: LatLngTuple = [16.25, -0.03];
+const DEFAULT_CENTER: LatLngTuple = [16.25, -40.0];
 const MIN_DEFAULT_VIEW_NM = 56;
 const VIEW_PADDING_FACTOR = 1.03;
 const AIRCRAFT_MARKER_RADIUS = 7;

@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "name": "airspacesim.demo_template",
+    "version": "1.0"
+  },
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Reciprocal-Track Traffic",
+    "description": "Two aircraft use the same path in opposite directions at different levels, making the closure visually obvious.",
+    "learn": {
+      "visible_route_ids": [
+        "A1",
+        "A1R",
+        "A2"
+      ],
+      "labels": {
+        "NVR418": "left",
+        "SKL525": "right"
+      }
+    },
+    "traffic_relationship": {
+      "type": "reciprocal_track",
+      "aircraft": [
+        "NVR418",
+        "SKL525"
+      ]
+    }
+  },
+  "airspace_id": "training_alpha",
+  "airspace": {
+    "extra_routes": [
+      {
+        "id": "A1R",
+        "name": "Alpha One Reverse",
+        "waypoint_ids": [
+          "ALP_EAST",
+          "ALP_VOR",
+          "ALP_WEST"
+        ]
+      }
+    ]
+  },
+  "aircraft": [
+    {
+      "id": "NVR418",
+      "callsign": "NVR418",
+      "aircraft_type": "A320",
+      "route_id": "A1",
+      "speed_kt": 430,
+      "flight_level": 330,
+      "appear_after_seconds": 0
+    },
+    {
+      "id": "SKL525",
+      "callsign": "SKL525",
+      "aircraft_type": "B738",
+      "route_id": "A1R",
+      "speed_kt": 440,
+      "flight_level": 350,
+      "appear_after_seconds": 0
+    }
+  ]
+}

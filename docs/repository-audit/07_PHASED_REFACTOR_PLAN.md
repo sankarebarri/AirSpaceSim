@@ -52,7 +52,9 @@ Delivered 2026-07-17 (tag `phase-4-versioned-validation`): semver `version` on p
 **Rollback**: validation initially warn-only behind a setting, then enforced.
 **Done when**: every run record stores scenario + environment version identifiers.
 
-## Phase 5 — Data-driven runners + Traffic Relationships + i18n (Q9 + content spec)
+## Phase 5 — Data-driven runners + Traffic Relationships + i18n (Q9 + content spec) ✅ CORE COMPLETE
+
+Delivered 2026-07-18 (tag `phase-5-traffic-relationships`): curriculum + five TR lessons as data (`content/curriculum.v1.json`, `airspaces/training_alpha/lessons/tr_*.v1.json`, six new scenarios with classification metadata); content API endpoints; generic `LessonRunnerPage`/`ConceptPage` + curriculum-driven Learn page (planned placeholders for Vertical/Horizontal Separation); EN/FR i18n with central keys, coverage tests, and FR drafts awaiting owner review; server-summary cutover done (client separation math removed from practiceOutcome/simulateSummary). **Remaining in this phase's scope**: converting the bespoke CrossingTraffic Learn/Practice pages onto the runners (needs a CommandStep runner step for the management lesson) and translating the Practice intro pages — per the plan's route-level cutover strategy, those pages stay live and English until converted.
 
 **Prerequisite reading**: `docs/content/traffic_relationships_spec.md` (authoritative content specification, moved from root `lessons.md`) alongside brief docs 04/07. Where it gives more detailed Traffic Relationships instructions, follow it unless it conflicts with `CLAUDE.md` or the non-negotiables.
 **Goal**: generic `ConceptPage`/`LearnRunner`/`PracticeRunner`/`SimulationRunner` + step components; lesson JSON served by the API and rendered, not duplicated in TSX; the five Traffic Relationships lessons; Vertical/Horizontal Separation visible as planned; EN/FR via central keys, operational commands English-only. **French translations drafted by the implementer** for owner review of aviation/lesson terminology (Q9).

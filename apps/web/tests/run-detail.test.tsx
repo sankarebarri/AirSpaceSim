@@ -1,6 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+
+import { LanguageProvider } from "../src/lib/i18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RunDetailPage } from "../src/pages/RunDetailPage";
@@ -216,13 +218,15 @@ function renderRunWorkspace() {
   });
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={["/runs/run-1"]} future={routerFuture}>
-        <Routes>
-          <Route path="/runs/:runId" element={<RunDetailPage />} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>,
+    <LanguageProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/runs/run-1"]} future={routerFuture}>
+          <Routes>
+            <Route path="/runs/:runId" element={<RunDetailPage />} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    </LanguageProvider>,
   );
 }
 
