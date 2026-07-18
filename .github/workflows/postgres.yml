@@ -1,0 +1,42 @@
+# PostgreSQL verification for the hosted API (decision Q5).
+# Separate from the intent-generated ci.yml: runs the full API suite —
+# including the Alembic baseline upgrade/downgrade — against a real
+# PostgreSQL service instead of SQLite.
+
+name: PostgreSQL
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  api-on-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: airspacesim_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e .
+          python -m pip install -e ./apps/api[dev]
+          python -m pip install psycopg2-binary
+      - name: Run API suite against PostgreSQL
+        working-directory: apps/api
+        env:
+          AIRSPACESIM_TEST_DATABASE_URL: postgresql+psycopg2://postgres:test@127.0.0.1:5432/airspacesim_test
+        run: |
+          python -m pytest -q

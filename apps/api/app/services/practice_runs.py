@@ -203,6 +203,7 @@ def create_practice_run(
     scenario_id: str | None = None,
     lesson_id: str | None = None,
     name: str | None = None,
+    user_id: str | None = None,
 ):
     """Create a scenario/run from package data for live lesson practice."""
 
@@ -261,6 +262,7 @@ def create_practice_run(
     scenario = create_scenario(
         session,
         session_id=session_id,
+        user_id=user_id,
         name=str(scenario_name),
         description=str(
             template_metadata.get("description")
@@ -311,6 +313,7 @@ def create_practice_run(
     return create_run(
         session,
         session_id=session_id,
+        user_id=user_id,
         scenario_id=scenario.id,
         name=name or f"{scenario.name} Practice Run",
     )

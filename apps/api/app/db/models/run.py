@@ -20,6 +20,12 @@ class RunRecord(Base):
         String(36), primary_key=True, default=lambda: str(uuid4())
     )
     session_id: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
+    user_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
     scenario_id: Mapped[str | None] = mapped_column(
         String(36),
         ForeignKey("scenarios.id", ondelete="SET NULL"),

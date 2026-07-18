@@ -3,7 +3,11 @@
 from fastapi import APIRouter, HTTPException, status
 
 from ....db.repositories import ScenarioRepository
-from ....dependencies import DbSessionDependency, SessionIdDependency
+from ....dependencies import (
+    DbSessionDependency,
+    OptionalUserDependency,
+    SessionIdDependency,
+)
 from ....schemas.scenarios import (
     ScenarioCreateRequest,
     ScenarioListResponse,
@@ -17,11 +21,15 @@ router = APIRouter(prefix="/scenarios", tags=["scenarios"])
 
 @router.get("", response_model=ScenarioListResponse)
 def list_scenarios(
-    db: DbSessionDependency, session_id: SessionIdDependency
+    db: DbSessionDependency,
+    session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> ScenarioListResponse:
-    """List durable scenarios from SQLite."""
+    """List scenarios for the browser session and, when signed in, the account."""
 
-    items = ScenarioRepository(db).list(session_id=session_id)
+    items = ScenarioRepository(db).list(
+        session_id=session_id, user_id=user.id if user else None
+    )
     return ScenarioListResponse(items=[ScenarioResponse.model_validate(item) for item in items])
 
 
@@ -30,12 +38,14 @@ def create_scenario_route(
     payload: ScenarioCreateRequest,
     db: DbSessionDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> ScenarioResponse:
     """Create and persist a scenario shell."""
 
     scenario = create_scenario(
         db,
         session_id=session_id,
+        user_id=user.id if user else None,
         name=payload.name,
         description=payload.description,
         airspace_payload=payload.airspace_payload,
@@ -47,11 +57,16 @@ def create_scenario_route(
 
 @router.get("/{scenario_id}", response_model=ScenarioResponse)
 def get_scenario(
-    scenario_id: str, db: DbSessionDependency, session_id: SessionIdDependency
+    scenario_id: str,
+    db: DbSessionDependency,
+    session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> ScenarioResponse:
     """Fetch a persisted scenario by id."""
 
-    scenario = ScenarioRepository(db).get(scenario_id, session_id=session_id)
+    scenario = ScenarioRepository(db).get(
+        scenario_id, session_id=session_id, user_id=user.id if user else None
+    )
     if scenario is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -31,8 +31,9 @@ def test_app_registers_expected_routes():
     assert "/api/v1/runs/{run_id}/commands" in route_paths
     assert "/api/v1/runs/{run_id}/stream" in route_paths
     assert cors_middleware is not None
-    assert cors_middleware.kwargs["allow_origins"] == ["*"]
-    assert cors_middleware.kwargs["allow_credentials"] is False
+    assert "http://127.0.0.1:5173" in cors_middleware.kwargs["allow_origins"]
+    assert "*" not in cors_middleware.kwargs["allow_origins"]
+    assert cors_middleware.kwargs["allow_credentials"] is True
     assert hasattr(app.state, "session_registry")
     assert hasattr(app.state, "broadcast_hub")
 

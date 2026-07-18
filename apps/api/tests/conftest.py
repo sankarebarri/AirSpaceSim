@@ -1,3 +1,4 @@
+import os
 from collections.abc import Iterator
 
 import pytest
@@ -19,11 +20,22 @@ def _reset_api_caches() -> None:
 
 @pytest.fixture
 def db_session(tmp_path, monkeypatch) -> Iterator[Session]:
-    db_path = tmp_path / "airspacesim-api-test.db"
-    monkeypatch.setenv("AIRSPACESIM_API_DATABASE_URL", f"sqlite:///{db_path}")
+    # Set AIRSPACESIM_TEST_DATABASE_URL (e.g. a postgresql:// URL) to run the
+    # whole suite against a real server database; defaults to per-test SQLite.
+    override_url = os.getenv("AIRSPACESIM_TEST_DATABASE_URL")
+    if override_url:
+        monkeypatch.setenv("AIRSPACESIM_API_DATABASE_URL", override_url)
+    else:
+        db_path = tmp_path / "airspacesim-api-test.db"
+        monkeypatch.setenv("AIRSPACESIM_API_DATABASE_URL", f"sqlite:///{db_path}")
     monkeypatch.setenv("AIRSPACESIM_API_AUTO_CREATE_SCHEMA", "1")
     _reset_api_caches()
 
+    if override_url:
+        from app.db.base import Base
+        from app.db import models  # noqa: F401
+
+        Base.metadata.drop_all(get_engine())
     init_db()
     session_factory = get_session_factory()
     session = session_factory()

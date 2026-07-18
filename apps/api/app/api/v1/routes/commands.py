@@ -12,6 +12,7 @@ from ....db.repositories import (
 from ....dependencies import (
     BroadcastHubDependency,
     DbSessionDependency,
+    OptionalUserDependency,
     SessionIdDependency,
     SessionRegistryDependency,
 )
@@ -87,10 +88,13 @@ def submit_command(
     session_registry: SessionRegistryDependency,
     broadcast_hub: BroadcastHubDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> RunCommandSubmissionResponse:
     """Persist an operator command against an existing run."""
 
-    run = RunRepository(db).get(run_id, session_id=session_id)
+    run = RunRepository(db).get(
+        run_id, session_id=session_id, user_id=user.id if user else None
+    )
     if run is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

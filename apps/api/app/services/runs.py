@@ -30,12 +30,15 @@ def create_run(
     session_id: str,
     scenario_id: str | None = None,
     name: str | None = None,
+    user_id: str | None = None,
 ) -> RunRecord:
     """Create a durable run shell, optionally attached to a stored scenario."""
 
     scenario: ScenarioRecord | None = None
     if scenario_id is not None:
-        scenario = ScenarioRepository(session).get(scenario_id, session_id=session_id)
+        scenario = ScenarioRepository(session).get(
+            scenario_id, session_id=session_id, user_id=user_id
+        )
         if scenario is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -44,6 +47,7 @@ def create_run(
 
     run = RunRecord(
         session_id=session_id,
+        user_id=user_id,
         scenario_id=scenario.id if scenario is not None else None,
         name=name or (f"{scenario.name} Run" if scenario is not None else None),
     )

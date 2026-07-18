@@ -12,6 +12,10 @@ describe("App", () => {
     expect(screen.getByRole("link", { name: /Learn/ })).toHaveAttribute("href", "/lessons");
     expect(screen.getByRole("link", { name: /Practice/ })).toHaveAttribute("href", "/scenarios");
     expect(screen.getByRole("link", { name: /Simulate/ })).toHaveAttribute("href", "/simulate");
-    expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
+    // Sign in is a real link to the account page now (no dead controls).
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute(
+      "href",
+      "/account",
+    );
   });
 });

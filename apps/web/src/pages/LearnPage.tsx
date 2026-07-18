@@ -57,9 +57,9 @@ export function LearnPage() {
         </Link>
         <div className="learn-nav-actions">
           <LanguageToggle />
-          <button type="button" className="learn-signin">
+          <Link to="/account" className="learn-signin">
             {t("nav.signIn")}
-          </button>
+          </Link>
         </div>
       </nav>
 

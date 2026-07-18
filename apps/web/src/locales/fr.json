@@ -111,5 +111,21 @@
   "lessons.tr_identify_relationship.complete.points.reciprocal": "le trafic sur routes opposées",
   "lessons.tr_identify_relationship.complete.points.crossing": "le trafic sur routes sécantes",
   "lessons.tr_identify_relationship.complete.points.unrelated": "le trafic sans relation",
-  "runner.continueToCrossing": "Continuer vers Trafic convergent"
+  "runner.continueToCrossing": "Continuer vers Trafic convergent",
+  "nav.account": "Compte",
+  "account.title": "Votre compte",
+  "account.signIn": "Se connecter",
+  "account.register": "Créer un compte",
+  "account.createAccount": "Créer le compte",
+  "account.email": "Adresse e-mail",
+  "account.password": "Mot de passe",
+  "account.displayName": "Nom affiché",
+  "account.displayNameOptional": "Nom affiché (facultatif)",
+  "account.language": "Langue préférée",
+  "account.signOut": "Se déconnecter",
+  "account.saved": "Enregistré.",
+  "account.switchToRegister": "Nouveau ici ? Créer un compte",
+  "account.switchToLogin": "Vous avez déjà un compte ? Se connecter",
+  "account.guestNote": "Vous pouvez utiliser Apprendre, Pratiquer et Simuler en solo sans compte. La connexion ajoute la sauvegarde de la progression, l'historique des sessions et votre préférence de langue sur tous vos appareils.",
+  "account.persistenceNote": "Votre progression et votre historique de sessions sont enregistrés sur ce compte. Les sessions anonymes ne sont conservées que temporairement."
 }

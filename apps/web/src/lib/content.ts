@@ -78,6 +78,7 @@ async function requestContent<TResponse>(path: string): Promise<TResponse> {
       Accept: "application/json",
       "X-Airspacesim-Session": getSessionId(),
     },
+    credentials: "include",
   });
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);

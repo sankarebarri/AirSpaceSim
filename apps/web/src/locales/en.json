@@ -111,5 +111,21 @@
   "lessons.tr_identify_relationship.complete.points.reciprocal": "reciprocal-track traffic",
   "lessons.tr_identify_relationship.complete.points.crossing": "crossing-track traffic",
   "lessons.tr_identify_relationship.complete.points.unrelated": "unrelated traffic",
-  "runner.continueToCrossing": "Continue to Crossing Traffic"
+  "runner.continueToCrossing": "Continue to Crossing Traffic",
+  "nav.account": "Account",
+  "account.title": "Your account",
+  "account.signIn": "Sign in",
+  "account.register": "Create an account",
+  "account.createAccount": "Create account",
+  "account.email": "Email",
+  "account.password": "Password",
+  "account.displayName": "Display name",
+  "account.displayNameOptional": "Display name (optional)",
+  "account.language": "Preferred language",
+  "account.signOut": "Sign out",
+  "account.saved": "Saved.",
+  "account.switchToRegister": "New here? Create an account",
+  "account.switchToLogin": "Already have an account? Sign in",
+  "account.guestNote": "You can use Learn, Practice, and solo Simulate without an account. Signing in adds saved progress, run history, and your language preference across devices.",
+  "account.persistenceNote": "Your lesson progress and run history are saved to this account. Anonymous runs are kept for a limited time only."
 }

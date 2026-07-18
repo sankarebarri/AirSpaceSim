@@ -26,6 +26,18 @@ The format follows Keep a Changelog principles and semantic versioning intent.
 - Real-airline-style callsigns replaced with fictional ones across scenarios, lessons, and the web app (AFR612→NVR231, RAM401→SKL842, DAL217→VLR217, UAE203→KTR203, KLM891→NVR891, SIA328→TIR328, ETH504→RIK504, JBU550→SKL550).
 - Web Simulate registry now points at `nerava_fir`/`sector_traffic` (slug `nerava-sector-traffic`); run-workspace defaults and placeholders use `UL602`/`NRV_VOR`.
 
+### Added (PostgreSQL, authentication, persistence — Phase 6)
+- Email/password authentication with secure server-side sessions (decision Q7): stdlib scrypt password hashing, opaque tokens in HttpOnly SameSite=Lax cookies (Secure in production), 30-day TTL. Endpoints: register, login, logout, current user, profile update (display name + preferred language). Guests keep full access.
+- Guest adoption: signing in attaches the anonymous browser session's runs and scenarios to the account, and account-owned history is visible across devices; runs/scenarios created while signed in are attributed to the user.
+- Protected learning-progress persistence (`GET/PUT /api/v1/progress`) for signed-in users; the lesson runner syncs completions server-side and the concept page merges server progress with guest-local storage.
+- Anonymous-run retention (decision Q10): background sweep deletes guest runs stopped more than `AIRSPACESIM_API_ANONYMOUS_RUN_RETENTION_DAYS` (default 14) days ago, plus orphaned practice scenarios; account history is never pruned.
+- Account page (EN/FR) with sign-in/registration, profile editing, preferred-language sync into the UI language; Sign in buttons now link to it (no dead controls).
+- Development-only test-account seeding (`scripts/seed_dev_user.py`) and developer docs (`docs/developer/AUTHENTICATION.md`, `docs/developer/DATABASE.md`).
+
+### Changed (breaking — database baseline squash, decision Q5)
+- The four pre-release SQLite-era Alembic revisions were squashed into one PostgreSQL-verified baseline (`20260718_0001_initial_baseline`) covering users, auth sessions, learning progress, scenarios, runs, commands, and checkpoints. The entire API test suite (75 tests, incl. migration upgrade/downgrade) passes against PostgreSQL 16; CI runs it on every push (`.github/workflows/postgres.yml`).
+- CORS defaults changed for cookie auth: explicit local dev origins with credentials enabled (the `*` wildcard is no longer the default); production startup now rejects wildcard or localhost origins.
+
 ### Added (Traffic Relationships curriculum, generic runners, EN/FR i18n)
 - Separation Fundamentals curriculum (`content/curriculum.v1.json`) with the five-lesson Traffic Relationships journey (Understanding Track, Same-Track, Reciprocal-Track, Crossing-Track, Identify the Relationship) available, and Vertical/Horizontal Separation shown as quiet planned placeholders with outline metadata.
 - Six deterministic Traffic Relationships scenarios in `training_alpha` (2 aircraft, ≤3 visible routes, scenario-configurable label placement, `traffic_relationship` classification metadata in scenario data per the content spec).

@@ -91,6 +91,7 @@ def create_scenario(
     session: Session,
     *,
     session_id: str,
+    user_id: str | None = None,
     name: str,
     description: str | None,
     airspace_payload: dict[str, Any],
@@ -113,6 +114,7 @@ def create_scenario(
     )
     scenario = ScenarioRecord(
         session_id=session_id,
+        user_id=user_id,
         slug=slug,
         name=name,
         description=description,

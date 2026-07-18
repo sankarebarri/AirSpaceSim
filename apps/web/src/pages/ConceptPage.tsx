@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+import { fetchServerProgress } from "../lib/auth";
 import { fetchCurriculum, type CurriculumConcept } from "../lib/content";
 import { LanguageToggle, useI18n } from "../lib/i18n";
 import { getCompletedLessons } from "../lib/learnProgress";
@@ -35,9 +36,26 @@ export function ConceptPage() {
   const concept = findConcept(curriculumQuery.data?.families, conceptId);
 
   useEffect(() => {
-    if (conceptId) {
-      setCompleted(getCompletedLessons(conceptId));
+    if (!conceptId) {
+      return;
     }
+    setCompleted(getCompletedLessons(conceptId));
+    // Merge server-side progress for signed-in learners (guests get []).
+    let cancelled = false;
+    void fetchServerProgress().then((entries) => {
+      if (cancelled) {
+        return;
+      }
+      const serverCompleted = entries
+        .filter((entry) => entry.concept_id === conceptId)
+        .map((entry) => entry.stage_key);
+      if (serverCompleted.length > 0) {
+        setCompleted((local) => [...new Set([...local, ...serverCompleted])]);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [conceptId]);
 
   return (

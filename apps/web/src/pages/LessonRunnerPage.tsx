@@ -19,6 +19,7 @@ import {
 } from "../lib/api";
 import { fetchCurriculum, fetchLesson, type LessonStep } from "../lib/content";
 import { LanguageToggle, useI18n } from "../lib/i18n";
+import { syncLessonComplete } from "../lib/auth";
 import { markLessonComplete } from "../lib/learnProgress";
 import { filterOverlayByRouteIds, parseScenarioMapOverlay } from "../lib/scenario-map";
 import "./LearnPage.css";
@@ -157,6 +158,8 @@ export function LessonRunnerPage() {
   useEffect(() => {
     if (step?.type === "complete" && conceptId && lessonId) {
       markLessonComplete(conceptId, lessonId);
+      // Signed-in learners also persist progress server-side (guests: no-op).
+      void syncLessonComplete(conceptId, lessonId);
     }
   }, [step, conceptId, lessonId]);
 

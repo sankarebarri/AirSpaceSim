@@ -59,6 +59,7 @@ async function requestJson<TResponse>(
   const response = await fetch(buildApiUrl(path), {
     ...init,
     headers,
+    credentials: "include",
   });
 
   if (!response.ok) {

@@ -6,6 +6,7 @@ import { CrossingTrafficIntroPage } from "../pages/CrossingTrafficIntroPage";
 import { CrossingTrafficLearnPage } from "../pages/CrossingTrafficLearnPage";
 import { CrossingTrafficPracticeIntroPage } from "../pages/CrossingTrafficPracticeIntroPage";
 import { CrossingTrafficPractice2IntroPage } from "../pages/CrossingTrafficPractice2IntroPage";
+import { AccountPage } from "../pages/AccountPage";
 import { ConceptPage } from "../pages/ConceptPage";
 import { HeadingVersusRadialLessonPage } from "../pages/HeadingVersusRadialLessonPage";
 import { LearnPage } from "../pages/LearnPage";
@@ -20,6 +21,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/account" element={<AccountPage />} />
       <Route path="/airspaces" element={<AirspacesPage />} />
       <Route path="/lessons" element={<LearnPage />} />
       <Route path="/learn/:conceptId" element={<ConceptPage />} />

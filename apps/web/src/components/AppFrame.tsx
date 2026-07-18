@@ -62,6 +62,14 @@ export function AppFrame({ children, pageClassName }: AppFrameProps) {
           >
             {t("nav.scenarios")}
           </NavLink>
+          <NavLink
+            to="/account"
+            className={({ isActive }) =>
+              isActive ? "topnav-link topnav-link-active" : "topnav-link"
+            }
+          >
+            {t("nav.account")}
+          </NavLink>
         </nav>
         <LanguageToggle className="topbar-lang" />
       </header>

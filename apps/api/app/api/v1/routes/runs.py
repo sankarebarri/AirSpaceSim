@@ -12,6 +12,7 @@ from ....db.repositories import RunCheckpointRepository, RunRepository
 from ....dependencies import (
     BroadcastHubDependency,
     DbSessionDependency,
+    OptionalUserDependency,
     RunCreationRateLimitDependency,
     SessionIdDependency,
     SessionRegistryDependency,
@@ -60,8 +61,13 @@ def _enforce_run_capacity(
         )
 
 
-def _get_run_or_404(run_id: str, db: DbSessionDependency, session_id: str):
-    run = RunRepository(db).get(run_id, session_id=session_id)
+def _get_run_or_404(
+    run_id: str,
+    db: DbSessionDependency,
+    session_id: str,
+    user_id: str | None = None,
+):
+    run = RunRepository(db).get(run_id, session_id=session_id, user_id=user_id)
     if run is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -251,12 +257,17 @@ def create_run_route(
     payload: RunCreateRequest,
     db: DbSessionDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
     _rate_limit: RunCreationRateLimitDependency = None,
 ) -> RunResponse:
-    """Create and persist a run shell."""
+    """Create and persist a run shell (attributed to the signed-in user)."""
 
     run = create_run(
-        db, session_id=session_id, scenario_id=payload.scenario_id, name=payload.name
+        db,
+        session_id=session_id,
+        scenario_id=payload.scenario_id,
+        name=payload.name,
+        user_id=user.id if user else None,
     )
     return RunResponse.model_validate(run)
 
@@ -268,6 +279,7 @@ def create_practice_run_route(
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
     settings: SettingsDependency,
+    user: OptionalUserDependency = None,
     _rate_limit: RunCreationRateLimitDependency = None,
 ) -> RunResponse:
     """Create and start a live practice run from an airspace package."""
@@ -287,6 +299,7 @@ def create_practice_run_route(
         scenario_id=payload.scenario_id,
         lesson_id=payload.lesson_id,
         name=payload.name,
+        user_id=user.id if user else None,
     )
     run = start_run_service(db, run)
     try:
@@ -300,18 +313,31 @@ def create_practice_run_route(
 
 
 @router.get("", response_model=RunListResponse)
-def list_runs(db: DbSessionDependency, session_id: SessionIdDependency) -> RunListResponse:
-    """List durable runs from SQLite."""
+def list_runs(
+    db: DbSessionDependency,
+    session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
+) -> RunListResponse:
+    """List runs for the browser session and, when signed in, the account."""
 
-    items = RunRepository(db).list(session_id=session_id)
+    items = RunRepository(db).list(
+        session_id=session_id, user_id=user.id if user else None
+    )
     return RunListResponse(items=[RunResponse.model_validate(item) for item in items])
 
 
 @router.get("/{run_id}", response_model=RunResponse)
-def get_run(run_id: str, db: DbSessionDependency, session_id: SessionIdDependency) -> RunResponse:
+def get_run(
+    run_id: str,
+    db: DbSessionDependency,
+    session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
+) -> RunResponse:
     """Fetch a persisted run by id."""
 
-    return RunResponse.model_validate(_get_run_or_404(run_id, db, session_id))
+    return RunResponse.model_validate(
+        _get_run_or_404(run_id, db, session_id, user.id if user else None)
+    )
 
 
 @router.post("/{run_id}/start", response_model=RunResponse)
@@ -321,10 +347,11 @@ def start_run(
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
     settings: SettingsDependency,
+    user: OptionalUserDependency = None,
 ) -> RunResponse:
     """Transition a draft run into running state."""
 
-    run = _get_run_or_404(run_id, db, session_id)
+    run = _get_run_or_404(run_id, db, session_id, user.id if user else None)
     _enforce_run_capacity(db, session_registry, session_id, settings)
     run = start_run_service(db, run)
     try:
@@ -343,10 +370,11 @@ def pause_run(
     db: DbSessionDependency,
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> RunResponse:
     """Transition a running run into paused state."""
 
-    run = _get_run_or_404(run_id, db, session_id)
+    run = _get_run_or_404(run_id, db, session_id, user.id if user else None)
     try:
         runtime_session = session_registry.pause(run_id)
     except ValueError as exc:
@@ -373,10 +401,11 @@ def resume_run(
     db: DbSessionDependency,
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> RunResponse:
     """Resume a paused run."""
 
-    run = _get_run_or_404(run_id, db, session_id)
+    run = _get_run_or_404(run_id, db, session_id, user.id if user else None)
     try:
         runtime_session = session_registry.resume(run_id)
     except ValueError as exc:
@@ -403,11 +432,13 @@ def stop_run(
     db: DbSessionDependency,
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> RunResponse:
     """Stop a draft, running, or paused run."""
 
+    run = _get_run_or_404(run_id, db, session_id, user.id if user else None)
     session_registry.stop(run_id)
-    run = stop_run_service(db, _get_run_or_404(run_id, db, session_id))
+    run = stop_run_service(db, run)
     return RunResponse.model_validate(run)
 
 
@@ -417,10 +448,11 @@ def get_run_state(
     db: DbSessionDependency,
     session_registry: SessionRegistryDependency,
     session_id: SessionIdDependency,
+    user: OptionalUserDependency = None,
 ) -> RunStateResponse:
     """Return the current live state or the latest checkpointed state."""
 
-    run = _get_run_or_404(run_id, db, session_id)
+    run = _get_run_or_404(run_id, db, session_id, user.id if user else None)
     return _build_run_state(run, db, session_registry)
 
 

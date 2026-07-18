@@ -49,9 +49,9 @@ export function HomePage() {
         </Link>
         <div className="home-nav-actions">
           <LanguageToggle />
-          <button type="button" className="home-signin">
+          <Link to="/account" className="home-signin">
             {t("nav.signIn")}
-          </button>
+          </Link>
         </div>
       </nav>
 
